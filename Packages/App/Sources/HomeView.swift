@@ -1,28 +1,78 @@
 import SwiftUI
+import Auth
 
-/// Home view
+/// Home view for authenticated users
 public struct HomeView: View {
-    @Binding var isAuthenticated: Bool
     
-    public init(isAuthenticated: Binding<Bool>) {
-        self._isAuthenticated = isAuthenticated
+    private let authState: AuthState
+    
+    public init(authState: AuthState) {
+        self.authState = authState
     }
     
     public var body: some View {
-        VStack(spacing: 20) {
+        NavigationStack {
+            VStack(spacing: 24) {
+                welcomeSection
+                userInfoSection
+                logoutButton
+            }
+            .padding()
+            .navigationTitle("Home")
+        }
+    }
+    
+    // MARK: - Sections
+    
+    private var welcomeSection: some View {
+        VStack(spacing: 12) {
+            Image(systemName: "snowflake")
+                .font(.system(size: 60))
+                .foregroundStyle(.blue)
+            
             Text("Welcome to ShredMate!")
                 .font(.largeTitle)
                 .fontWeight(.bold)
-            
-            Text("You are logged in")
-                .font(.body)
-                .foregroundColor(.secondary)
-            
-            Button("Logout") {
-                isAuthenticated = false
-            }
-            .buttonStyle(.bordered)
         }
-        .padding()
+    }
+    
+    private var userInfoSection: some View {
+        VStack(spacing: 8) {
+            if let user = authState.user {
+                Text(user.name ?? user.email)
+                    .font(.title2)
+                    .fontWeight(.medium)
+                
+                Text(user.email)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
+            
+            if let rider = authState.rider {
+                Text(rider.type.rawValue)
+                    .font(.caption)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 4)
+                    .background(.blue.opacity(0.1))
+                    .foregroundStyle(.blue)
+                    .clipShape(Capsule())
+            }
+        }
+    }
+    
+    private var logoutButton: some View {
+        Button {
+            Task { await authState.logout() }
+        } label: {
+            if authState.isLoading {
+                ProgressView()
+            } else {
+                Text("Sign Out")
+            }
+        }
+        .buttonStyle(.bordered)
+        .disabled(authState.isLoading)
+        .padding(.top, 20)
     }
 }
+

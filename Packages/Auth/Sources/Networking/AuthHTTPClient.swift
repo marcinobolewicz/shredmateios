@@ -1,0 +1,261 @@
+import Foundation
+
+/// HTTP method enum
+public enum HTTPMethod: String, Sendable {
+    case get = "GET"
+    case post = "POST"
+    case put = "PUT"
+    case patch = "PATCH"
+    case delete = "DELETE"
+}
+
+/// Authenticated HTTP client with automatic token injection and 401 refresh handling
+public actor AuthHTTPClient {
+    
+    private let baseURL: String
+    private let session: URLSession
+    private let tokenStorage: TokenStorageProtocol
+    private let decoder: JSONDecoder
+    private let encoder: JSONEncoder
+    
+    /// Endpoints that don't require authorization header
+    private let publicEndpoints = [
+        "/auth/login",
+        "/auth/register",
+        "/auth/refresh"
+    ]
+    
+    /// Single-flight refresh state
+    private var isRefreshing = false
+    private var refreshContinuations: [CheckedContinuation<AuthTokens, Error>] = []
+    
+    /// Callback when session is invalidated (refresh failed)
+    public var onSessionInvalidated: (@Sendable () async -> Void)?
+    
+    public init(
+        baseURL: String,
+        tokenStorage: TokenStorageProtocol,
+        session: URLSession = .shared
+    ) {
+        self.baseURL = baseURL
+        self.tokenStorage = tokenStorage
+        self.session = session
+        
+        self.decoder = JSONDecoder()
+        self.decoder.dateDecodingStrategy = .iso8601
+        self.decoder.keyDecodingStrategy = .convertFromSnakeCase
+        
+        self.encoder = JSONEncoder()
+        self.encoder.dateEncodingStrategy = .iso8601
+        self.encoder.keyEncodingStrategy = .convertToSnakeCase
+    }
+    
+    /// Set the session invalidation handler
+    public func setSessionInvalidationHandler(_ handler: @escaping @Sendable () async -> Void) {
+        onSessionInvalidated = handler
+    }
+    
+    // MARK: - Public Request Methods
+    
+    /// Perform GET request
+    public func get<T: Decodable>(_ endpoint: String) async throws -> T {
+        try await request(endpoint, method: .get)
+    }
+    
+    /// Perform POST request with body
+    public func post<T: Decodable, B: Encodable>(_ endpoint: String, body: B) async throws -> T {
+        try await request(endpoint, method: .post, body: body)
+    }
+    
+    /// Perform POST request without response body
+    public func post<B: Encodable>(_ endpoint: String, body: B) async throws {
+        let _: EmptyResponse = try await request(endpoint, method: .post, body: body)
+    }
+    
+    /// Perform PATCH request with body
+    public func patch<T: Decodable, B: Encodable>(_ endpoint: String, body: B) async throws -> T {
+        try await request(endpoint, method: .patch, body: body)
+    }
+    
+    /// Perform DELETE request
+    public func delete(_ endpoint: String) async throws {
+        let _: EmptyResponse = try await request(endpoint, method: .delete)
+    }
+    
+    // MARK: - Core Request Logic
+    
+    private func request<T: Decodable>(
+        _ endpoint: String,
+        method: HTTPMethod,
+        body: (any Encodable)? = nil,
+        isRetry: Bool = false
+    ) async throws -> T {
+        let urlRequest = try await buildRequest(endpoint, method: method, body: body)
+        
+        let (data, response) = try await session.data(for: urlRequest)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw AuthError.networkError("Invalid response type")
+        }
+        
+        // Handle 401 - attempt refresh and retry
+        if httpResponse.statusCode == 401 && !isRetry && !isPublicEndpoint(endpoint) {
+            _ = try await performSingleFlightRefresh()
+            return try await request(endpoint, method: method, body: body, isRetry: true)
+        }
+        
+        // Handle other errors
+        guard (200...299).contains(httpResponse.statusCode) else {
+            throw mapStatusCodeToError(httpResponse.statusCode)
+        }
+        
+        // Handle empty responses
+        if T.self == EmptyResponse.self || data.isEmpty {
+            // swiftlint:disable:next force_cast
+            return EmptyResponse() as! T
+        }
+        
+        do {
+            return try decoder.decode(T.self, from: data)
+        } catch {
+            throw AuthError.decodingError
+        }
+    }
+    
+    private func buildRequest(
+        _ endpoint: String,
+        method: HTTPMethod,
+        body: (any Encodable)? = nil
+    ) async throws -> URLRequest {
+        guard let url = URL(string: baseURL + endpoint) else {
+            throw AuthError.networkError("Invalid URL: \(baseURL + endpoint)")
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = method.rawValue
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        // Add authorization header for protected endpoints
+        if !isPublicEndpoint(endpoint) {
+            if let tokens = await tokenStorage.loadTokens() {
+                request.setValue("Bearer \(tokens.accessToken)", forHTTPHeaderField: "Authorization")
+            }
+        }
+        
+        // Encode body
+        if let body {
+            request.httpBody = try encoder.encode(body)
+        }
+        
+        return request
+    }
+    
+    // MARK: - Single-Flight Refresh
+    
+    private func performSingleFlightRefresh() async throws -> AuthTokens {
+        // If already refreshing, wait for the result
+        if isRefreshing {
+            return try await withCheckedThrowingContinuation { continuation in
+                refreshContinuations.append(continuation)
+            }
+        }
+        
+        isRefreshing = true
+        
+        do {
+            let tokens = try await executeRefresh()
+            
+            // Notify all waiting continuations
+            let continuations = refreshContinuations
+            refreshContinuations = []
+            isRefreshing = false
+            
+            for continuation in continuations {
+                continuation.resume(returning: tokens)
+            }
+            
+            return tokens
+        } catch {
+            // Notify all waiting continuations of failure
+            let continuations = refreshContinuations
+            refreshContinuations = []
+            isRefreshing = false
+            
+            for continuation in continuations {
+                continuation.resume(throwing: error)
+            }
+            
+            // Invalidate session on refresh failure
+            await onSessionInvalidated?()
+            
+            throw error
+        }
+    }
+    
+    private func executeRefresh() async throws -> AuthTokens {
+        guard let currentTokens = await tokenStorage.loadTokens() else {
+            throw AuthError.noRefreshToken
+        }
+        
+        let refreshBody = RefreshRequest(refreshToken: currentTokens.refreshToken)
+        
+        guard let url = URL(string: baseURL + "/auth/refresh") else {
+            throw AuthError.networkError("Invalid refresh URL")
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = HTTPMethod.post.rawValue
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try encoder.encode(refreshBody)
+        
+        let (data, response) = try await session.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw AuthError.networkError("Invalid response")
+        }
+        
+        // Refresh token expired or invalid
+        if httpResponse.statusCode == 401 {
+            throw AuthError.sessionExpired
+        }
+        
+        guard (200...299).contains(httpResponse.statusCode) else {
+            throw AuthError.refreshFailed
+        }
+        
+        let authResponse = try decoder.decode(AuthResponse.self, from: data)
+        let newTokens = AuthTokens(
+            accessToken: authResponse.accessToken,
+            refreshToken: authResponse.refreshToken
+        )
+        
+        try await tokenStorage.saveTokens(newTokens)
+        try await tokenStorage.saveUser(authResponse.user)
+        
+        return newTokens
+    }
+    
+    // MARK: - Helpers
+    
+    private func isPublicEndpoint(_ endpoint: String) -> Bool {
+        publicEndpoints.contains { endpoint.hasPrefix($0) }
+    }
+    
+    private func mapStatusCodeToError(_ statusCode: Int) -> AuthError {
+        switch statusCode {
+        case 400:
+            return .invalidCredentials
+        case 401:
+            return .unauthorized
+        case 403:
+            return .unauthorized
+        default:
+            return .serverError(statusCode: statusCode)
+        }
+    }
+}
+
+/// Helper type for endpoints that return empty response
+public struct EmptyResponse: Decodable, Sendable {
+    public init() {}
+}
