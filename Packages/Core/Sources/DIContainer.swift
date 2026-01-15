@@ -9,6 +9,11 @@ private struct SendableFactory<T>: @unchecked Sendable {
     }
 }
 
+/// DI Container errors
+public enum DIContainerError: Error {
+    case dependencyNotFound(String)
+}
+
 /// Actor-based dependency container for managing app-wide dependencies
 @MainActor
 public final class DIContainer: Sendable {
@@ -24,12 +29,20 @@ public final class DIContainer: Sendable {
         dependencies[key] = SendableFactory(factory)
     }
     
-    /// Resolve a dependency
+    /// Resolve a dependency (returns nil if not found)
     public func resolve<T>(_ type: T.Type) -> T? {
         let key = String(describing: type)
         guard let wrapper = dependencies[key] as? SendableFactory<T> else {
             return nil
         }
         return wrapper.create()
+    }
+    
+    /// Resolve a required dependency (throws if not found)
+    public func resolveRequired<T>(_ type: T.Type) throws -> T {
+        guard let dependency = resolve(type) else {
+            throw DIContainerError.dependencyNotFound(String(describing: type))
+        }
+        return dependency
     }
 }

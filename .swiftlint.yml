@@ -8,7 +8,6 @@ included:
   - Packages
   - ShredMate
 excluded:
-  - Packages/*/Tests
   - .build
   - .git
 analyzer_rules:
