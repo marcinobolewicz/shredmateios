@@ -37,9 +37,15 @@ public struct LoginView: View {
     
     private var headerSection: some View {
         VStack(spacing: 8) {
-            Image(systemName: "snowflake")
-                .font(.system(size: 60))
-                .foregroundStyle(.blue)
+            Image("shredmate-logo", bundle: .main)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 100, height: 100)
+                .padding(20)
+                .background(
+                    Circle()
+                        .fill(.black)
+                )
             
             Text("ShredMate")
                 .font(.largeTitle)

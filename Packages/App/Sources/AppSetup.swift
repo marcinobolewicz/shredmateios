@@ -1,7 +1,7 @@
 import SwiftUI
 import Core
 import Networking
-import Auth
+@_exported import Auth
 
 /// App setup and DI configuration
 @MainActor

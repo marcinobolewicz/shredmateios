@@ -2,7 +2,7 @@ import Foundation
 
 /// Protocol for network client
 public protocol NetworkClient: Sendable {
-    func request<T: Decodable>(_ endpoint: String) async throws -> T
+    func request<T: Decodable & Sendable>(_ endpoint: String) async throws -> T
 }
 
 /// Actor-based URL session client for network requests
@@ -16,7 +16,7 @@ public actor URLSessionClient: NetworkClient {
     }
     
     /// Perform an async network request
-    public func request<T: Decodable>(_ endpoint: String) async throws -> T {
+    public func request<T: Decodable & Sendable>(_ endpoint: String) async throws -> T {
         guard let url = URL(string: baseURL + endpoint) else {
             throw NetworkError.invalidURL
         }
