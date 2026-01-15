@@ -3,15 +3,23 @@ import App
 
 @main
 struct ShredMateApp: App {
+    @State private var isSetupComplete = false
+    
     init() {
-        Task {
-            await AppSetup.configure()
-        }
+        // Perform synchronous initialization here if needed
     }
     
     var body: some Scene {
         WindowGroup {
-            RootView()
+            if isSetupComplete {
+                RootView()
+            } else {
+                ProgressView()
+                    .task {
+                        await AppSetup.configure()
+                        isSetupComplete = true
+                    }
+            }
         }
     }
 }

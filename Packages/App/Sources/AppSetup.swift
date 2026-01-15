@@ -14,6 +14,8 @@ public struct AppSetup {
         let container = DIContainer.shared
         
         // Register dependencies
+        // Note: Actor initialization is synchronous, but their methods are async
+        // For a more advanced setup, consider using async factories or pre-creating actors
         container.register(NetworkingService.self) {
             let client = URLSessionClient(baseURL: baseURL)
             return NetworkingService(client: client)
