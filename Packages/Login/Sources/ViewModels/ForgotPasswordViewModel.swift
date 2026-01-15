@@ -20,7 +20,7 @@ public final class ForgotPasswordViewModel {
     public var isSuccess = false
     
     public var isFormValid: Bool {
-        !email.isEmpty && email.contains("@")
+        !email.isEmpty && email.isValidEmail()
     }
     
     // MARK: - Dependencies

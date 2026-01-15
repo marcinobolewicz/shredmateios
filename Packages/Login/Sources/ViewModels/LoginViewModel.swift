@@ -15,7 +15,7 @@ public final class LoginViewModel {
     public var errorMessage: String?
     
     public var isFormValid: Bool {
-        !email.isEmpty && !password.isEmpty && email.contains("@")
+        !email.isEmpty && !password.isEmpty && email.isValidEmail()
     }
     
     // MARK: - Dependencies
@@ -58,5 +58,13 @@ public final class LoginViewModel {
     public func clearError() {
         errorMessage = nil
         authState.clearError()
+    }
+}
+
+extension String {
+    func isValidEmail() -> Bool {
+        let emailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
+        let emailPredicate = NSPredicate(format: "SELF MATCHES %@", emailRegEx)
+        return emailPredicate.evaluate(with: self)
     }
 }

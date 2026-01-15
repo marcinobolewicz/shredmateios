@@ -111,8 +111,10 @@ public actor AuthHTTPClient {
         
         // Handle empty responses
         if T.self == EmptyResponse.self || data.isEmpty {
-            // swiftlint:disable:next force_cast
-            return EmptyResponse() as! T
+            guard let emptyResponse = EmptyResponse() as? T else {
+                throw AuthError.decodingError
+            }
+            return emptyResponse
         }
         
         do {

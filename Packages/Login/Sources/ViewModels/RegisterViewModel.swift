@@ -19,7 +19,7 @@ public final class RegisterViewModel {
     public var isFormValid: Bool {
         !name.isEmpty &&
         !email.isEmpty &&
-        email.contains("@") &&
+        email.isValidEmail() &&
         !password.isEmpty &&
         password.count >= 8 &&
         password == confirmPassword
