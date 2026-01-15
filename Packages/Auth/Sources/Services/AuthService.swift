@@ -1,4 +1,7 @@
 import Foundation
+import os.log
+
+private let logger = Logger(subsystem: "com.shredmate.auth", category: "AuthService")
 
 /// Protocol for AuthService abstraction (enables testing)
 public protocol AuthServiceProtocol: Sendable {
@@ -7,6 +10,8 @@ public protocol AuthServiceProtocol: Sendable {
     func logout() async throws
     func fetchCurrentUser() async throws -> User
     func refreshSession() async throws -> AuthResponse
+    func isAuthenticated() async -> Bool
+    func getAccessToken() async -> String?
 }
 
 /// Service handling authentication operations
@@ -41,7 +46,7 @@ public actor AuthService: AuthServiceProtocol {
     public func logout() async throws {
         if let tokens = await tokenStorage.loadTokens() {
             let request = LogoutRequest(refreshToken: tokens.refreshToken)
-            try? await httpClient.post("/auth/logout", body: request)
+            try await httpClient.post("/auth/logout", body: request)
         }
         
         try await tokenStorage.clearAll()

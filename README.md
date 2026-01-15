@@ -49,58 +49,58 @@ The app supports two build configurations:
 - **Backend**: PROD uses the same backend as DEV (see "Backend URL (DEV = PROD)")
 - **Compilation Flag**: PROD
 
-## Komunikacja z backendem
+## Backend Communication
 
-Poniższy opis dotyczy kontraktów (URL-e, ścieżki, eventy) oraz podziału odpowiedzialności między warstwami aplikacji. Implementacja pozostaje ukryta — REST jest źródłem prawdy, a realtime służy do best-effort odświeżania UI.
+The following description covers contracts (URLs, paths, events) and the division of responsibilities between application layers. Implementation remains hidden — REST is the source of truth, and realtime serves for best-effort UI refreshing.
 
 ### Backend URL (DEV = PROD)
 
-Obie konfiguracje (Dev i Prod) wskazują aktualnie na ten sam backend:
+Both configurations (Dev and Prod) currently point to the same backend:
 
 - **REST base URL**: `https://api.shredmate.eu/api/v1`
 - **Socket.IO origin**: `https://api.shredmate.eu`
 - **Socket namespace**: `/chat`
 - **Socket transport path**: `/socket.io/*` (polling + websocket)
 
-### Organizacja warstw (bez kodu)
+### Layer Organization (without code)
 
-- **API Client**: centralny klient HTTP; odpowiada za base URL, wspólne nagłówki, oraz ustandaryzowaną obsługę błędów i retry po autoryzacji.
-- **Auth Session / Token Store**: pojedyncze „source of truth” dla tokenów; bezpieczne przechowywanie `accessToken`, `refreshToken` i `expiresAt`.
-- **Auth Service**: operacje sesji użytkownika w REST: login/register/logout, `me` oraz refresh tokenów.
-- **Chat Service**: REST-owe operacje domeny czatu: lista konwersacji, tworzenie konwersacji, pobieranie wiadomości (paginacja), wysyłka wiadomości.
-- **Chat Realtime**: zarządza połączeniem Socket.IO w namespace `/chat`; podpina token w handshake, obsługuje reconnect (w tym po odświeżeniu tokenu) i propaguje eventy do warstwy UI/cache.
+- **API Client**: central HTTP client; responsible for base URL, common headers, standardized error handling and retry after authorization.
+- **Auth Session / Token Store**: single "source of truth" for tokens; secure storage of `accessToken`, `refreshToken` and `expiresAt`.
+- **Auth Service**: user session operations in REST: login/register/logout, `me` and token refresh.
+- **Chat Service**: REST operations for chat domain: conversation list, conversation creation, message fetching (pagination), message sending.
+- **Chat Realtime**: manages Socket.IO connection in `/chat` namespace; attaches token in handshake, handles reconnect (including after token refresh) and propagates events to UI/cache layer.
 
-### Autoryzacja
+### Authorization
 
-#### 1) Przechowywanie sesji
+#### 1) Session Storage
 
-- Aplikacja przechowuje `accessToken`, `refreshToken` i `expiresAt` w bezpiecznym storage.
-- Cała aplikacja korzysta z jednego centralnego „source of truth” dla tokenów.
+- The application stores `accessToken`, `refreshToken` and `expiresAt` in secure storage.
+- The entire application uses a single central "source of truth" for tokens.
 
-#### 2) Autoryzacja requestów REST
+#### 2) REST Request Authorization
 
-- Każdy request REST przechodzi przez wspólny klient HTTP.
-- Dla endpointów wymagających autoryzacji klient automatycznie dodaje nagłówek: `Authorization: Bearer <accessToken>`.
+- Every REST request goes through a common HTTP client.
+- For endpoints requiring authorization, the client automatically adds the header: `Authorization: Bearer <accessToken>`.
 
-#### 3) Odświeżanie tokenów (401 → refresh → retry)
+#### 3) Token Refresh (401 → refresh → retry)
 
-- Jeśli API zwróci `401` dla requestu autoryzowanego (z wyjątkiem: login/register/logout/refresh), uruchamiany jest refresh przez `POST /auth/refresh`.
-- Refresh jest **single-flight**: równoległe requesty nie uruchamiają wielu refreshy — czekają na wynik jednego odświeżenia.
-- Po sukcesie: zapisywane są nowe tokeny i wykonywany jest retry oryginalnych requestów.
-- Jeśli refresh zwróci `401` lub brakuje `refreshToken`: sesja jest czyszczona i wymagane jest ponowne logowanie.
+- If the API returns `401` for an authorized request (except: login/register/logout/refresh), a refresh is triggered via `POST /auth/refresh`.
+- Refresh is **single-flight**: parallel requests don't trigger multiple refreshes — they wait for the result of a single refresh.
+- On success: new tokens are saved and original requests are retried.
+- If refresh returns `401` or `refreshToken` is missing: the session is cleared and re-login is required.
 
-#### 4) Init aplikacji / „długi brak aktywności”
+#### 4) App Init / "long inactivity"
 
-- Na starcie aplikacja wykonuje `GET /auth/me`:
-    - `200` → sesja OK
-    - `401` → automatycznie `POST /auth/refresh` i retry `GET /auth/me`
-- Po powrocie aplikacji na foreground, gdy `expiresAt` sugeruje wygaśnięcie tokenu:
-    - najpierw wykonywane jest `GET /auth/me` (które może uruchomić refresh),
-    - dopiero potem (re)łączony jest socket.
+- On app start, `GET /auth/me` is executed:
+    - `200` → session OK
+    - `401` → automatically `POST /auth/refresh` and retry `GET /auth/me`
+- When the app returns to foreground and `expiresAt` suggests token expiration:
+    - first `GET /auth/me` is executed (which may trigger refresh),
+    - only then the socket is (re)connected.
 
 ### Messages / Chat endpoints
 
-Kontrakt REST dla czatu jest liczony względem **REST base URL**. Endpointy autoryzowane wymagają nagłówka `Authorization: Bearer <accessToken>`.
+REST contract for chat is relative to **REST base URL**. Authorized endpoints require the `Authorization: Bearer <accessToken>` header.
 
 #### Auth
 
@@ -108,27 +108,27 @@ Kontrakt REST dla czatu jest liczony względem **REST base URL**. Endpointy auto
 - `POST /auth/register`
 - `POST /auth/refresh`
 - `POST /auth/logout`
-- `GET /auth/me` (safe ping; może zwrócić `401` i wtedy uruchamia się refresh)
+- `GET /auth/me` (safe ping; may return `401` which triggers refresh)
 
 #### Messages / Chat
 
 - `GET /chat/conversations`
 - `POST /chat/conversations/with/:otherUserId`
-- `GET /chat/conversations/:id/messages` (paginacja)
-- `POST /chat/conversations/:id/messages` z payload `{ type: 'TEXT', text }`
+- `GET /chat/conversations/:id/messages` (pagination)
+- `POST /chat/conversations/:id/messages` with payload `{ type: 'TEXT', text }`
 
-Założenie MVP: obsługiwane są wyłącznie wiadomości typu `TEXT` (bez obrazów i załączników).
+MVP assumption: only `TEXT` type messages are supported (no images or attachments).
 
 ### Realtime (Socket.IO)
 
-Połączenie realtime jest **best-effort** i służy do szybkiego odświeżania UI; REST pozostaje źródłem prawdy.
+Realtime connection is **best-effort** and serves for fast UI refreshing; REST remains the source of truth.
 
-- **Auth**: JWT przekazywany w `handshake.auth.token`.
+- **Auth**: JWT passed in `handshake.auth.token`.
 - **Namespace**: `/chat`.
-- **Eventy**:
-    - `conversation:updated` (aktualizacja ostatniej wiadomości / `lastMessageAt`)
-    - `message:new` (nowa wiadomość)
-- **Zasada synchronizacji**: eventy mogą aktualizować cache/UI optymistycznie, ale docelowo po nich powinien następować re-fetch lub invalidation danych przez REST.
+- **Events**:
+    - `conversation:updated` (last message update / `lastMessageAt`)
+    - `message:new` (new message)
+- **Sync rule**: events can update cache/UI optimistically, but eventually should be followed by re-fetch or data invalidation via REST.
 
 ## Building
 

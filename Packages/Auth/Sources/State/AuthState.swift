@@ -17,15 +17,15 @@ public final class AuthState {
     
     // MARK: - Dependencies
     
-    private let authService: AuthService
-    private let riderService: RiderService
+    private let authService: any AuthServiceProtocol
+    private let riderService: any RiderServiceProtocol
     private let tokenStorage: TokenStorageProtocol
     
     // MARK: - Init
     
     public init(
-        authService: AuthService,
-        riderService: RiderService,
+        authService: any AuthServiceProtocol,
+        riderService: any RiderServiceProtocol,
         tokenStorage: TokenStorageProtocol
     ) {
         self.authService = authService

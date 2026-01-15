@@ -27,17 +27,24 @@ public actor TokenStorage: TokenStorageProtocol {
     
     // MARK: - Tokens
     
-    public func saveTokens(_ tokens: AuthTokens) throws {
-        try saveToKeychain(key: accessTokenKey, data: tokens.accessToken.data(using: .utf8)!)
-        try saveToKeychain(key: refreshTokenKey, data: tokens.refreshToken.data(using: .utf8)!)
+    public func saveTokens(_ tokens: AuthTokens) async throws {
+        guard let accessData = tokens.accessToken.data(using: .utf8),
+              let refreshData = tokens.refreshToken.data(using: .utf8) else {
+            throw AuthError.tokenStorageError("Failed to encode tokens")
+        }
+        
+        try saveToKeychain(key: accessTokenKey, data: accessData)
+        try saveToKeychain(key: refreshTokenKey, data: refreshData)
         
         if let expiresAt = tokens.expiresAt {
             let timestamp = String(expiresAt.timeIntervalSince1970)
-            try saveToKeychain(key: expiresAtKey, data: timestamp.data(using: .utf8)!)
+            if let timestampData = timestamp.data(using: .utf8) {
+                try saveToKeychain(key: expiresAtKey, data: timestampData)
+            }
         }
     }
     
-    public func loadTokens() -> AuthTokens? {
+    public func loadTokens() async -> AuthTokens? {
         guard let accessData = loadFromKeychain(key: accessTokenKey),
               let refreshData = loadFromKeychain(key: refreshTokenKey) else {
             return nil
@@ -61,7 +68,7 @@ public actor TokenStorage: TokenStorageProtocol {
         return AuthTokens(accessToken: accessToken, refreshToken: refreshToken, expiresAt: expiresAt)
     }
     
-    public func clearTokens() throws {
+    public func clearTokens() async throws {
         try deleteFromKeychain(key: accessTokenKey)
         try deleteFromKeychain(key: refreshTokenKey)
         try deleteFromKeychain(key: expiresAtKey)
@@ -69,29 +76,29 @@ public actor TokenStorage: TokenStorageProtocol {
     
     // MARK: - User
     
-    public func saveUser(_ user: User) throws {
+    public func saveUser(_ user: User) async throws {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
         let data = try encoder.encode(user)
         try saveToKeychain(key: userKey, data: data)
     }
     
-    public func loadUser() -> User? {
+    public func loadUser() async -> User? {
         guard let data = loadFromKeychain(key: userKey) else { return nil }
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
         return try? decoder.decode(User.self, from: data)
     }
     
-    public func clearUser() throws {
+    public func clearUser() async throws {
         try deleteFromKeychain(key: userKey)
     }
     
     // MARK: - Clear All
     
-    public func clearAll() throws {
-        try clearTokens()
-        try clearUser()
+    public func clearAll() async throws {
+        try await clearTokens()
+        try await clearUser()
     }
     
     // MARK: - Keychain Operations
