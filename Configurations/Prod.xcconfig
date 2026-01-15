@@ -1,0 +1,9 @@
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974
+
+// Production Configuration
+DISPLAY_NAME = ShredMate
+PRODUCT_BUNDLE_IDENTIFIER = com.shredmate.app
+API_BASE_URL = https://api.shredmate.app
+ENVIRONMENT = PROD
+SWIFT_ACTIVE_COMPILATION_CONDITIONS = $(inherited) PROD
