@@ -35,8 +35,14 @@ public final class AuthState {
     
     // MARK: - Session Initialization
     
+    private var hasRestoredSession = false
+    
     /// Restore session on app launch (call from app init)
     public func restoreSession() async {
+        // Only restore once per app launch
+        guard !hasRestoredSession else { return }
+        hasRestoredSession = true
+        
         isLoading = true
         error = nil
         
@@ -46,6 +52,9 @@ public final class AuthState {
         if let storedUser = await tokenStorage.loadUser() {
             user = storedUser
         }
+        
+        // If no stored user, no session to restore
+        guard user != nil else { return }
         
         // Validate session with backend
         do {

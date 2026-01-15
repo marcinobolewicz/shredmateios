@@ -3,16 +3,19 @@ import App
 
 @main
 struct ShredMateApp: App {
-    @State private var authState: AuthState?
+    @State private var dependencies: AppDependencies?
     
     var body: some Scene {
         WindowGroup {
-            if let authState {
-                RootView(authState: authState)
+            if let dependencies {
+                RootView(
+                    authState: dependencies.authState,
+                    riderService: dependencies.riderService
+                )
             } else {
-                ProgressView("Ładowanie...")
+                ProgressView("Loading...")
                     .onAppear {
-                        authState = AppSetup.configure()
+                        dependencies = AppSetup.configure()
                     }
             }
         }

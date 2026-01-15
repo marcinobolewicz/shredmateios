@@ -6,15 +6,17 @@ import Login
 public struct RootView: View {
     
     private let authState: AuthState
+    private let riderService: any RiderServiceProtocol
     
-    public init(authState: AuthState) {
+    public init(authState: AuthState, riderService: any RiderServiceProtocol) {
         self.authState = authState
+        self.riderService = riderService
     }
     
     public var body: some View {
         Group {
             if authState.isLoggedIn {
-                HomeView(authState: authState)
+                HomeView(authState: authState, riderService: riderService)
             } else {
                 AuthFlowView(authState: authState)
             }
@@ -25,4 +27,3 @@ public struct RootView: View {
         }
     }
 }
-
