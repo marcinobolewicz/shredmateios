@@ -3,29 +3,18 @@ import App
 
 @main
 struct ShredMateApp: App {
-    @StateObject private var appState = AppState()
+    @State private var authState: AuthState?
     
     var body: some Scene {
         WindowGroup {
-            if appState.isSetupComplete {
-                RootView()
+            if let authState {
+                RootView(authState: authState)
             } else {
-                ProgressView()
-                    .task {
-                        await appState.setup()
+                ProgressView("Ładowanie...")
+                    .onAppear {
+                        authState = AppSetup.configure()
                     }
             }
         }
-    }
-}
-
-@MainActor
-final class AppState: ObservableObject {
-    @Published var isSetupComplete = false
-    
-    func setup() async {
-        guard !isSetupComplete else { return }
-        await AppSetup.configure()
-        isSetupComplete = true
     }
 }

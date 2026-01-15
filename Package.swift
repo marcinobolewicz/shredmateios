@@ -10,6 +10,7 @@ let package = Package(
         .library(name: "App", targets: ["App"]),
         .library(name: "Core", targets: ["Core"]),
         .library(name: "Networking", targets: ["Networking"]),
+        .library(name: "Auth", targets: ["Auth"]),
         .library(name: "Login", targets: ["Login"])
     ],
     targets: [
@@ -42,10 +43,25 @@ let package = Package(
             path: "Packages/Networking/Tests"
         ),
         
+        // Auth Package
+        .target(
+            name: "Auth",
+            dependencies: ["Core"],
+            path: "Packages/Auth/Sources",
+            swiftSettings: [
+                .enableUpcomingFeature("StrictConcurrency")
+            ]
+        ),
+        .testTarget(
+            name: "AuthTests",
+            dependencies: ["Auth"],
+            path: "Packages/Auth/Tests"
+        ),
+        
         // Login Package
         .target(
             name: "Login",
-            dependencies: ["Core", "Networking"],
+            dependencies: ["Core", "Networking", "Auth"],
             path: "Packages/Login/Sources",
             swiftSettings: [
                 .enableUpcomingFeature("StrictConcurrency")
@@ -60,7 +76,7 @@ let package = Package(
         // App Package
         .target(
             name: "App",
-            dependencies: ["Core", "Networking", "Login"],
+            dependencies: ["Core", "Networking", "Auth", "Login"],
             path: "Packages/App/Sources",
             swiftSettings: [
                 .enableUpcomingFeature("StrictConcurrency")

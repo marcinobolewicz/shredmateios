@@ -7,10 +7,6 @@ public actor AppConfiguration: Sendable {
     private var config: [String: String] = [:]
     
     private init() {
-        loadConfiguration()
-    }
-    
-    private func loadConfiguration() {
         // Load from Info.plist or environment
         if let baseURL = Bundle.main.infoDictionary?["API_BASE_URL"] as? String {
             config["API_BASE_URL"] = baseURL

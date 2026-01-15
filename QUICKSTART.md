@@ -76,14 +76,20 @@ swiftlint --fix
 ### Development (ShredMate-dev)
 - Bundle ID: `com.shredmate.app.dev`
 - Display Name: "ShredMate Dev"
-- API URL: `https://api-dev.shredmate.app`
+- Backend: DEV = PROD (wspólny backend)
+- REST base URL: `https://api.shredmate.eu/api/v1`
+- Socket.IO origin: `https://api.shredmate.eu`
 - Compilation Flag: `DEV`
 
 ### Production (ShredMate-prod)
 - Bundle ID: `com.shredmate.app`
 - Display Name: "ShredMate"
-- API URL: `https://api.shredmate.app`
+- Backend: DEV = PROD (wspólny backend)
+- REST base URL: `https://api.shredmate.eu/api/v1`
+- Socket.IO origin: `https://api.shredmate.eu`
 - Compilation Flag: `PROD`
+
+Szczegóły kontraktów (endpointy REST, realtime, autoryzacja) są opisane w [README.md](README.md).
 
 ## Key Features
 

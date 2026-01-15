@@ -1,17 +1,28 @@
 import SwiftUI
+import Auth
 import Login
 
-/// Root view with simple routing between Login and Home
+/// Root view that switches between auth flow and home based on session
 public struct RootView: View {
-    @State private var isAuthenticated: Bool = false
     
-    public init() {}
+    private let authState: AuthState
+    
+    public init(authState: AuthState) {
+        self.authState = authState
+    }
     
     public var body: some View {
-        if isAuthenticated {
-            HomeView(isAuthenticated: $isAuthenticated)
-        } else {
-            LoginView(isAuthenticated: $isAuthenticated)
+        Group {
+            if authState.isLoggedIn {
+                HomeView(authState: authState)
+            } else {
+                AuthFlowView(authState: authState)
+            }
+        }
+        .animation(.easeInOut(duration: 0.3), value: authState.isLoggedIn)
+        .task {
+            await authState.restoreSession()
         }
     }
 }
+

@@ -1,24 +1,49 @@
 import SwiftUI
 import Core
 import Networking
+@_exported import Auth
 
 /// App setup and DI configuration
 @MainActor
 public struct AppSetup {
-    public static func configure() async {
-        // Get configuration
-        let config = AppConfiguration.shared
-        let baseURL = await config.getAPIBaseURL()
+    
+    /// Configure app dependencies and return AuthState for root view
+    public static func configure() -> AuthState {
+        let baseURL = "https://api.shredmate.eu/api/v1"
         
-        // Setup DI container
-        let container = DIContainer.shared
+        // Create token storage
+        let tokenStorage = TokenStorage()
         
-        // Register dependencies
-        // Note: Actor initialization is synchronous, but their methods are async
-        // For a more advanced setup, consider using async factories or pre-creating actors
-        container.register(NetworkingService.self) {
-            let client = URLSessionClient(baseURL: baseURL)
-            return NetworkingService(client: client)
+        // Create HTTP client with token interceptor
+        let httpClient = AuthHTTPClient(
+            baseURL: baseURL,
+            tokenStorage: tokenStorage
+        )
+        
+        // Create services
+        let authService = AuthService(httpClient: httpClient, tokenStorage: tokenStorage)
+        let riderService = RiderService(httpClient: httpClient)
+        
+        // Create auth state
+        let authState = AuthState(
+            authService: authService,
+            riderService: riderService,
+            tokenStorage: tokenStorage
+        )
+        
+        // Configure session invalidation callback
+        Task { @MainActor in
+            await httpClient.setSessionInvalidationHandler {
+                await authState.handleSessionInvalidation()
+            }
         }
+        
+        // Register in DI container
+        let container = DIContainer.shared
+        container.register(AuthState.self) { authState }
+        container.register(AuthHTTPClient.self) { httpClient }
+        
+        return authState
     }
 }
+

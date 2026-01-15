@@ -10,7 +10,7 @@ public actor NetworkingService: Sendable {
     }
     
     /// Fetch data from an endpoint
-    public func fetch<T: Decodable>(from endpoint: String) async throws -> T {
+    public func fetch<T: Decodable & Sendable>(from endpoint: String) async throws -> T {
         return try await client.request(endpoint)
     }
 }
