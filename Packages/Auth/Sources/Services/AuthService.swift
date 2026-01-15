@@ -12,6 +12,7 @@ public protocol AuthServiceProtocol: Sendable {
     func refreshSession() async throws -> AuthResponse
     func isAuthenticated() async -> Bool
     func getAccessToken() async -> String?
+    func getTokens() async -> AuthTokens?
 }
 
 /// Service handling authentication operations

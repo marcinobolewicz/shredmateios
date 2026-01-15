@@ -1,4 +1,7 @@
 import Foundation
+import os.log
+
+private let logger = Logger(subsystem: "com.shredmate.auth", category: "HTTPClient")
 
 /// HTTP method enum
 public enum HTTPMethod: String, Sendable {
@@ -72,6 +75,11 @@ public actor AuthHTTPClient {
         let _: EmptyResponse = try await request(endpoint, method: .post, body: body)
     }
     
+    /// Perform PUT request with body
+    public func put<T: Decodable, B: Encodable>(_ endpoint: String, body: B) async throws -> T {
+        try await request(endpoint, method: .put, body: body)
+    }
+    
     /// Perform PATCH request with body
     public func patch<T: Decodable, B: Encodable>(_ endpoint: String, body: B) async throws -> T {
         try await request(endpoint, method: .patch, body: body)
@@ -82,6 +90,23 @@ public actor AuthHTTPClient {
         let _: EmptyResponse = try await request(endpoint, method: .delete)
     }
     
+    /// Perform multipart file upload
+    public func uploadMultipart<T: Decodable>(
+        _ endpoint: String,
+        fileData: Data,
+        fileName: String,
+        mimeType: String,
+        fieldName: String = "file"
+    ) async throws -> T {
+        try await multipartRequest(
+            endpoint,
+            fileData: fileData,
+            fileName: fileName,
+            mimeType: mimeType,
+            fieldName: fieldName
+        )
+    }
+    
     // MARK: - Core Request Logic
     
     private func request<T: Decodable>(
@@ -90,22 +115,33 @@ public actor AuthHTTPClient {
         body: (any Encodable)? = nil,
         isRetry: Bool = false
     ) async throws -> T {
+        logger.debug("➡️ \(method.rawValue) \(endpoint) (retry: \(isRetry))")
+        
         let urlRequest = try await buildRequest(endpoint, method: method, body: body)
+        
+        let hasAuth = urlRequest.value(forHTTPHeaderField: "Authorization") != nil
+        logger.debug("   Auth header: \(hasAuth ? "present" : "MISSING")")
         
         let (data, response) = try await session.data(for: urlRequest)
         
         guard let httpResponse = response as? HTTPURLResponse else {
+            logger.error("❌ Invalid response type")
             throw AuthError.networkError("Invalid response type")
         }
         
+        logger.debug("⬅️ \(httpResponse.statusCode) \(endpoint)")
+        
         // Handle 401 - attempt refresh and retry
         if httpResponse.statusCode == 401 && !isRetry && !isPublicEndpoint(endpoint) {
+            logger.warning("🔄 Got 401, attempting token refresh...")
             _ = try await performSingleFlightRefresh()
             return try await request(endpoint, method: method, body: body, isRetry: true)
         }
         
         // Handle other errors
         guard (200...299).contains(httpResponse.statusCode) else {
+            let bodyStr = String(data: data, encoding: .utf8) ?? "<binary>"
+            logger.error("❌ Error \(httpResponse.statusCode): \(bodyStr)")
             throw mapStatusCodeToError(httpResponse.statusCode)
         }
         
@@ -119,7 +155,10 @@ public actor AuthHTTPClient {
         
         do {
             return try decoder.decode(T.self, from: data)
-        } catch {
+        } catch let decodingError {
+            let bodyStr = String(data: data, encoding: .utf8) ?? "<binary>"
+            logger.error("❌ Decoding error: \(decodingError.localizedDescription)")
+            logger.error("   Response body: \(bodyStr)")
             throw AuthError.decodingError
         }
     }
@@ -139,9 +178,12 @@ public actor AuthHTTPClient {
         
         // Add authorization header for protected endpoints
         if !isPublicEndpoint(endpoint) {
-            if let tokens = await tokenStorage.loadTokens() {
-                request.setValue("Bearer \(tokens.accessToken)", forHTTPHeaderField: "Authorization")
+            guard let tokens = await tokenStorage.loadTokens() else {
+                logger.error("🔐 No tokens found for protected endpoint: \(endpoint)")
+                throw AuthError.noRefreshToken
             }
+            logger.debug("🔐 Token loaded, first 20 chars: \(String(tokens.accessToken.prefix(20)))...")
+            request.setValue("Bearer \(tokens.accessToken)", forHTTPHeaderField: "Authorization")
         }
         
         // Encode body
@@ -235,6 +277,57 @@ public actor AuthHTTPClient {
         try await tokenStorage.saveUser(authResponse.user)
         
         return newTokens
+    }
+    
+    // MARK: - Multipart Upload
+    
+    private func multipartRequest<T: Decodable>(
+        _ endpoint: String,
+        fileData: Data,
+        fileName: String,
+        mimeType: String,
+        fieldName: String
+    ) async throws -> T {
+        guard let url = URL(string: baseURL + endpoint) else {
+            throw AuthError.networkError("Invalid URL: \(baseURL + endpoint)")
+        }
+        
+        let boundary = "Boundary-\(UUID().uuidString)"
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = HTTPMethod.post.rawValue
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        
+        // Add authorization header
+        if let tokens = await tokenStorage.loadTokens() {
+            request.setValue("Bearer \(tokens.accessToken)", forHTTPHeaderField: "Authorization")
+        }
+        
+        // Build multipart body
+        var body = Data()
+        body.append("--\(boundary)\r\n".data(using: .utf8)!)
+        body.append("Content-Disposition: form-data; name=\"\(fieldName)\"; filename=\"\(fileName)\"\r\n".data(using: .utf8)!)
+        body.append("Content-Type: \(mimeType)\r\n\r\n".data(using: .utf8)!)
+        body.append(fileData)
+        body.append("\r\n--\(boundary)--\r\n".data(using: .utf8)!)
+        
+        request.httpBody = body
+        
+        let (data, response) = try await session.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw AuthError.networkError("Invalid response type")
+        }
+        
+        guard (200...299).contains(httpResponse.statusCode) else {
+            throw mapStatusCodeToError(httpResponse.statusCode)
+        }
+        
+        do {
+            return try decoder.decode(T.self, from: data)
+        } catch {
+            throw AuthError.decodingError
+        }
     }
     
     // MARK: - Helpers

@@ -67,7 +67,7 @@ final class AuthStateTests: XCTestCase {
     
     func testLoginFetchesRiderProfileOnSuccess() async {
         let user = User(id: "1", email: "test@test.com")
-        let rider = Rider(id: "r1", userId: "1", type: .skier, createdAt: Date(), updatedAt: Date())
+        let rider = Rider(id: "r1", userId: "1", type: .rider, createdAt: Date(), updatedAt: Date())
         mockAuthService.mockUser = user
         mockRiderService.mockRider = rider
         
@@ -104,7 +104,7 @@ final class AuthStateTests: XCTestCase {
     func testLogoutClearsUserAndRider() async {
         // First login
         mockAuthService.mockUser = User(id: "1", email: "test@test.com")
-        mockRiderService.mockRider = Rider(id: "r1", userId: "1", type: .skier, createdAt: Date(), updatedAt: Date())
+        mockRiderService.mockRider = Rider(id: "r1", userId: "1", type: .rider, createdAt: Date(), updatedAt: Date())
         await authState.login(email: "test@test.com", password: "password")
         
         XCTAssertTrue(authState.isLoggedIn)
@@ -158,7 +158,7 @@ final class AuthStateTests: XCTestCase {
     
     func testHandleSessionInvalidationClearsAllState() async {
         mockAuthService.mockUser = User(id: "1", email: "test@test.com")
-        mockRiderService.mockRider = Rider(id: "r1", userId: "1", type: .skier, createdAt: Date(), updatedAt: Date())
+        mockRiderService.mockRider = Rider(id: "r1", userId: "1", type: .rider, createdAt: Date(), updatedAt: Date())
         await authState.login(email: "test@test.com", password: "password")
         
         XCTAssertTrue(authState.isLoggedIn)
@@ -313,6 +313,9 @@ actor MockAuthService: AuthServiceProtocol {
 
 actor MockRiderService: RiderServiceProtocol {
     var mockRider: Rider?
+    var mockBaseLocation: RiderBaseLocation?
+    var mockSports: [Sport] = []
+    var mockRiderSports: [RiderSport] = []
     var shouldFail = false
     
     func fetchMyRider() async throws -> Rider {
@@ -335,7 +338,10 @@ actor MockRiderService: RiderServiceProtocol {
         rider = Rider(
             id: rider.id,
             userId: rider.userId,
-            type: update.type ?? rider.type,
+            type: update.type ?? rider.type ?? .rider,
+            displayName: update.displayName ?? rider.displayName,
+            description: update.description ?? rider.description,
+            avatarUrl: rider.avatarUrl,
             createdAt: rider.createdAt,
             updatedAt: Date()
         )
@@ -343,10 +349,67 @@ actor MockRiderService: RiderServiceProtocol {
         return rider
     }
     
+    func uploadAvatar(_ imageData: Data) async throws -> AvatarUploadResponse {
+        if shouldFail {
+            throw AuthError.serverError(statusCode: 500)
+        }
+        return AvatarUploadResponse(avatarUrl: "https://example.com/avatar.jpg")
+    }
+    
     func deleteMyAccount() async throws {
         if shouldFail {
             throw AuthError.serverError(statusCode: 500)
         }
+    }
+    
+    func fetchMyBaseLocation() async throws -> RiderBaseLocation? {
+        if shouldFail {
+            throw AuthError.serverError(statusCode: 500)
+        }
+        return mockBaseLocation
+    }
+    
+    func updateMyBaseLocation(_ location: UpdateBaseLocationRequest) async throws -> RiderBaseLocation {
+        if shouldFail {
+            throw AuthError.serverError(statusCode: 500)
+        }
+        let updated = RiderBaseLocation(latitude: location.latitude, longitude: location.longitude, name: location.name)
+        mockBaseLocation = updated
+        return updated
+    }
+    
+    func fetchAllSports() async throws -> [Sport] {
+        if shouldFail {
+            throw AuthError.serverError(statusCode: 500)
+        }
+        return mockSports
+    }
+    
+    func fetchMyRiderSports() async throws -> [RiderSport] {
+        if shouldFail {
+            throw AuthError.serverError(statusCode: 500)
+        }
+        return mockRiderSports
+    }
+    
+    func upsertMyRiderSport(sportId: String, request: UpsertRiderSportRequest) async throws -> RiderSport {
+        if shouldFail {
+            throw AuthError.serverError(statusCode: 500)
+        }
+        let sport = RiderSport(id: UUID().uuidString, sportId: sportId, level: request.level, isMentor: request.isMentor)
+        if let index = mockRiderSports.firstIndex(where: { $0.sportId == sportId }) {
+            mockRiderSports[index] = sport
+        } else {
+            mockRiderSports.append(sport)
+        }
+        return sport
+    }
+    
+    func deleteMyRiderSport(sportId: String) async throws {
+        if shouldFail {
+            throw AuthError.serverError(statusCode: 500)
+        }
+        mockRiderSports.removeAll { $0.sportId == sportId }
     }
 }
 
