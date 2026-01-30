@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import Auth
+import Networking
 
 public struct ProfileView: View {
     

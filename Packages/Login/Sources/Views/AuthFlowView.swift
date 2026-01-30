@@ -1,6 +1,6 @@
 import SwiftUI
 import Core
-import Auth
+import Networking
 
 public enum AuthEntryPoint: Equatable {
     case login

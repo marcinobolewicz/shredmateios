@@ -1,6 +1,6 @@
 import Foundation
 import Observation
-import Auth
+import Networking
 
 /// Profile editing state
 @MainActor

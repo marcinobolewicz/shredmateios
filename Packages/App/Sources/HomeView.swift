@@ -1,5 +1,5 @@
 import SwiftUI
-import Auth
+import Networking
 import Core
 import Profile
 
