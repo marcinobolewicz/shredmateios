@@ -1,7 +1,13 @@
+//
+//  ProfileView.swift
+//  ShredMate
+//
+//  Created by Marcin Obolewicz on 30/01/2026.
+//
+
 import SwiftUI
 import Auth
 
-/// Profile editing view
 public struct ProfileView: View {
     
     @State private var viewModel: ProfileViewModel
@@ -287,3 +293,4 @@ private struct SportRow: View {
         }
     }
 }
+

@@ -1,6 +1,7 @@
 import SwiftUI
 import Auth
 import Core
+import Profile
 
 /// Home view for authenticated users
 public struct HomeView: View {
@@ -18,19 +19,6 @@ public struct HomeView: View {
             VStack(spacing: 24) {
                 welcomeSection
                 userInfoSection
-                
-                // Temporary Profile button
-                NavigationLink {
-                    ProfileView(
-                        viewModel: ProfileViewModel(
-                            riderService: riderService,
-                            authState: authState
-                        )
-                    )
-                } label: {
-                    Label("Profile", systemImage: "person.circle")
-                }
-                .buttonStyle(.borderedProminent)
                 
                 logoutButton
             }

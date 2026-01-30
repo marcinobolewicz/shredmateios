@@ -6,17 +6,133 @@ Moduł autoryzacji dla aplikacji ShredMate iOS. Zapewnia kompletną warstwę uwi
 
 ```
 Auth/
-├── Models/           # Modele danych (User, Rider, AuthTokens, ...)
-├── Storage/          # TokenStorage (Keychain)
-├── Networking/       # AuthHTTPClient (interceptor 401 → refresh)
-├── Services/         # AuthService, RiderService
-├── State/            # AuthState (@Observable)
-└── Tests/            # Testy jednostkowe
+├── Models/              # Modele danych (User, Rider, AuthTokens, ...)
+├── Storage/             # TokenStorage (Keychain)
+├── New Networking/      # Nowa warstwa sieciowa (zalecana)
+│   ├── Core/            # Endpoint, HTTPClient, RequestBody, ...
+│   ├── API/             # AuthAPI, RiderAPI, SportsAPI
+│   └── Services/        # AuthService, RiderService, DefaultTokenProvider
+├── Networking/          # [DEPRECATED] Stary AuthHTTPClient
+├── Services/            # [DEPRECATED] Stare serwisy
+├── State/               # AuthState (@Observable)
+└── Tests/               # Testy jednostkowe
 ```
 
-## Główne komponenty
+## Nowa warstwa sieciowa (zalecana)
 
-### TokenStorage
+### Endpoint-based API
+
+Deklaratywne, type-safe definicje endpointów:
+
+```swift
+// Statyczne definicje w enumach
+AuthAPI.login(email: "user@example.com", password: "secret")  // → Endpoint<AuthResponse>
+AuthAPI.me()                                                   // → Endpoint<User>
+RiderAPI.me()                                                  // → Endpoint<Rider>
+RiderAPI.uploadAvatar(imageData: data)                        // → Endpoint<AvatarUploadResponse>
+SportsAPI.all()                                               // → Endpoint<[Sport]>
+```
+
+### Setup
+
+```swift
+// 1. Token storage
+let tokenStorage = TokenStorage()
+
+// 2. Token provider (obsługuje refresh)
+let tokenProvider = DefaultTokenProvider(
+    tokenStorage: tokenStorage,
+    baseURL: URL(string: "https://api.shredmate.eu/api/v1")!
+)
+
+// 3. HTTP client z auto-auth (Bearer token, 401→refresh→retry)
+let client = AuthenticatingHTTPClient(
+    baseURL: URL(string: "https://api.shredmate.eu/api/v1")!,
+    tokenProvider: tokenProvider
+)
+
+// 4. Serwisy
+let authService = AuthService(client: client, tokenStorage: tokenStorage)
+let riderService = RiderService(client: client)
+```
+
+### AuthService
+
+```swift
+// Login
+let response = try await authService.login(email: "user@example.com", password: "secret")
+
+// Register
+let response = try await authService.register(email: "...", password: "...", name: "John")
+
+// Logout
+try await authService.logout()
+
+// Sprawdzenie sesji
+let isLoggedIn = await authService.isAuthenticated()
+```
+
+### RiderService
+
+```swift
+// Pobranie profilu
+let rider = try await riderService.fetchMyRider()
+
+// Aktualizacja
+let updated = try await riderService.updateMyRider(
+    UpdateRiderRequest(type: .mentor, description: "Expert")
+)
+
+// Upload avatara
+let result = try await riderService.uploadAvatar(imageData)
+
+// Sporty
+let sports = try await riderService.fetchAllSports()
+let mySports = try await riderService.fetchMyRiderSports()
+```
+
+### Tworzenie własnych endpointów
+
+```swift
+// Prosty GET z auth
+let endpoint = Endpoint<MyResponse>.get("/my/endpoint", auth: .bearerToken)
+
+// POST z body
+let endpoint = Endpoint<MyResponse>.post(
+    "/my/endpoint",
+    body: MyRequest(data: "value"),
+    auth: .bearerToken
+)
+
+// Multipart upload
+let endpoint = Endpoint<UploadResponse>.uploadMultipart(
+    "/upload",
+    multipart: MultipartFormData(
+        fileData: imageData,
+        fileName: "photo.jpg",
+        mimeType: "image/jpeg"
+    ),
+    auth: .bearerToken
+)
+
+// Wykonanie
+let response = try await client.send(endpoint)
+```
+
+## Komponenty warstwy sieciowej
+
+| Komponent | Opis |
+|-----------|------|
+| `Endpoint<T>` | Type-safe definicja endpointu z metodą, ścieżką, body, auth |
+| `RequestBody` | Enum: `.none`, `.json(Encodable)`, `.multipart(...)`, `.raw(Data)` |
+| `AuthRequirement` | Enum: `.none`, `.bearerToken` |
+| `HTTPClient` | Protokół wykonujący requesty |
+| `AuthenticatingHTTPClient` | HTTP client z auto-wstrzykiwaniem tokenu i 401→refresh |
+| `TokenProvider` | Protokół dostarczający i odświeżający tokeny |
+| `APIClienting` | Protokół dla serwisów (`send(_:)`) |
+
+## TokenStorage
+
 Bezpieczne przechowywanie tokenów w iOS Keychain.
 
 ```swift
@@ -34,67 +150,8 @@ let user = await storage.loadUser()
 try await storage.clearAll()
 ```
 
-### AuthHTTPClient
-Centralny klient HTTP z automatycznym:
-- Dodawaniem nagłówka `Authorization: Bearer <token>`
-- Obsługą 401 → refresh → retry (single-flight)
-- Powiadamianiem o wygaśnięciu sesji
+## AuthState
 
-```swift
-let httpClient = AuthHTTPClient(
-    baseURL: "https://api.shredmate.eu/api/v1",
-    tokenStorage: storage
-)
-
-// Callback na wygaśnięcie sesji
-httpClient.onSessionInvalidated = {
-    await authState.handleSessionInvalidation()
-}
-
-// Użycie
-let user: User = try await httpClient.get("/auth/me")
-let response: AuthResponse = try await httpClient.post("/auth/login", body: loginRequest)
-```
-
-### AuthService
-Operacje autoryzacyjne (login/register/logout/refresh/me).
-
-```swift
-let authService = AuthService(httpClient: httpClient, tokenStorage: storage)
-
-// Login
-let response = try await authService.login(email: "user@example.com", password: "secret")
-
-// Register
-let response = try await authService.register(email: "...", password: "...", name: "John")
-
-// Logout
-try await authService.logout()
-
-// Sprawdzenie sesji
-let isLoggedIn = await authService.isAuthenticated()
-let token = await authService.getAccessToken()
-```
-
-### RiderService
-Operacje na profilu Ridera.
-
-```swift
-let riderService = RiderService(httpClient: httpClient)
-
-// Pobranie profilu
-let rider = try await riderService.fetchMyRider()
-
-// Aktualizacja
-let updated = try await riderService.updateMyRider(
-    UpdateRiderRequest(type: .mentor, description: "Expert")
-)
-
-// Usunięcie konta
-try await riderService.deleteMyAccount()
-```
-
-### AuthState
 Reaktywny stan UI (`@Observable`). Użyj w SwiftUI poprzez `@Environment` lub `@State`.
 
 ```swift
@@ -141,9 +198,9 @@ Task {
 ```
 
 ### 2. Request z 401
-1. `AuthHTTPClient` przechwytuje 401
+1. `AuthenticatingHTTPClient` przechwytuje 401
 2. Blokuje kolejne requesty (single-flight)
-3. Wywołuje `POST /auth/refresh`
+3. Wywołuje refresh przez `TokenProvider`
 4. Sukces → zapisuje nowe tokeny, ponawia oryginalny request
 5. Błąd → wywołuje `onSessionInvalidated`, czyści sesję
 
@@ -153,33 +210,6 @@ Task {
 if await authState.tokensNeedRefresh() {
     await authState.restoreSession()
 }
-// Dopiero potem reconnect Socket.IO
-```
-
-## Integracja z DI Container
-
-```swift
-// W AppSetup.configure()
-let storage = TokenStorage()
-let httpClient = AuthHTTPClient(
-    baseURL: AppConfiguration.apiBaseURL,
-    tokenStorage: storage
-)
-let authService = AuthService(httpClient: httpClient, tokenStorage: storage)
-let riderService = RiderService(httpClient: httpClient)
-let authState = AuthState(
-    authService: authService,
-    riderService: riderService,
-    tokenStorage: storage
-)
-
-// Callback na wygaśnięcie sesji
-httpClient.onSessionInvalidated = { [weak authState] in
-    await authState?.handleSessionInvalidation()
-}
-
-DIContainer.shared.register(AuthState.self) { authState }
-DIContainer.shared.register(AuthHTTPClient.self) { httpClient }
 ```
 
 ## Testowanie
@@ -187,38 +217,48 @@ DIContainer.shared.register(AuthHTTPClient.self) { httpClient }
 Moduł jest zaprojektowany z myślą o testowalności:
 
 ```swift
-// Mock storage dla testów
-actor MockTokenStorage: TokenStorageProtocol {
-    private var tokens: AuthTokens?
-    private var user: User?
+// Mock client dla testów
+final class MockAPIClient: APIClienting, @unchecked Sendable {
+    var responses: [String: Any] = [:]
     
-    func saveTokens(_ tokens: AuthTokens) async throws { self.tokens = tokens }
-    func loadTokens() async -> AuthTokens? { tokens }
-    // ...
+    func send<T: Decodable & Sendable>(_ endpoint: Endpoint<T>) async throws -> T {
+        // Return mocked response based on endpoint.path
+    }
 }
 
 // Użycie w testach
-let mockStorage = MockTokenStorage()
-let service = AuthService(httpClient: httpClient, tokenStorage: mockStorage)
+let mockClient = MockAPIClient()
+let service = RiderService(client: mockClient)
 ```
 
 ## Endpointy API
 
 ### Auth
-| Metoda | Endpoint | Opis |
-|--------|----------|------|
-| POST | `/auth/login` | Logowanie |
-| POST | `/auth/register` | Rejestracja |
-| POST | `/auth/refresh` | Odświeżenie tokenów |
-| POST | `/auth/logout` | Wylogowanie |
-| GET | `/auth/me` | Pobranie aktualnego użytkownika |
+| Metoda | Endpoint | Auth | Opis |
+|--------|----------|------|------|
+| POST | `/auth/login` | ❌ | Logowanie |
+| POST | `/auth/register` | ❌ | Rejestracja |
+| POST | `/auth/refresh` | ❌ | Odświeżenie tokenów |
+| POST | `/auth/logout` | ✅ | Wylogowanie |
+| GET | `/auth/me` | ✅ | Pobranie aktualnego użytkownika |
 
 ### Riders
-| Metoda | Endpoint | Opis |
-|--------|----------|------|
-| GET | `/riders/me` | Pobranie profilu ridera |
-| PATCH | `/riders/me` | Aktualizacja profilu |
-| DELETE | `/riders/me` | Usunięcie konta |
+| Metoda | Endpoint | Auth | Opis |
+|--------|----------|------|------|
+| GET | `/riders/me` | ✅ | Pobranie profilu ridera |
+| PATCH | `/riders/me` | ✅ | Aktualizacja profilu |
+| DELETE | `/riders/me` | ✅ | Usunięcie konta |
+| POST | `/riders/me/avatar` | ✅ | Upload avatara |
+| GET | `/riders/me/base-location` | ✅ | Pobranie lokalizacji |
+| PUT | `/riders/me/base-location` | ✅ | Aktualizacja lokalizacji |
+| GET | `/riders/me/sports` | ✅ | Pobranie sportów ridera |
+| POST | `/riders/me/sports/:id` | ✅ | Dodanie/aktualizacja sportu |
+| DELETE | `/riders/me/sports/:id` | ✅ | Usunięcie sportu |
+
+### Sports
+| Metoda | Endpoint | Auth | Opis |
+|--------|----------|------|------|
+| GET | `/sports` | ✅ | Lista wszystkich sportów |
 
 ## Wymagania
 
