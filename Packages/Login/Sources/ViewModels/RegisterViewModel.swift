@@ -1,6 +1,6 @@
 import Foundation
 import Core
-import Auth
+import Networking
 
 /// ViewModel for RegisterView
 @MainActor

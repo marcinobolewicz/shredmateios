@@ -1,5 +1,8 @@
 import Foundation
 import Security
+import os.log
+
+private let logger = Logger(subsystem: "com.shredmate.auth", category: "TokenStorage")
 
 /// Protocol for token storage abstraction (enables testing)
 public protocol TokenStorageProtocol: Sendable {
@@ -28,6 +31,7 @@ public actor TokenStorage: TokenStorageProtocol {
     // MARK: - Tokens
     
     public func saveTokens(_ tokens: AuthTokens) async throws {
+        logger.debug("Saving tokens to keychain")
         guard let accessData = tokens.accessToken.data(using: .utf8),
               let refreshData = tokens.refreshToken.data(using: .utf8) else {
             throw AuthError.tokenStorageError("Failed to encode tokens")
@@ -35,6 +39,7 @@ public actor TokenStorage: TokenStorageProtocol {
         
         try saveToKeychain(key: accessTokenKey, data: accessData)
         try saveToKeychain(key: refreshTokenKey, data: refreshData)
+        logger.debug("Tokens saved successfully")
         
         if let expiresAt = tokens.expiresAt {
             let timestamp = String(expiresAt.timeIntervalSince1970)
@@ -45,8 +50,10 @@ public actor TokenStorage: TokenStorageProtocol {
     }
     
     public func loadTokens() async -> AuthTokens? {
+        logger.debug("Loading tokens from keychain")
         guard let accessData = loadFromKeychain(key: accessTokenKey),
               let refreshData = loadFromKeychain(key: refreshTokenKey) else {
+            logger.warning("Tokens not found in keychain")
             return nil
         }
         

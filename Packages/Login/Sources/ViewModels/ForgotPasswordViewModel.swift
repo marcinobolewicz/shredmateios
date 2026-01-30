@@ -47,6 +47,7 @@ public final class ForgotPasswordViewModel {
             try await resetService?.requestPasswordReset(email: email)
             isSuccess = true
         } catch {
+//            TODO: localize
             errorMessage = "Failed to send reset email. Please try again."
         }
         

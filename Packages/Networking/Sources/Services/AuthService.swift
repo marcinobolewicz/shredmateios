@@ -1,3 +1,10 @@
+//
+//  AuthService.swift
+//  ShredMate
+//
+//  Created by Marcin Obolewicz on 29/01/2026.
+//
+
 import Foundation
 import os.log
 
@@ -12,48 +19,49 @@ public protocol AuthServiceProtocol: Sendable {
     func refreshSession() async throws -> AuthResponse
     func isAuthenticated() async -> Bool
     func getAccessToken() async -> String?
+    func getTokens() async -> AuthTokens?
 }
 
 /// Service handling authentication operations
 public actor AuthService: AuthServiceProtocol {
     
-    private let httpClient: AuthHTTPClient
+    private let client: APIClienting
     private let tokenStorage: TokenStorageProtocol
     
-    public init(httpClient: AuthHTTPClient, tokenStorage: TokenStorageProtocol) {
-        self.httpClient = httpClient
+    public init(client: APIClienting, tokenStorage: TokenStorageProtocol) {
+        self.client = client
         self.tokenStorage = tokenStorage
     }
     
     // MARK: - Auth Operations
     
     public func login(email: String, password: String) async throws -> AuthResponse {
-        let request = LoginRequest(email: email, password: password)
-        let response: AuthResponse = try await httpClient.post("/auth/login", body: request)
-        
+        logger.debug("Attempting login for: \(email)")
+        let response = try await client.send(AuthAPI.login(email: email, password: password))
         try await saveSession(from: response)
+        logger.debug("Login successful")
         return response
     }
     
     public func register(email: String, password: String, name: String) async throws -> AuthResponse {
-        let request = RegisterRequest(email: email, password: password, name: name)
-        let response: AuthResponse = try await httpClient.post("/auth/register", body: request)
-        
+        logger.debug("Attempting registration for: \(email)")
+        let response = try await client.send(AuthAPI.register(email: email, password: password, name: name))
         try await saveSession(from: response)
+        logger.debug("Registration successful")
         return response
     }
     
     public func logout() async throws {
+        logger.debug("Logging out")
         if let tokens = await tokenStorage.loadTokens() {
-            let request = LogoutRequest(refreshToken: tokens.refreshToken)
-            try await httpClient.post("/auth/logout", body: request)
+            _ = try await client.send(AuthAPI.logout(refreshToken: tokens.refreshToken))
         }
-        
         try await tokenStorage.clearAll()
+        logger.debug("Logout complete")
     }
     
     public func fetchCurrentUser() async throws -> User {
-        try await httpClient.get("/auth/me")
+        try await client.send(AuthAPI.me())
     }
     
     public func refreshSession() async throws -> AuthResponse {
@@ -61,10 +69,10 @@ public actor AuthService: AuthServiceProtocol {
             throw AuthError.noRefreshToken
         }
         
-        let request = RefreshRequest(refreshToken: tokens.refreshToken)
-        let response: AuthResponse = try await httpClient.post("/auth/refresh", body: request)
-        
+        logger.debug("Refreshing session")
+        let response = try await client.send(AuthAPI.refresh(refreshToken: tokens.refreshToken))
         try await saveSession(from: response)
+        logger.debug("Session refreshed")
         return response
     }
     

@@ -1,13 +1,17 @@
 import SwiftUI
-import Auth
+import Networking
+import Core
+import Profile
 
 /// Home view for authenticated users
 public struct HomeView: View {
     
     private let authState: AuthState
+    private let riderService: any RiderServiceProtocol
     
-    public init(authState: AuthState) {
+    public init(authState: AuthState, riderService: any RiderServiceProtocol) {
         self.authState = authState
+        self.riderService = riderService
     }
     
     public var body: some View {
@@ -15,6 +19,7 @@ public struct HomeView: View {
             VStack(spacing: 24) {
                 welcomeSection
                 userInfoSection
+                
                 logoutButton
             }
             .padding()
@@ -54,8 +59,8 @@ public struct HomeView: View {
                     .foregroundStyle(.secondary)
             }
             
-            if let rider = authState.rider {
-                Text(rider.type.rawValue)
+            if let rider = authState.rider, let type = rider.type {
+                Text(type.rawValue)
                     .font(.caption)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 4)

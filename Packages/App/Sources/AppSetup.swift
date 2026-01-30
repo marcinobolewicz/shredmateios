@@ -3,26 +3,42 @@ import Core
 import Networking
 @_exported import Auth
 
+@MainActor
+@Observable
+public final class AppDependencies {
+    public let authState: AuthState
+    public let riderService: any RiderServiceProtocol
+
+    public init(authState: AuthState, riderService: any RiderServiceProtocol) {
+        self.authState = authState
+        self.riderService = riderService
+    }
+}
+
 /// App setup and DI configuration
 @MainActor
 public struct AppSetup {
     
-    /// Configure app dependencies and return AuthState for root view
-    public static func configure() -> AuthState {
-        let baseURL = "https://api.shredmate.eu/api/v1"
+    /// Configure app dependencies and return all dependencies for root view
+    public static func configure() -> AppDependencies {
+        let baseURL = URL(string: "https://api.shredmate.eu/api/v1")!
         
-        // Create token storage
         let tokenStorage = TokenStorage()
         
-        // Create HTTP client with token interceptor
-        let httpClient = AuthHTTPClient(
-            baseURL: baseURL,
-            tokenStorage: tokenStorage
+        let tokenProvider = DefaultTokenProvider(
+            tokenStorage: tokenStorage,
+            baseURL: baseURL
         )
         
-        // Create services
-        let authService = AuthService(httpClient: httpClient, tokenStorage: tokenStorage)
-        let riderService = RiderService(httpClient: httpClient)
+        // Create HTTP client with auto-auth (Bearer token, 401→refresh→retry)
+        let httpClient = AuthenticatingHTTPClient(
+            baseURL: baseURL,
+            tokenProvider: tokenProvider
+        )
+        
+        // Create services using new API-based approach
+        let authService = AuthService(client: httpClient, tokenStorage: tokenStorage)
+        let riderService = RiderService(client: httpClient)
         
         // Create auth state
         let authState = AuthState(
@@ -41,9 +57,9 @@ public struct AppSetup {
         // Register in DI container
         let container = DIContainer.shared
         container.register(AuthState.self) { authState }
-        container.register(AuthHTTPClient.self) { httpClient }
+        container.register(AuthenticatingHTTPClient.self) { httpClient }
+        container.register(RiderService.self) { riderService }
         
-        return authState
+        return AppDependencies(authState: authState, riderService: riderService)
     }
 }
-
