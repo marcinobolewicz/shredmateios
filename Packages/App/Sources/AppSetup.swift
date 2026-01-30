@@ -39,6 +39,7 @@ public struct AppSetup {
         // Create services using new API-based approach
         let authService = AuthService(client: httpClient, tokenStorage: tokenStorage)
         let riderService = RiderService(client: httpClient)
+        let placesService = PlacesService(client: httpClient)
         
         // Create auth state
         let authState = AuthState(
@@ -59,6 +60,7 @@ public struct AppSetup {
         container.register(AuthState.self) { authState }
         container.register(AuthenticatingHTTPClient.self) { httpClient }
         container.register(RiderService.self) { riderService }
+        container.register(PlacesService.self) { placesService }
         
         return AppDependencies(authState: authState, riderService: riderService)
     }
