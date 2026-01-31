@@ -17,28 +17,31 @@ enum PlacesDisplayMode: String, CaseIterable, Identifiable {
 
 @MainActor
 @Observable
-final class PlacesViewModel {
+public final class PlacesViewModel {
     var displayMode: PlacesDisplayMode = .list
     var searchText: String = ""
     var isLoading: Bool = false
     
-//    let service = PlacesService(client: DefaultHTTPClient())
+    private let placesService: any PlacesServiceProtocol
+    private let authState: AuthState
+
     
-    private var loadTask: Task<Void, Never>?
+    public init(placesService: any PlacesServiceProtocol, authState: AuthState) {
+        self.placesService = placesService
+        self.authState = authState
+    }
     
-    init() {}
-    
-    func loadOnAppear() {
-        loadTask?.cancel()
-        loadTask = Task { [weak self] in
-            guard let self else { return }
-            while !Task.isCancelled {
-                do {
-//                    try await service.pl
-                } catch {
-                    break
-                }
-            }
+    func loadOnAppear() async {
+        guard !isLoading else { return }
+        isLoading = true
+        defer { isLoading = false }
+
+        do {
+            let skiPlaces = try await placesService.fetchPlaces(sportSlug: "ski")
+            print(skiPlaces)
+        } catch {
+            // handle
         }
     }
+
 }

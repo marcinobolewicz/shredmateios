@@ -5,21 +5,27 @@ import Login
 import SwiftUI
 
 public struct RootView: View {
-    @Environment(AppDependencies.self) private var dependencies
+    private var dependencies: AppDependencies
     @Environment(AuthState.self) private var authState
     @State private var router = RootRouter()
 
-    public init() {}
+    public init(
+        dependencies: AppDependencies
+    ) {
+        self.dependencies = dependencies
+    }
     
     public var body: some View {
         ZStack {
             switch router.flow {
             case .guest:
-                GuestTabView(onLoginTap: { router.showAuth(.login) })
+                GuestTabView(
+                    dependencies: dependencies,
+                    onLoginTap: { router.showAuth(.login) }
+                )
 
             case .auth(let entry):
                 AuthFlowView(
-                    authState: authState,
                     entry: entry,
                     onClose: { router.showGuest() },
                     onLoginSuccess: { router.showUser() }

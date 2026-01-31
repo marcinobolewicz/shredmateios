@@ -1,17 +1,22 @@
 import SwiftUI
-import Core
 import Networking
-@_exported import Auth
+import Core
 
 @MainActor
 @Observable
 public final class AppDependencies {
     public let authState: AuthState
     public let riderService: any RiderServiceProtocol
+    public let placesService: any PlacesServiceProtocol
 
-    public init(authState: AuthState, riderService: any RiderServiceProtocol) {
+    public init(
+        authState: AuthState,
+        riderService: any RiderServiceProtocol,
+        placesService: any PlacesServiceProtocol
+    ) {
         self.authState = authState
         self.riderService = riderService
+        self.placesService = placesService
     }
 }
 
@@ -59,9 +64,9 @@ public struct AppSetup {
         let container = DIContainer.shared
         container.register(AuthState.self) { authState }
         container.register(AuthenticatingHTTPClient.self) { httpClient }
-        container.register(RiderService.self) { riderService }
-        container.register(PlacesService.self) { placesService }
+        container.register(RiderServiceProtocol.self) { riderService }
+        container.register(PlacesServiceProtocol.self) { placesService }
         
-        return AppDependencies(authState: authState, riderService: riderService)
+        return AppDependencies(authState: authState, riderService: riderService, placesService: placesService)
     }
 }

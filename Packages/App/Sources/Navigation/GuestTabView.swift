@@ -8,6 +8,7 @@
 import SwiftUI
 import Login
 import Places
+import Core
 
 enum GuestTab: Hashable {
     case welcome
@@ -15,12 +16,13 @@ enum GuestTab: Hashable {
     case login
 }
 
-public struct GuestTabView: View {
+struct GuestTabView: View {
+    let dependencies: AppDependencies
     @State private var selectedTab: GuestTab = .welcome
     
     let onLoginTap: () -> Void
     
-    public var body: some View {
+    var body: some View {
         TabView(selection: $selectedTab) {
             GuestWelcomeView(
             )
@@ -29,11 +31,16 @@ public struct GuestTabView: View {
             }
             .tag(GuestTab.welcome)
             
-            PlacesView()
-                .tabItem {
-                    Label("Odkrywaj", systemImage: "map")
-                }
-                .tag(GuestTab.explore)
+            PlacesRootView(
+                placesService: dependencies.placesService,
+            )
+            .tabItem { Label("Spots", systemImage: "map") }
+            .tag(UserTab.spots)
+
+            .tabItem {
+                Label("Odkrywaj", systemImage: "map")
+            }
+            .tag(GuestTab.explore)
             
             Color.clear
                 .tabItem {

@@ -1,9 +1,19 @@
 import SwiftUI
+import Networking
 
 public struct PlacesView: View {
-    @State private var viewModel = PlacesViewModel()
+    @Environment(PlacesRouter.self) private var router
+    @State private var viewModel: PlacesViewModel
     
-    public init() {}
+    public init(
+        placesService: PlacesServiceProtocol,
+        authState: AuthState
+    ) {
+        _viewModel = State(wrappedValue: PlacesViewModel(
+            placesService: placesService,
+            authState: authState
+        ))
+    }
     
     public var body: some View {
         VStack(spacing: 0) {
@@ -38,6 +48,7 @@ public struct PlacesView: View {
             .padding(10)
             .background(.gray.opacity(0.1))
             .clipShape(RoundedRectangle(cornerRadius: 10))
+            .task { await viewModel.loadOnAppear() }
         }
         .padding()
     }
@@ -51,8 +62,4 @@ public struct PlacesView: View {
             PlacesMapView(viewModel: viewModel)
         }
     }
-}
-
-#Preview {
-    PlacesView()
 }

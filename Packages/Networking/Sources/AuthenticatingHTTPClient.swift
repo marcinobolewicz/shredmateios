@@ -108,6 +108,24 @@ public actor AuthenticatingHTTPClient {
         
         do {
             return try coding.makeDecoder().decode(Response.self, from: data)
+        } catch let decodingError as DecodingError {
+            let bodyStr = String(decoding: data, as: UTF8.self)
+            
+            switch decodingError {
+            case .keyNotFound(let key, let context):
+                logger.error("❌ Decoding error: Missing key '\(key.stringValue)' at path: \(context.codingPath.map(\.stringValue).joined(separator: "."))")
+            case .typeMismatch(let type, let context):
+                logger.error("❌ Decoding error: Type mismatch for \(type) at path: \(context.codingPath.map(\.stringValue).joined(separator: "."))")
+            case .valueNotFound(let type, let context):
+                logger.error("❌ Decoding error: Value not found for \(type) at path: \(context.codingPath.map(\.stringValue).joined(separator: "."))")
+            case .dataCorrupted(let context):
+                logger.error("❌ Decoding error: Data corrupted at path: \(context.codingPath.map(\.stringValue).joined(separator: "."))")
+            @unknown default:
+                logger.error("❌ Decoding error: \(decodingError.localizedDescription)")
+            }
+            
+            logger.error("   Response body: \(bodyStr)")
+            throw NetworkError.decodingFailed
         } catch {
             let bodyStr = String(decoding: data, as: UTF8.self)
             logger.error("❌ Decoding error: \(error.localizedDescription)")
