@@ -6,18 +6,24 @@ public struct PlacesView: View {
     @State private var viewModel: PlacesViewModel
     
     public init(
-        placesService: PlacesServiceProtocol,
-        authState: AuthState
+            placesService: any PlacesServiceProtocol,
+            authState: AuthState
     ) {
-        _viewModel = State(wrappedValue: PlacesViewModel(
-            placesService: placesService,
-            authState: authState
-        ))
+        let repository = PlacesRepository(service: placesService)
+        let presenter = SpotRowPresenter()
+        
+        _viewModel = State(
+            wrappedValue: PlacesViewModel(
+                repository: repository,
+                presenter: presenter
+            )
+        )
     }
     
     public var body: some View {
         VStack(spacing: 0) {
             headerSection
+            sportChips
             contentSection
         }
     }
@@ -60,6 +66,24 @@ public struct PlacesView: View {
             PlacesListView(viewModel: viewModel)
         case .map:
             PlacesMapView(viewModel: viewModel)
+        }
+    }
+    
+    private var sportChips: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 12) {
+                ForEach(Sport.allCases) { sport in
+                    Chip(
+                        title: sport.rawValue,
+                        isSelected: viewModel.selectedSport == sport
+                    ) {
+                        withAnimation(.snappy(duration: 0.18)) {
+                            viewModel.selectedSport = sport
+                        }
+                    }
+                }
+            }
+            .padding(.vertical, 4)
         }
     }
 }

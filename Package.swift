@@ -9,6 +9,7 @@ let package = Package(
     products: [
         .library(name: "App", targets: ["App"]),
         .library(name: "Core", targets: ["Core"]),
+        .library(name: "Common", targets: ["Common"]),
         .library(name: "Networking", targets: ["Networking"]),
         .library(name: "Auth", targets: ["Auth"]),
         .library(name: "Login", targets: ["Login"]),
@@ -29,6 +30,20 @@ let package = Package(
             name: "CoreTests",
             dependencies: ["Core"],
             path: "Packages/Core/Tests"
+        ),
+        
+        // Common Package
+        .target(
+            name: "Common",
+            path: "Packages/Common/Sources",
+            swiftSettings: [
+                .enableUpcomingFeature("StrictConcurrency")
+            ]
+        ),
+        .testTarget(
+            name: "CommonTests",
+            dependencies: ["Common"],
+            path: "Packages/Common/Tests"
         ),
         
         // Networking Package
@@ -108,7 +123,7 @@ let package = Package(
         // Places Package
         .target(
             name: "Places",
-            dependencies: ["Core", "Networking"],
+            dependencies: ["Core", "Networking", "Common"],
             path: "Packages/Places/Sources",
             swiftSettings: [
                 .enableUpcomingFeature("StrictConcurrency")
