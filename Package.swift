@@ -153,7 +153,7 @@ let package = Package(
         // Conversations Package
         .target(
             name: "Conversations",
-            dependencies: ["Core", "Networking", "Auth"],
+            dependencies: ["Core", "Networking", "Auth", "Common", "Theme"],
             path: "Packages/Conversations/Sources",
             swiftSettings: [
                 .enableUpcomingFeature("StrictConcurrency")
