@@ -1,0 +1,8 @@
+"conversations.root_navigation_title" = "Conversations";
+"conversations.list_empty_title" = "No conversations";
+"conversations.list_empty_description" = "Start a new conversation by tapping +";
+"conversations.list_failed_title" = "Could not load conversations";
+"conversations.list_failed_description" = "Check your internet connection and try again.";
+"conversations.new_conversation_title" = "New conversation";
+"conversations.search_rider_placeholder" = "Search rider...";
+"conversations.chat_input_placeholder" = "Write a message...";

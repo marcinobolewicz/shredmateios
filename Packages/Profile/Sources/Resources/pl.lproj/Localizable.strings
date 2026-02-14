@@ -1,10 +1,7 @@
 "profile.navigation_title" = "Profil";
-"profile.error_alert_title" = "Błąd";
 "profile.success_alert_title" = "Sukces";
-"profile.ok_button" = "OK";
 "profile.delete_account_dialog_title" = "Usuń konto";
 "profile.delete_account_button" = "Usuń konto";
-"profile.cancel_button" = "Anuluj";
 "profile.delete_account_dialog_message" = "Tej akcji nie można cofnąć. Wszystkie Twoje dane zostaną trwale usunięte.";
 "profile.loading_profile" = "Wczytywanie profilu...";
 "profile.section_profile_information" = "Informacje o profilu";

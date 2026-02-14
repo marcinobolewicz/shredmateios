@@ -8,13 +8,9 @@
 "login.forgot_password_button" = "Forgot Password?";
 "login.no_account_prompt" = "Don't have an account?";
 "login.sign_up_button" = "Sign Up";
-"login.error_title" = "Error";
-"login.ok" = "OK";
 
 /* Register View */
 "register.navigation_title" = "Create Account";
-"register.error_title" = "Error";
-"register.ok" = "OK";
 "register.header_title" = "Join ShredMate";
 "register.name_placeholder" = "Name";
 "register.email_placeholder" = "Email";
@@ -28,8 +24,6 @@
 
 /* Forgot Password View */
 "forgot_password.navigation_title" = "Reset Password";
-"forgot_password.error_title" = "Error";
-"forgot_password.ok" = "OK";
 "forgot_password.header_title" = "Forgot your password?";
 "forgot_password.header_subtitle" = "Enter your email and we'll send you a reset link";
 "forgot_password.email_placeholder" = "Email";

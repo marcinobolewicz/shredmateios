@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Theme
+import Common
 
 struct ChatInputView: View {
     @Environment(AppTheme.self) private var theme
@@ -15,7 +16,7 @@ struct ChatInputView: View {
 
     var body: some View {
         HStack(spacing: theme.spacing.sm) {
-            TextField("Napisz wiadomość...", text: $text, axis: .vertical)
+            TextField(ConversationsStrings.chatInputPlaceholder.localized, text: $text, axis: .vertical)
                 .lineLimit(1...5)
                 .padding(.horizontal, theme.spacing.sm)
                 .padding(.vertical, theme.spacing.xs)
@@ -25,7 +26,7 @@ struct ChatInputView: View {
                 )
 
             Button(action: onSend) {
-                Text("Wyślij")
+                Text(CommonStrings.sendButton.localized)
                     .font(.callout.weight(.semibold))
                     .foregroundStyle(theme.colors.primaryForeground)
                     .padding(.horizontal, theme.spacing.sm)

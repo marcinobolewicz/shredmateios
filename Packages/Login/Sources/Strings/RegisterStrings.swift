@@ -9,8 +9,6 @@ import Foundation
 
 enum RegisterStrings: String {
     case navigationTitle = "register.navigation_title"
-    case errorTitle = "register.error_title"
-    case ok = "register.ok"
     case headerTitle = "register.header_title"
     case namePlaceholder = "register.name_placeholder"
     case emailPlaceholder = "register.email_placeholder"

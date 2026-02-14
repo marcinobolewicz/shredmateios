@@ -97,7 +97,7 @@ let package = Package(
         // Login Package
         .target(
             name: "Login",
-            dependencies: ["Core", "Networking", "Theme"],
+            dependencies: ["Core", "Networking", "Theme", "Common"],
             path: "Packages/Login/Sources",
             resources: [
                 .process("Resources")
@@ -133,7 +133,7 @@ let package = Package(
         // Profile Package
         .target(
             name: "Profile",
-            dependencies: ["Core", "Networking"],
+            dependencies: ["Core", "Networking", "Common"],
             path: "Packages/Profile/Sources",
             resources: [
                 .process("Resources")
@@ -171,6 +171,9 @@ let package = Package(
             name: "Conversations",
             dependencies: ["Core", "Networking", "Auth", "Common", "Theme"],
             path: "Packages/Conversations/Sources",
+            resources: [
+                .process("Resources")
+            ],
             swiftSettings: [
                 .enableUpcomingFeature("StrictConcurrency")
             ]

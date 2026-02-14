@@ -35,9 +35,9 @@ struct ConversationsListView: View {
         case .loaded:
             if viewModel.rows.isEmpty {
                 ContentUnavailableView(
-                    "Brak konwersacji",
+                    ConversationsStrings.listEmptyTitle.localized,
                     systemImage: "message",
-                    description: Text("Rozpocznij nową rozmowę klikając +")
+                    description: Text(ConversationsStrings.listEmptyDescription.localized)
                 )
             } else {
                 List(viewModel.rows) { row in
@@ -66,11 +66,11 @@ struct ConversationsListView: View {
 
         case .failed:
             ContentUnavailableView {
-                Label("Nie udało się wczytać", systemImage: "exclamationmark.triangle")
+                Label(ConversationsStrings.listFailedTitle.localized, systemImage: "exclamationmark.triangle")
             } description: {
-                Text("Sprawdź internet i spróbuj ponownie.")
+                Text(ConversationsStrings.listFailedDescription.localized)
             } actions: {
-                Button("Odśwież", action: viewModel.refresh)
+                Button(CommonStrings.retryButton.localized, action: viewModel.refresh)
                     .buttonStyle(.dsPrimary)
             }
         }

@@ -3,13 +3,10 @@ import Foundation
 enum ProfileStrings: String {
     case navigationTitle = "profile.navigation_title"
 
-    case errorAlertTitle = "profile.error_alert_title"
     case successAlertTitle = "profile.success_alert_title"
-    case okButton = "profile.ok_button"
 
     case deleteAccountDialogTitle = "profile.delete_account_dialog_title"
     case deleteAccountButton = "profile.delete_account_button"
-    case cancelButton = "profile.cancel_button"
     case deleteAccountDialogMessage = "profile.delete_account_dialog_message"
 
     case loadingProfile = "profile.loading_profile"

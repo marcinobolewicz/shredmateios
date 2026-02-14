@@ -1,5 +1,8 @@
 "common.generic_error_title" = "Coś poszło nie tak";
 "common.generic_error_message" = "Nie udało się pobrać danych. Spróbuj ponownie.";
 "common.generic_error_recovery" = "Sprawdź połączenie z internetem.";
+"common.error_title" = "Błąd";
 "common.retry_button" = "Spróbuj ponownie";
 "common.ok_button" = "OK";
+"common.cancel_button" = "Anuluj";
+"common.send_button" = "Wyślij";

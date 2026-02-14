@@ -9,8 +9,6 @@ import Foundation
 
 enum ForgotPasswordStrings: String {
     case navigationTitle = "forgot_password.navigation_title"
-    case errorTitle = "forgot_password.error_title"
-    case ok = "forgot_password.ok"
     case headerTitle = "forgot_password.header_title"
     case headerSubtitle = "forgot_password.header_subtitle"
     case emailPlaceholder = "forgot_password.email_placeholder"

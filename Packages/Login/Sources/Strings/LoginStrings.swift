@@ -19,8 +19,6 @@ enum LoginStrings: String {
     case forgotPasswordButton = "login.forgot_password_button"
     case noAccountPrompt = "login.no_account_prompt"
     case signUpButton = "login.sign_up_button"
-    case errorTitle = "login.error_title"
-    case ok = "login.ok"
 
     var localized: String {
         NSLocalizedString(rawValue, bundle: .module, comment: "")

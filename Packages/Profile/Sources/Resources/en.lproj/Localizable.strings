@@ -1,10 +1,7 @@
 "profile.navigation_title" = "Profile";
-"profile.error_alert_title" = "Error";
 "profile.success_alert_title" = "Success";
-"profile.ok_button" = "OK";
 "profile.delete_account_dialog_title" = "Delete Account";
 "profile.delete_account_button" = "Delete Account";
-"profile.cancel_button" = "Cancel";
 "profile.delete_account_dialog_message" = "This action cannot be undone. All your data will be permanently deleted.";
 "profile.loading_profile" = "Loading profile...";
 "profile.section_profile_information" = "Profile Information";

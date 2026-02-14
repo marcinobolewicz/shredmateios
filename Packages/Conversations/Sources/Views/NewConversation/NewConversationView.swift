@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Theme
+import Common
 
 struct NewConversationView: View {
     @Environment(AppTheme.self) private var theme
@@ -21,11 +22,11 @@ struct NewConversationView: View {
                 ridersList
             }
             .background(theme.colors.background)
-            .navigationTitle("Nowa konwersacja")
+            .navigationTitle(ConversationsStrings.newConversationTitle.localized)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Anuluj") { dismiss() }
+                    Button(CommonStrings.cancelButton.localized) { dismiss() }
                 }
             }
             .task { viewModel.load() }
@@ -33,7 +34,7 @@ struct NewConversationView: View {
     }
 
     private var searchBar: some View {
-        DSSearchBar("Szukaj ridera...", text: $viewModel.searchText)
+        DSSearchBar(ConversationsStrings.searchRiderPlaceholder.localized, text: $viewModel.searchText)
             .padding(theme.spacing.md)
             .onChange(of: viewModel.searchText) { _, _ in
                 viewModel.onSearchChanged()

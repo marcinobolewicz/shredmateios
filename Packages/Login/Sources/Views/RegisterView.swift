@@ -2,6 +2,7 @@ import SwiftUI
 import Core
 import Auth
 import Theme
+import Common
 
 /// Register view for new user sign up
 public struct RegisterView: View {
@@ -25,11 +26,11 @@ public struct RegisterView: View {
         }
         .navigationTitle(RegisterStrings.navigationTitle.localized)
         .navigationBarTitleDisplayMode(.large)
-        .alert(RegisterStrings.errorTitle.localized, isPresented: .init(
+        .alert(CommonStrings.errorTitle.localized, isPresented: .init(
             get: { viewModel.errorMessage != nil },
             set: { if !$0 { viewModel.clearError() } }
         )) {
-            Button(RegisterStrings.ok.localized) { viewModel.clearError() }
+            Button(CommonStrings.okButton.localized) { viewModel.clearError() }
         } message: {
             Text(viewModel.errorMessage ?? "")
         }

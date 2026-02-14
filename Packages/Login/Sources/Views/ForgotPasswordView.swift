@@ -1,6 +1,7 @@
 import SwiftUI
 import Core
 import Theme
+import Common
 
 /// Forgot password view for password reset
 public struct ForgotPasswordView: View {
@@ -30,11 +31,11 @@ public struct ForgotPasswordView: View {
         }
         .navigationTitle(ForgotPasswordStrings.navigationTitle.localized)
         .navigationBarTitleDisplayMode(.large)
-        .alert(ForgotPasswordStrings.errorTitle.localized, isPresented: .init(
+        .alert(CommonStrings.errorTitle.localized, isPresented: .init(
             get: { viewModel.errorMessage != nil },
             set: { if !$0 { viewModel.clearError() } }
         )) {
-            Button(ForgotPasswordStrings.ok.localized) { viewModel.clearError() }
+            Button(CommonStrings.okButton.localized) { viewModel.clearError() }
         } message: {
             Text(viewModel.errorMessage ?? "")
         }

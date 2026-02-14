@@ -19,7 +19,7 @@ public struct ConversationsRootView: View {
 
         NavigationStack(path: $router.path) {
             ConversationsListView(viewModel: viewModel)
-                .navigationTitle("Konwersacje")
+                .navigationTitle(ConversationsStrings.rootNavigationTitle.localized)
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button {

@@ -2,6 +2,7 @@ import SwiftUI
 import Core
 import Auth
 import Theme
+import Common
 
 /// Login view with navigation to Register and ForgotPassword
 public struct LoginView: View {
@@ -25,11 +26,11 @@ public struct LoginView: View {
         }
         .navigationTitle(LoginStrings.navigationTitle.localized)
         .navigationBarTitleDisplayMode(.large)
-        .alert(LoginStrings.errorTitle.localized, isPresented: .init(
+        .alert(CommonStrings.errorTitle.localized, isPresented: .init(
             get: { viewModel.errorMessage != nil },
             set: { if !$0 { viewModel.clearError() } }
         )) {
-            Button(LoginStrings.ok.localized) { viewModel.clearError() }
+            Button(CommonStrings.okButton.localized) { viewModel.clearError() }
         } message: {
             Text(viewModel.errorMessage ?? "")
         }

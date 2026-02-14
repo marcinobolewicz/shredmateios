@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Networking
+import Common
 
 public struct ProfileView: View {
     
@@ -35,11 +36,11 @@ public struct ProfileView: View {
         .task {
             await viewModel.loadProfile()
         }
-        .alert(ProfileStrings.errorAlertTitle.localized, isPresented: .init(
+        .alert(CommonStrings.errorTitle.localized, isPresented: .init(
             get: { viewModel.error != nil },
             set: { if !$0 { viewModel.clearMessages() } }
         )) {
-            Button(ProfileStrings.okButton.localized) { viewModel.clearMessages() }
+            Button(CommonStrings.okButton.localized) { viewModel.clearMessages() }
         } message: {
             Text(viewModel.error ?? "")
         }
@@ -47,7 +48,7 @@ public struct ProfileView: View {
             get: { viewModel.successMessage != nil },
             set: { if !$0 { viewModel.clearMessages() } }
         )) {
-            Button(ProfileStrings.okButton.localized) { viewModel.clearMessages() }
+            Button(CommonStrings.okButton.localized) { viewModel.clearMessages() }
         } message: {
             Text(viewModel.successMessage ?? "")
         }
@@ -59,7 +60,7 @@ public struct ProfileView: View {
             Button(ProfileStrings.deleteAccountButton.localized, role: .destructive) {
                 Task { await viewModel.deleteAccount() }
             }
-            Button(ProfileStrings.cancelButton.localized, role: .cancel) {}
+            Button(CommonStrings.cancelButton.localized, role: .cancel) {}
         } message: {
             Text(ProfileStrings.deleteAccountDialogMessage.localized)
         }
