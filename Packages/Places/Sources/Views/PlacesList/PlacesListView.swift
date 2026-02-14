@@ -1,6 +1,8 @@
 import SwiftUI
+import Theme
 
 struct PlacesListView: View {
+    @Environment(AppTheme.self) private var theme
     @Bindable var viewModel: PlacesViewModel
 
     var body: some View {
@@ -8,10 +10,8 @@ struct PlacesListView: View {
             .navigationTitle("Explore")
             .searchable(text: $viewModel.searchText)
             .onChange(of: viewModel.searchText) { _, _ in
-                // Jeśli chcesz: debounce. Bez overengineering: odświeżaj po wpisaniu.
                 viewModel.load(force: true)
             }
-            .task { viewModel.loadOnAppear() }
             .refreshable { viewModel.refresh() }
             .errorAlert(state: viewModel.state) { viewModel.refresh() }
     }
@@ -21,7 +21,6 @@ struct PlacesListView: View {
         switch viewModel.state {
         case .idle, .loading:
             List {
-//                TODO: skeleton rows
                 ProgressView()
                     .frame(maxWidth: .infinity, alignment: .center)
                     .listRowSeparator(.hidden)
@@ -30,17 +29,28 @@ struct PlacesListView: View {
 
         case .loaded:
             if viewModel.rows.isEmpty {
-                ContentUnavailableView("Brak miejsc", systemImage: "mappin.and.ellipse", description: Text("Spróbuj zmienić filtr lub wyszukiwanie."))
+                ContentUnavailableView(
+                    "Brak miejsc",
+                    systemImage: "mappin.and.ellipse",
+                    description: Text("Spróbuj zmienić filtr lub wyszukiwanie.")
+                )
             } else {
                 List(viewModel.rows) { row in
                     SpotRow(viewData: row)
-                        .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+                        .listRowInsets(
+                            EdgeInsets(
+                                top: theme.spacing.xs,
+                                leading: theme.spacing.md,
+                                bottom: theme.spacing.xs,
+                                trailing: theme.spacing.md
+                            )
+                        )
                         .listRowSeparator(.hidden)
                         .listRowBackground(Color.clear)
                 }
                 .listStyle(.plain)
                 .scrollContentBackground(.hidden)
-                .background(Color(uiColor: .systemBackground))
+                .background(theme.colors.background)
             }
 
         case .failed:
@@ -50,6 +60,7 @@ struct PlacesListView: View {
                 Text("Sprawdź internet i spróbuj ponownie.")
             } actions: {
                 Button("Odśwież", action: viewModel.refresh)
+                    .buttonStyle(.dsPrimary)
             }
         }
     }

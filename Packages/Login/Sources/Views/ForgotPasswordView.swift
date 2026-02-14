@@ -1,30 +1,32 @@
 import SwiftUI
 import Core
+import Theme
 
 /// Forgot password view for password reset
 public struct ForgotPasswordView: View {
-    
+
+    @Environment(AppTheme.self) private var theme
     @State private var viewModel: ForgotPasswordViewModel
-    
+
     public init(viewModel: ForgotPasswordViewModel) {
         self._viewModel = State(initialValue: viewModel)
     }
-    
+
     public var body: some View {
         ScrollView {
-            VStack(spacing: 24) {
+            VStack(spacing: theme.spacing.lg) {
                 headerSection
-                
+
                 if viewModel.isSuccess {
                     successSection
                 } else {
                     formSection
                     resetButton
                 }
-                
+
                 loginLink
             }
-            .padding()
+            .padding(theme.spacing.md)
         }
         .navigationTitle("Reset Password")
         .navigationBarTitleDisplayMode(.large)
@@ -37,76 +39,64 @@ public struct ForgotPasswordView: View {
             Text(viewModel.errorMessage ?? "")
         }
     }
-    
+
     // MARK: - Sections
-    
+
     private var headerSection: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: theme.spacing.xs) {
             Image(systemName: "key.fill")
                 .font(.system(size: 50))
-                .foregroundStyle(.orange)
-            
+                .foregroundStyle(theme.colors.warning)
+
             Text("Forgot your password?")
-                .font(.title2)
-                .fontWeight(.semibold)
-            
+                .dsTextStyle(.title2)
+
             Text("Enter your email and we'll send you a reset link")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
+                .dsTextStyle(.subheadline)
                 .multilineTextAlignment(.center)
         }
-        .padding(.vertical, 16)
+        .padding(.vertical, theme.spacing.md)
     }
-    
+
     private var formSection: some View {
-        TextField("Email", text: $viewModel.email)
-            .textFieldStyle(.roundedBorder)
+        DSTextField("Email", text: $viewModel.email)
             .textContentType(.emailAddress)
             .keyboardType(.emailAddress)
             .textInputAutocapitalization(.never)
             .autocorrectionDisabled()
     }
-    
+
     private var resetButton: some View {
-        Button {
+        DSLoadingButton(
+            "Send Reset Link",
+            isLoading: viewModel.isLoading,
+            isDisabled: !viewModel.isFormValid
+        ) {
             Task { await viewModel.requestReset() }
-        } label: {
-            if viewModel.isLoading {
-                ProgressView()
-                    .frame(maxWidth: .infinity)
-            } else {
-                Text("Send Reset Link")
-                    .frame(maxWidth: .infinity)
-            }
         }
-        .buttonStyle(.borderedProminent)
-        .controlSize(.large)
-        .disabled(!viewModel.isFormValid || viewModel.isLoading)
     }
-    
+
     private var successSection: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: theme.spacing.md) {
             Image(systemName: "checkmark.circle.fill")
                 .font(.system(size: 60))
-                .foregroundStyle(.green)
-            
+                .foregroundStyle(theme.colors.success)
+
             Text("Check your inbox!")
-                .font(.headline)
-            
+                .dsTextStyle(.heading)
+
             Text("We've sent a password reset link to \(viewModel.email)")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
+                .dsTextStyle(.subheadline)
                 .multilineTextAlignment(.center)
         }
-        .padding(.vertical, 20)
+        .padding(.vertical, theme.spacing.lg)
     }
-    
+
     private var loginLink: some View {
         Button("Back to Sign In") {
             viewModel.navigateBack()
         }
-        .font(.subheadline)
-        .fontWeight(.semibold)
-        .padding(.top, 8)
+        .buttonStyle(.dsGhost)
+        .padding(.top, theme.spacing.xs)
     }
 }

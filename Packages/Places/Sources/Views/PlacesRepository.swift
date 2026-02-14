@@ -8,7 +8,7 @@
 import Networking
 
 protocol PlacesRepositoryProtocol: Sendable {
-    func fetchPlaces(for sportSlug: String) async throws -> [Place]
+    func fetchPlaces(for sportSlug: String?) async throws -> [Place]
 }
 
 final class PlacesRepository: PlacesRepositoryProtocol, Sendable {
@@ -18,7 +18,7 @@ final class PlacesRepository: PlacesRepositoryProtocol, Sendable {
         self.service = service
     }
 
-    func fetchPlaces(for sportSlug: String) async throws -> [Place] {
+    func fetchPlaces(for sportSlug: String?) async throws -> [Place] {
         let dtos = try await service.fetchPlaces(sportSlug: sportSlug)
         return dtos.map(PlaceMapper.map)
     }

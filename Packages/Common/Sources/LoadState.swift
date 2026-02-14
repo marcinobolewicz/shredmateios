@@ -11,3 +11,4 @@ public enum LoadState: Equatable {
     case loaded
     case failed(AppError)
 }
+// enum LoadState<T> { case idle, loading, loaded(T), failed(String) }

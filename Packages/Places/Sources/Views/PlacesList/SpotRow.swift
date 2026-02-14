@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Networking
+import Theme
 
 // MARK: - Models
 
@@ -30,7 +31,7 @@ struct Spot: Identifiable, Equatable {
     let riders: Int
     let mentors: Int
     let avatar: Avatar
-    
+
     static func spot(with place: PlaceDto) -> Spot {
         Spot(
             name: place.name,
@@ -43,80 +44,54 @@ struct Spot: Identifiable, Equatable {
             mentors: 2,
             avatar: .initials("AA")
         )
-//        location
     }
 }
 
-// MARK: - Components
-
-struct Chip: View {
-    let title: String
-    let isSelected: Bool
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            Text(title)
-                .font(.system(.headline, design: .default))
-                .foregroundStyle(isSelected ? Color.primary : Color.secondary)
-                .padding(.horizontal, 18)
-                .padding(.vertical, 10)
-                .background {
-                    Capsule()
-                        .fill(isSelected ? Color.accentColor.opacity(0.85) : Color(uiColor: .secondarySystemBackground))
-                }
-                .overlay {
-                    Capsule()
-                        .strokeBorder(Color.primary.opacity(isSelected ? 0.0 : 0.06), lineWidth: 1)
-                }
-        }
-        .buttonStyle(.plain)
-    }
-}
+// MARK: - SpotRow
 
 struct SpotRow: View {
+    @Environment(AppTheme.self) private var theme
     let viewData: SpotRowViewData
 
     var body: some View {
-        HStack(alignment: .top, spacing: 14) {
+        HStack(alignment: .top, spacing: theme.spacing.sm) {
             avatar
 
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: theme.spacing.xs) {
                 HStack {
                     Text(viewData.title)
-                        .font(.headline)
+                        .dsTextStyle(.heading)
                     Spacer()
-                    Text(viewData.sportTag)
-                        .font(.caption.weight(.semibold))
-                        .foregroundStyle(.secondary)
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 6)
-                        .background(Capsule().fill(Color(uiColor: .tertiarySystemFill)))
+                    Tag(text: viewData.sportTag)
                 }
 
                 Text(viewData.subtitle)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                    .dsTextStyle(.subheadline)
 
                 Text(viewData.description)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                    .dsTextStyle(.subheadline)
                     .lineLimit(2)
 
-                HStack(spacing: 14) {
-                    Text(viewData.ratingText).font(.subheadline.weight(.semibold))
-                    Text(viewData.ridersText).font(.subheadline).foregroundStyle(.secondary)
-                    Text(viewData.mentorsText).font(.subheadline).foregroundStyle(.secondary)
+                HStack(spacing: theme.spacing.sm) {
+                    StatRating(value: Double(viewData.ratingText) ?? 0)
+                    StatText(label: "riders", value: Int(viewData.ridersText.filter(\.isNumber)) ?? 0)
+                    StatText(label: "mentors", value: Int(viewData.mentorsText.filter(\.isNumber)) ?? 0)
                 }
             }
 
             Image(systemName: "chevron.right")
-                .foregroundStyle(.tertiary)
-                .padding(.top, 6)
+                .foregroundStyle(theme.colors.textTertiary)
+                .padding(.top, theme.spacing.xxs + 2)
         }
-        .padding(14)
-        .background(RoundedRectangle(cornerRadius: 18, style: .continuous).fill(Color(uiColor: .secondarySystemBackground)))
-        .overlay(RoundedRectangle(cornerRadius: 18, style: .continuous).strokeBorder(Color.primary.opacity(0.06), lineWidth: 1))
+        .padding(theme.spacing.sm)
+        .background(
+            RoundedRectangle(cornerRadius: theme.radius.lg, style: .continuous)
+                .fill(theme.colors.surface)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: theme.radius.lg, style: .continuous)
+                .strokeBorder(theme.colors.border.opacity(0.3), lineWidth: 1)
+        )
     }
 
     @ViewBuilder
@@ -124,69 +99,68 @@ struct SpotRow: View {
         switch viewData.avatar {
         case .initials(let text):
             ZStack {
-                Circle().fill(Color(uiColor: .tertiarySystemFill))
-                Text(text).font(.headline.weight(.semibold))
+                Circle().fill(theme.colors.surfaceTertiary)
+                Text(text)
+                    .font(.headline.weight(.semibold))
+                    .foregroundStyle(theme.colors.textSecondary)
             }
             .frame(width: 46, height: 46)
         case .imageRemote:
-//            TODO: AsyncImage/Kingfisher
-            Circle().fill(Color(uiColor: .tertiarySystemFill))
+            Circle().fill(theme.colors.surfaceTertiary)
                 .frame(width: 46, height: 46)
-        case .image(_):
-//            TODO: named image
+        case .image:
             EmptyView()
         }
     }
 }
 
+// MARK: - Supporting Views
 
 private struct Tag: View {
+    @Environment(AppTheme.self) private var theme
     let text: String
 
     var body: some View {
         Text(text)
             .font(.caption.weight(.semibold))
-            .foregroundStyle(.secondary)
-            .padding(.horizontal, 10)
-            .padding(.vertical, 6)
-            .background {
-                Capsule()
-                    .fill(Color(uiColor: .tertiarySystemFill))
-            }
-            .overlay {
-                Capsule()
-                    .strokeBorder(Color.primary.opacity(0.08), lineWidth: 1)
-            }
+            .foregroundStyle(theme.colors.textSecondary)
+            .padding(.horizontal, theme.spacing.xs + 2)
+            .padding(.vertical, theme.spacing.xxs + 2)
+            .background(
+                Capsule().fill(theme.colors.surfaceTertiary)
+            )
     }
 }
 
 private struct StatRating: View {
+    @Environment(AppTheme.self) private var theme
     let value: Double
 
     var body: some View {
-        HStack(spacing: 6) {
+        HStack(spacing: theme.spacing.xxs + 2) {
             Image(systemName: "star.fill")
                 .font(.system(size: 12, weight: .semibold))
-                .foregroundStyle(.secondary) // system-friendly
+                .foregroundStyle(theme.colors.warning)
             Text(String(format: "%.1f", value))
                 .font(.subheadline.weight(.semibold))
-                .foregroundStyle(.primary)
+                .foregroundStyle(theme.colors.textPrimary)
         }
     }
 }
 
 private struct StatText: View {
+    @Environment(AppTheme.self) private var theme
     let label: String
     let value: Int
 
     var body: some View {
-        HStack(spacing: 6) {
-            Text("\(label)")
+        HStack(spacing: theme.spacing.xxs + 2) {
+            Text(label)
                 .font(.subheadline)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(theme.colors.textSecondary)
             Text("\(value)")
                 .font(.subheadline.weight(.semibold))
-                .foregroundStyle(.primary)
+                .foregroundStyle(theme.colors.textPrimary)
         }
     }
 }

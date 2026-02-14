@@ -9,11 +9,10 @@ import Foundation
 
 public enum PlacesAPI {
     
-    public static func places(sportSlug: String) -> Endpoint<[PlaceDto]> {
+    public static func places(sportSlug: String?) -> Endpoint<[PlaceDto]> {
         .get(
             "/places",
-            query: [URLQueryItem(name: "sportSlug", value: sportSlug)],
-            auth: .bearerToken
+            query: [URLQueryItem(name: "sportSlug", value: sportSlug)]
         )
     }
 }

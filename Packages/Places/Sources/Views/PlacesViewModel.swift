@@ -61,7 +61,7 @@ public final class PlacesViewModel {
             guard let self else { return }
 
             do {
-                let places = try await repository.fetchPlaces(for: sportSlug)
+                let places = try await repository.fetchPlaces(for: nil)
                 try Task.checkCancellation()
 
                 let filtered = self.applySearch(places: places, text: self.searchText)

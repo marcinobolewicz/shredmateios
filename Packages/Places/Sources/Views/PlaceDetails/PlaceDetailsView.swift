@@ -6,15 +6,16 @@
 //
 
 import SwiftUI
+import Theme
 
 struct PlaceDetailsView: View {
-    
+    @Environment(AppTheme.self) private var theme
+
     var body: some View {
         VStack {
             Text("Places details")
-                .font(.title)
-                .padding()
-
+                .dsTextStyle(.title)
+                .padding(theme.spacing.md)
         }
     }
 }
