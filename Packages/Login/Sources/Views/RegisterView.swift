@@ -1,6 +1,5 @@
 import SwiftUI
 import Core
-import Auth
 import Theme
 import Common
 

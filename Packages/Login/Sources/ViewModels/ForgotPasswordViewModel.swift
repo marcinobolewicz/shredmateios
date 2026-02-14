@@ -1,6 +1,5 @@
 import Foundation
 import Core
-import Auth
 
 /// Protocol for password reset service (enables testing)
 public protocol PasswordResetServicing: Sendable {

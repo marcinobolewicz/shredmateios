@@ -175,7 +175,6 @@ let package = Package(
             dependencies: [
                 "Core",
                 "Networking",
-                "Auth",
                 "Common",
                 "Theme",
                 .product(name: "SocketIO", package: "socket.io-client-swift")

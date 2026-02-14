@@ -23,8 +23,9 @@ public struct Rider: Codable, Sendable, Equatable, Identifiable {
     public let displayName: String?
     public let description: String?
     public let avatarUrl: String?
-    public let createdAt: Date
-    public let updatedAt: Date
+    public let isPublic: Bool?
+    public let createdAt: Date?
+    public let updatedAt: Date?
     
     public init(
         id: String,
@@ -33,8 +34,9 @@ public struct Rider: Codable, Sendable, Equatable, Identifiable {
         displayName: String? = nil,
         description: String? = nil,
         avatarUrl: String? = nil,
-        createdAt: Date = Date(),
-        updatedAt: Date = Date()
+        isPublic: Bool? = nil,
+        createdAt: Date? = nil,
+        updatedAt: Date? = nil
     ) {
         self.id = id
         self.userId = userId
@@ -42,6 +44,7 @@ public struct Rider: Codable, Sendable, Equatable, Identifiable {
         self.displayName = displayName
         self.description = description
         self.avatarUrl = avatarUrl
+        self.isPublic = isPublic
         self.createdAt = createdAt
         self.updatedAt = updatedAt
     }
