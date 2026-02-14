@@ -1,25 +1,27 @@
 import SwiftUI
 import Core
 import Auth
+import Theme
 
 /// Login view with navigation to Register and ForgotPassword
 public struct LoginView: View {
-    
+
+    @Environment(AppTheme.self) private var theme
     @State private var viewModel: LoginViewModel
-    
+
     public init(viewModel: LoginViewModel) {
         self._viewModel = State(initialValue: viewModel)
     }
-    
+
     public var body: some View {
         ScrollView {
-            VStack(spacing: 24) {
+            VStack(spacing: theme.spacing.lg) {
                 headerSection
                 formSection
                 actionsSection
                 navigationLinks
             }
-            .padding()
+            .padding(theme.spacing.md)
         }
         .navigationTitle("Login")
         .navigationBarTitleDisplayMode(.large)
@@ -32,84 +34,71 @@ public struct LoginView: View {
             Text(viewModel.errorMessage ?? "")
         }
     }
-    
+
     // MARK: - Sections
-    
+
     private var headerSection: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: theme.spacing.xs) {
             Image("shredmate-logo", bundle: .main)
                 .resizable()
                 .scaledToFit()
                 .frame(width: 100, height: 100)
-                .padding(20)
+                .padding(theme.spacing.lg)
                 .background(
                     Circle()
                         .fill(.black)
                 )
-            
+
             Text("ShredMate")
-                .font(.largeTitle)
-                .fontWeight(.bold)
-            
+                .dsTextStyle(.largeTitle)
+
             Text("Sign in to continue")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
+                .dsTextStyle(.subheadline)
         }
-        .padding(.vertical, 20)
+        .padding(.vertical, theme.spacing.lg)
     }
-    
+
     private var formSection: some View {
-        VStack(spacing: 16) {
-            TextField("Email", text: $viewModel.email)
-                .textFieldStyle(.roundedBorder)
+        VStack(spacing: theme.spacing.md) {
+            DSTextField("Email", text: $viewModel.email)
                 .textContentType(.emailAddress)
                 .keyboardType(.emailAddress)
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
-            
-            SecureField("Password", text: $viewModel.password)
-                .textFieldStyle(.roundedBorder)
+
+            DSSecureField("Password", text: $viewModel.password)
                 .textContentType(.password)
         }
     }
-    
+
     private var actionsSection: some View {
-        VStack(spacing: 12) {
-            Button {
-                Task { await viewModel.login() }
-            } label: {
-                if viewModel.isLoading {
-                    ProgressView()
-                        .frame(maxWidth: .infinity)
-                } else {
-                    Text("Sign In")
-                        .frame(maxWidth: .infinity)
-                }
-            }
-            .buttonStyle(.borderedProminent)
-            .controlSize(.large)
-            .disabled(!viewModel.isFormValid || viewModel.isLoading)
+        DSLoadingButton(
+            "Sign In",
+            isLoading: viewModel.isLoading,
+            isDisabled: !viewModel.isFormValid
+        ) {
+            Task { await viewModel.login() }
         }
     }
-    
+
     private var navigationLinks: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: theme.spacing.md) {
             Button("Forgot Password?") {
                 viewModel.navigateToForgotPassword()
             }
-            .font(.footnote)
-            
-            HStack {
+            .buttonStyle(.dsGhost)
+
+            HStack(spacing: theme.spacing.xxs) {
                 Text("Don't have an account?")
-                    .foregroundStyle(.secondary)
+                    .dsTextStyle(.subheadline)
+
                 Button("Sign Up") {
                     viewModel.navigateToRegister()
                 }
-                .fontWeight(.semibold)
+                .buttonStyle(.dsGhost)
             }
-            .font(.subheadline)
         }
-        .padding(.top, 8)
+        .padding(.top, theme.spacing.xs)
     }
 }
 

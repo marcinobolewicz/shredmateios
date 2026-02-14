@@ -1,25 +1,27 @@
 import SwiftUI
 import Core
 import Auth
+import Theme
 
 /// Register view for new user sign up
 public struct RegisterView: View {
-    
+
+    @Environment(AppTheme.self) private var theme
     @State private var viewModel: RegisterViewModel
-    
+
     public init(viewModel: RegisterViewModel) {
         self._viewModel = State(initialValue: viewModel)
     }
-    
+
     public var body: some View {
         ScrollView {
-            VStack(spacing: 24) {
+            VStack(spacing: theme.spacing.lg) {
                 headerSection
                 formSection
                 registerButton
                 loginLink
             }
-            .padding()
+            .padding(theme.spacing.md)
         }
         .navigationTitle("Create Account")
         .navigationBarTitleDisplayMode(.large)
@@ -32,83 +34,67 @@ public struct RegisterView: View {
             Text(viewModel.errorMessage ?? "")
         }
     }
-    
+
     // MARK: - Sections
-    
+
     private var headerSection: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: theme.spacing.xs) {
             Image(systemName: "person.badge.plus")
                 .font(.system(size: 50))
-                .foregroundStyle(.blue)
-            
+                .foregroundStyle(theme.colors.primary)
+
             Text("Join ShredMate")
-                .font(.title2)
-                .fontWeight(.semibold)
+                .dsTextStyle(.title2)
         }
-        .padding(.vertical, 16)
+        .padding(.vertical, theme.spacing.md)
     }
-    
+
     private var formSection: some View {
-        VStack(spacing: 16) {
-            TextField("Name", text: $viewModel.name)
-                .textFieldStyle(.roundedBorder)
+        VStack(spacing: theme.spacing.md) {
+            DSTextField("Name", text: $viewModel.name)
                 .textContentType(.name)
                 .textInputAutocapitalization(.words)
-            
-            TextField("Email", text: $viewModel.email)
-                .textFieldStyle(.roundedBorder)
+
+            DSTextField("Email", text: $viewModel.email)
                 .textContentType(.emailAddress)
                 .keyboardType(.emailAddress)
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
-            
-            SecureField("Password", text: $viewModel.password)
-                .textFieldStyle(.roundedBorder)
+
+            DSSecureField("Password", text: $viewModel.password)
                 .textContentType(.newPassword)
-            
-            SecureField("Confirm Password", text: $viewModel.confirmPassword)
-                .textFieldStyle(.roundedBorder)
+
+            DSSecureField("Confirm Password", text: $viewModel.confirmPassword)
                 .textContentType(.newPassword)
-            
+
             if viewModel.passwordMismatch {
-                Text("Passwords don't match")
-                    .font(.caption)
-                    .foregroundStyle(.red)
+                DSErrorLabel("Passwords don't match")
             }
-            
-            Text("Password must be at least 8 characters")
-                .font(.caption)
-                .foregroundStyle(.secondary)
+
+            DSHintLabel("Password must be at least 8 characters")
         }
     }
-    
+
     private var registerButton: some View {
-        Button {
+        DSLoadingButton(
+            "Create Account",
+            isLoading: viewModel.isLoading,
+            isDisabled: !viewModel.isFormValid
+        ) {
             Task { await viewModel.register() }
-        } label: {
-            if viewModel.isLoading {
-                ProgressView()
-                    .frame(maxWidth: .infinity)
-            } else {
-                Text("Create Account")
-                    .frame(maxWidth: .infinity)
-            }
         }
-        .buttonStyle(.borderedProminent)
-        .controlSize(.large)
-        .disabled(!viewModel.isFormValid || viewModel.isLoading)
     }
-    
+
     private var loginLink: some View {
-        HStack {
+        HStack(spacing: theme.spacing.xxs) {
             Text("Already have an account?")
-                .foregroundStyle(.secondary)
+                .dsTextStyle(.subheadline)
+
             Button("Sign In") {
                 viewModel.navigateBack()
             }
-            .fontWeight(.semibold)
+            .buttonStyle(.dsGhost)
         }
-        .font(.subheadline)
-        .padding(.top, 8)
+        .padding(.top, theme.spacing.xs)
     }
 }

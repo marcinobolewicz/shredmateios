@@ -9,14 +9,30 @@ let package = Package(
     products: [
         .library(name: "App", targets: ["App"]),
         .library(name: "Core", targets: ["Core"]),
+        .library(name: "Common", targets: ["Common"]),
         .library(name: "Networking", targets: ["Networking"]),
         .library(name: "Auth", targets: ["Auth"]),
         .library(name: "Login", targets: ["Login"]),
         .library(name: "Profile", targets: ["Profile"]),
         .library(name: "Places", targets: ["Places"]),
-        .library(name: "Conversations", targets: ["Conversations"])
+        .library(name: "Conversations", targets: ["Conversations"]),
+        .library(name: "Theme", targets: ["Theme"])
     ],
     targets: [
+        // Theme Package
+        .target(
+            name: "Theme",
+            path: "Packages/Theme/Sources",
+            swiftSettings: [
+                .enableUpcomingFeature("StrictConcurrency")
+            ]
+        ),
+        .testTarget(
+            name: "ThemeTests",
+            dependencies: ["Theme"],
+            path: "Packages/Theme/Tests"
+        ),
+        
         // Core Package
         .target(
             name: "Core",
@@ -29,6 +45,20 @@ let package = Package(
             name: "CoreTests",
             dependencies: ["Core"],
             path: "Packages/Core/Tests"
+        ),
+        
+        // Common Package
+        .target(
+            name: "Common",
+            path: "Packages/Common/Sources",
+            swiftSettings: [
+                .enableUpcomingFeature("StrictConcurrency")
+            ]
+        ),
+        .testTarget(
+            name: "CommonTests",
+            dependencies: ["Common"],
+            path: "Packages/Common/Tests"
         ),
         
         // Networking Package
@@ -63,7 +93,7 @@ let package = Package(
         // Login Package
         .target(
             name: "Login",
-            dependencies: ["Core", "Networking"],
+            dependencies: ["Core", "Networking", "Theme"],
             path: "Packages/Login/Sources",
             swiftSettings: [
                 .enableUpcomingFeature("StrictConcurrency")
@@ -78,7 +108,7 @@ let package = Package(
         // App Package
         .target(
             name: "App",
-            dependencies: ["Core", "Networking", "Auth", "Login", "Profile", "Places", "Conversations"],
+            dependencies: ["Core", "Networking", "Auth", "Login", "Profile", "Places", "Conversations", "Theme"],
             path: "Packages/App/Sources",
             swiftSettings: [
                 .enableUpcomingFeature("StrictConcurrency")
@@ -108,7 +138,7 @@ let package = Package(
         // Places Package
         .target(
             name: "Places",
-            dependencies: ["Core", "Networking"],
+            dependencies: ["Core", "Networking", "Common", "Theme"],
             path: "Packages/Places/Sources",
             swiftSettings: [
                 .enableUpcomingFeature("StrictConcurrency")

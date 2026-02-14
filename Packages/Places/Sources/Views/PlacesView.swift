@@ -1,58 +1,52 @@
 import SwiftUI
 import Networking
+import Theme
 
 public struct PlacesView: View {
+    @Environment(AppTheme.self) private var theme
     @Environment(PlacesRouter.self) private var router
     @State private var viewModel: PlacesViewModel
-    
+
     public init(
-        placesService: PlacesServiceProtocol,
-        authState: AuthState
+            placesService: any PlacesServiceProtocol,
+            authState: AuthState
     ) {
-        _viewModel = State(wrappedValue: PlacesViewModel(
-            placesService: placesService,
-            authState: authState
-        ))
+        let repository = PlacesRepository(service: placesService)
+        let presenter = SpotRowPresenter()
+
+        _viewModel = State(
+            wrappedValue: PlacesViewModel(
+                repository: repository,
+                presenter: presenter
+            )
+        )
     }
-    
+
     public var body: some View {
         VStack(spacing: 0) {
             headerSection
+            sportChips
             contentSection
         }
+        .task { viewModel.loadOnAppear() }
+        .errorAlert(state: viewModel.state) { viewModel.refresh() }
     }
-    
+
     private var headerSection: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: theme.spacing.sm) {
             Picker("Display Mode", selection: $viewModel.displayMode) {
                 ForEach(PlacesDisplayMode.allCases) { mode in
                     Text(mode.title).tag(mode)
                 }
             }
             .pickerStyle(.segmented)
-            
-            HStack {
-                Image(systemName: "magnifyingglass")
-                    .foregroundStyle(.secondary)
-                TextField("Search places...", text: $viewModel.searchText)
-                    .textFieldStyle(.plain)
-                if !viewModel.searchText.isEmpty {
-                    Button {
-                        viewModel.searchText = ""
-                    } label: {
-                        Image(systemName: "xmark.circle.fill")
-                            .foregroundStyle(.secondary)
-                    }
-                }
-            }
-            .padding(10)
-            .background(.gray.opacity(0.1))
-            .clipShape(RoundedRectangle(cornerRadius: 10))
-            .task { await viewModel.loadOnAppear() }
+
+            DSSearchBar("Search places...", text: $viewModel.searchText)
+                .task { await viewModel.loadOnAppear() }
         }
-        .padding()
+        .padding(theme.spacing.md)
     }
-    
+
     @ViewBuilder
     private var contentSection: some View {
         switch viewModel.displayMode {
@@ -60,6 +54,24 @@ public struct PlacesView: View {
             PlacesListView(viewModel: viewModel)
         case .map:
             PlacesMapView(viewModel: viewModel)
+        }
+    }
+
+    private var sportChips: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: theme.spacing.sm) {
+                ForEach(Sport.allCases) { sport in
+                    DSChip(
+                        title: sport.rawValue,
+                        isSelected: viewModel.selectedSport == sport
+                    ) {
+                        withAnimation(.snappy(duration: Constants.Animation.chipDuration)) {
+                            viewModel.selectedSport = sport
+                        }
+                    }
+                }
+            }
+            .padding(.vertical, theme.spacing.xxs)
         }
     }
 }

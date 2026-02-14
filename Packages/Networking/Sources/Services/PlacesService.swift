@@ -8,7 +8,7 @@
 import Foundation
 
 public protocol PlacesServiceProtocol: Sendable {
-    func fetchPlaces(sportSlug: String) async throws -> [PlaceDto]
+    func fetchPlaces(sportSlug: String?) async throws -> [PlaceDto]
 }
 
 public final class PlacesService: PlacesServiceProtocol, Sendable {
@@ -19,7 +19,7 @@ public final class PlacesService: PlacesServiceProtocol, Sendable {
         self.client = client
     }
     
-    public func fetchPlaces(sportSlug: String) async throws -> [PlaceDto] {
+    public func fetchPlaces(sportSlug: String?) async throws -> [PlaceDto] {
         try await client.send(PlacesAPI.places(sportSlug: sportSlug))
     }
 }
