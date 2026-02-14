@@ -9,21 +9,18 @@ public enum AuthEntryPoint: Equatable {
 }
 
 public struct AuthFlowView: View {
-
+    @Environment(AuthState.self) private var authState
     @State private var router: AuthRouter
-    private let authState: AuthState
     private let entry: AuthEntryPoint
     private let onClose: () -> Void
     private let onLoginSuccess: () -> Void
 
     public init(
-        authState: AuthState,
         entry: AuthEntryPoint = .login,
         router: AuthRouter = AuthRouter(),
         onClose: @escaping () -> Void,
         onLoginSuccess: @escaping () -> Void = {}
     ) {
-        self.authState = authState
         self.entry = entry
         self.onClose = onClose
         self.onLoginSuccess = onLoginSuccess

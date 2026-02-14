@@ -7,7 +7,7 @@ struct ShredMateApp: App {
 
     var body: some Scene {
         WindowGroup {
-            RootView()
+            RootView(dependencies: dependencies)
                 .environment(dependencies)
                 .environment(dependencies.authState)
         }

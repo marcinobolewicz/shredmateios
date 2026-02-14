@@ -1,12 +1,19 @@
 import XCTest
 @testable import Networking
-import Core
 
-final class NetworkingServiceTests: XCTestCase {
-    func testNetworkingServiceInitialization() async {
-        let client = URLSessionClient(baseURL: "https://api.test.com")
-        let service = NetworkingService(client: client)
+final class NetworkingTests: XCTestCase {
+    func testEndpointCreation() async {
+        let endpoint = Endpoint<EmptyResponse>.get("/test", auth: .bearerToken)
         
-        XCTAssertNotNil(service)
+        XCTAssertEqual(endpoint.method, .get)
+        XCTAssertEqual(endpoint.path, "/test")
+        XCTAssertEqual(endpoint.auth, .bearerToken)
+    }
+    
+    func testAPIClientInitialization() async {
+        let baseURL = URL(string: "https://api.test.com")!
+        let client = APIClient(baseURL: baseURL)
+        
+        XCTAssertNotNil(client)
     }
 }

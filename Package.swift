@@ -34,7 +34,6 @@ let package = Package(
         // Networking Package
         .target(
             name: "Networking",
-            dependencies: ["Core"],
             path: "Packages/Networking/Sources",
             swiftSettings: [
                 .enableUpcomingFeature("StrictConcurrency")
@@ -64,7 +63,7 @@ let package = Package(
         // Login Package
         .target(
             name: "Login",
-            dependencies: ["Core", "Networking", "Auth"],
+            dependencies: ["Core", "Networking"],
             path: "Packages/Login/Sources",
             swiftSettings: [
                 .enableUpcomingFeature("StrictConcurrency")
@@ -94,7 +93,7 @@ let package = Package(
         // Profile Package
         .target(
             name: "Profile",
-            dependencies: ["Core", "Networking", "Auth"],
+            dependencies: ["Core", "Networking"],
             path: "Packages/Profile/Sources",
             swiftSettings: [
                 .enableUpcomingFeature("StrictConcurrency")
@@ -109,7 +108,7 @@ let package = Package(
         // Places Package
         .target(
             name: "Places",
-            dependencies: ["Core", "Networking", "Auth"],
+            dependencies: ["Core", "Networking"],
             path: "Packages/Places/Sources",
             swiftSettings: [
                 .enableUpcomingFeature("StrictConcurrency")

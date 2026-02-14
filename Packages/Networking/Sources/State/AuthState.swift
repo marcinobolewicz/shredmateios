@@ -1,5 +1,8 @@
 import Foundation
 import Observation
+import os.log
+
+private let logger = Logger(subsystem: "com.shredmate.auth", category: "AuthState")
 
 /// Authentication state for UI reactivity
 @MainActor
@@ -40,30 +43,49 @@ public final class AuthState {
     /// Restore session on app launch (call from app init)
     public func restoreSession() async {
         // Only restore once per app launch
-        guard !hasRestoredSession else { return }
+        guard !hasRestoredSession else { 
+            logger.debug("Session already restored, skipping")
+            return 
+        }
         hasRestoredSession = true
         
+        logger.debug("Starting session restore...")
         isLoading = true
         error = nil
         
         defer { isLoading = false }
         
-        // Check for stored user first
-        if let storedUser = await tokenStorage.loadUser() {
-            user = storedUser
+        // Check if we have tokens - this is the primary indicator of a session
+        let hasTokens = await authService.isAuthenticated()
+        logger.debug("Has stored tokens: \(hasTokens)")
+        
+        guard hasTokens else {
+            logger.info("No tokens found, no session to restore")
+            return
         }
         
-        // If no stored user, no session to restore
-        guard user != nil else { return }
+        // Optionally load cached user for instant UI (before network validation)
+        if let storedUser = await tokenStorage.loadUser() {
+            logger.debug("Loaded cached user: \(storedUser.email)")
+            user = storedUser
+        } else {
+            logger.debug("No cached user found")
+        }
         
-        // Validate session with backend
+        // Validate session with backend and get fresh user data
         do {
+            logger.debug("Validating session with backend...")
             let currentUser = try await authService.fetchCurrentUser()
             user = currentUser
+            logger.info("Session restored for: \(currentUser.email)")
+            
+            // Persist fresh user data
+            try? await tokenStorage.saveUser(currentUser)
             
             // Also fetch rider profile
             await fetchRiderProfile()
         } catch {
+            logger.error("Session validation failed: \(error.localizedDescription)")
             // Session invalid - clear state
             await handleSessionInvalidation()
         }

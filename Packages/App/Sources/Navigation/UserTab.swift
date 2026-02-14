@@ -9,6 +9,7 @@ import SwiftUI
 import Profile
 import Places
 import Conversations
+import Core
 
 enum UserTab: Hashable {
     case home
@@ -27,16 +28,18 @@ struct UserTabView: View {
                 authState: dependencies.authState,
                 riderService: dependencies.riderService
             )
-                .tabItem { Label("Home", systemImage: "house") }
-                .tag(UserTab.home)
+            .tabItem { Label("Home", systemImage: "house") }
+            .tag(UserTab.home)
 
-            PlacesView()
-                .tabItem { Label("Spots", systemImage: "map") }
-                .tag(UserTab.spots)
+            PlacesRootView(
+                placesService: dependencies.placesService,
+            )
+            .tabItem { Label("Spots", systemImage: "map") }
+            .tag(UserTab.spots)
 
             ConversationsView()
-                .tabItem { Label("Chat", systemImage: "message") }
-                .tag(UserTab.messages)
+            .tabItem { Label("Chat", systemImage: "message") }
+            .tag(UserTab.messages)
 
             ProfileView(
                 viewModel: ProfileViewModel(
@@ -44,8 +47,8 @@ struct UserTabView: View {
                     authState: dependencies.authState
                 )
             )
-                .tabItem { Label("Profil", systemImage: "person") }
-                .tag(UserTab.profile)
+            .tabItem { Label("Profil", systemImage: "person") }
+            .tag(UserTab.profile)
         }
     }
 }
