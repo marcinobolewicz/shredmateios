@@ -1,0 +1,5 @@
+"common.generic_error_title" = "Something went wrong";
+"common.generic_error_message" = "Could not fetch data. Please try again.";
+"common.generic_error_recovery" = "Check your internet connection.";
+"common.retry_button" = "Try Again";
+"common.ok_button" = "OK";

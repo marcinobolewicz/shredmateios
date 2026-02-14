@@ -40,7 +40,7 @@ public struct AuthFlowView: View {
                         } label: {
                             Image(systemName: "xmark")
                         }
-                        .accessibilityLabel("Zamknij logowanie")
+                        .accessibilityLabel(AuthFlowStrings.closeAccessibilityLabel.localized)
                     }
                 }
         }

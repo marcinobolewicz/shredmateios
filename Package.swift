@@ -3,6 +3,7 @@ import PackageDescription
 
 let package = Package(
     name: "ShredMate",
+    defaultLocalization: "en",
     platforms: [
         .iOS(.v18)
     ],
@@ -51,6 +52,9 @@ let package = Package(
         .target(
             name: "Common",
             path: "Packages/Common/Sources",
+            resources: [
+                .process("Resources")
+            ],
             swiftSettings: [
                 .enableUpcomingFeature("StrictConcurrency")
             ]
@@ -95,6 +99,9 @@ let package = Package(
             name: "Login",
             dependencies: ["Core", "Networking", "Theme"],
             path: "Packages/Login/Sources",
+            resources: [
+                .process("Resources")
+            ],
             swiftSettings: [
                 .enableUpcomingFeature("StrictConcurrency")
             ]
@@ -110,6 +117,9 @@ let package = Package(
             name: "App",
             dependencies: ["Core", "Networking", "Auth", "Login", "Profile", "Places", "Conversations", "Theme"],
             path: "Packages/App/Sources",
+            resources: [
+                .process("Resources")
+            ],
             swiftSettings: [
                 .enableUpcomingFeature("StrictConcurrency")
             ]
@@ -125,6 +135,9 @@ let package = Package(
             name: "Profile",
             dependencies: ["Core", "Networking"],
             path: "Packages/Profile/Sources",
+            resources: [
+                .process("Resources")
+            ],
             swiftSettings: [
                 .enableUpcomingFeature("StrictConcurrency")
             ]
@@ -140,6 +153,9 @@ let package = Package(
             name: "Places",
             dependencies: ["Core", "Networking", "Common", "Theme"],
             path: "Packages/Places/Sources",
+            resources: [
+                .process("Resources")
+            ],
             swiftSettings: [
                 .enableUpcomingFeature("StrictConcurrency")
             ]

@@ -10,8 +10,8 @@ enum PlacesDisplayMode: String, CaseIterable, Identifiable {
     
     var title: String {
         switch self {
-        case .list: return "List"
-        case .map: return "Map"
+        case .list: return PlacesStrings.displayModeList.localized
+        case .map: return PlacesStrings.displayModeMap.localized
         }
     }
 }
@@ -61,7 +61,7 @@ public final class PlacesViewModel {
             guard let self else { return }
 
             do {
-                let places = try await repository.fetchPlaces(for: nil)
+                let places = try await repository.fetchPlaces(for: sportSlug)
                 try Task.checkCancellation()
 
                 let filtered = self.applySearch(places: places, text: self.searchText)

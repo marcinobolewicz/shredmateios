@@ -7,7 +7,7 @@ struct PlacesListView: View {
 
     var body: some View {
         content
-            .navigationTitle("Explore")
+            .navigationTitle(PlacesStrings.listNavigationTitle.localized)
             .searchable(text: $viewModel.searchText)
             .onChange(of: viewModel.searchText) { _, _ in
                 viewModel.load(force: true)
@@ -30,9 +30,9 @@ struct PlacesListView: View {
         case .loaded:
             if viewModel.rows.isEmpty {
                 ContentUnavailableView(
-                    "Brak miejsc",
+                    PlacesStrings.emptyTitle.localized,
                     systemImage: "mappin.and.ellipse",
-                    description: Text("Spróbuj zmienić filtr lub wyszukiwanie.")
+                    description: Text(PlacesStrings.emptyDescription.localized)
                 )
             } else {
                 List(viewModel.rows) { row in
@@ -55,11 +55,11 @@ struct PlacesListView: View {
 
         case .failed:
             ContentUnavailableView {
-                Label("Nie udało się wczytać", systemImage: "exclamationmark.triangle")
+                Label(PlacesStrings.failedTitle.localized, systemImage: "exclamationmark.triangle")
             } description: {
-                Text("Sprawdź internet i spróbuj ponownie.")
+                Text(PlacesStrings.failedDescription.localized)
             } actions: {
-                Button("Odśwież", action: viewModel.refresh)
+                Button(PlacesStrings.refreshButton.localized, action: viewModel.refresh)
                     .buttonStyle(.dsPrimary)
             }
         }

@@ -10,7 +10,7 @@ import SwiftUI
 public struct GuestWelcomeView: View {
     public var body: some View {
         VStack {
-            Text("Guest Welcome")
+            Text(AppStrings.guestWelcomeTitle.localized)
                 .font(.title)
                 .padding()
           

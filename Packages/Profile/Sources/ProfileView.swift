@@ -30,38 +30,38 @@ public struct ProfileView: View {
                 dangerZoneSection
             }
         }
-        .navigationTitle("Profile")
+        .navigationTitle(ProfileStrings.navigationTitle.localized)
         .navigationBarTitleDisplayMode(.inline)
         .task {
             await viewModel.loadProfile()
         }
-        .alert("Error", isPresented: .init(
+        .alert(ProfileStrings.errorAlertTitle.localized, isPresented: .init(
             get: { viewModel.error != nil },
             set: { if !$0 { viewModel.clearMessages() } }
         )) {
-            Button("OK") { viewModel.clearMessages() }
+            Button(ProfileStrings.okButton.localized) { viewModel.clearMessages() }
         } message: {
             Text(viewModel.error ?? "")
         }
-        .alert("Success", isPresented: .init(
+        .alert(ProfileStrings.successAlertTitle.localized, isPresented: .init(
             get: { viewModel.successMessage != nil },
             set: { if !$0 { viewModel.clearMessages() } }
         )) {
-            Button("OK") { viewModel.clearMessages() }
+            Button(ProfileStrings.okButton.localized) { viewModel.clearMessages() }
         } message: {
             Text(viewModel.successMessage ?? "")
         }
         .confirmationDialog(
-            "Delete Account",
+            ProfileStrings.deleteAccountDialogTitle.localized,
             isPresented: $showDeleteConfirmation,
             titleVisibility: .visible
         ) {
-            Button("Delete Account", role: .destructive) {
+            Button(ProfileStrings.deleteAccountButton.localized, role: .destructive) {
                 Task { await viewModel.deleteAccount() }
             }
-            Button("Cancel", role: .cancel) {}
+            Button(ProfileStrings.cancelButton.localized, role: .cancel) {}
         } message: {
-            Text("This action cannot be undone. All your data will be permanently deleted.")
+            Text(ProfileStrings.deleteAccountDialogMessage.localized)
         }
     }
     
@@ -71,7 +71,7 @@ public struct ProfileView: View {
         Section {
             HStack {
                 Spacer()
-                ProgressView("Loading profile...")
+                ProgressView(ProfileStrings.loadingProfile.localized)
                 Spacer()
             }
             .padding(.vertical, 40)
@@ -79,18 +79,18 @@ public struct ProfileView: View {
     }
     
     private var profileSection: some View {
-        Section("Profile Information") {
-            TextField("Display Name", text: $viewModel.displayName)
+        Section(ProfileStrings.sectionProfileInformation.localized) {
+            TextField(ProfileStrings.displayNamePlaceholder.localized, text: $viewModel.displayName)
                 .textContentType(.name)
             
-            Picker("Type", selection: $viewModel.selectedType) {
+            Picker(ProfileStrings.typePickerTitle.localized, selection: $viewModel.selectedType) {
                 ForEach(RiderType.allCases, id: \.self) { type in
                     Text(type.displayName).tag(type)
                 }
             }
             
             VStack(alignment: .leading, spacing: 4) {
-                Text("Description")
+                Text(ProfileStrings.descriptionLabel.localized)
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 
@@ -106,7 +106,7 @@ public struct ProfileView: View {
                         ProgressView()
                             .controlSize(.small)
                     }
-                    Text("Save Profile")
+                    Text(ProfileStrings.saveProfileButton.localized)
                 }
                 .frame(maxWidth: .infinity)
             }
@@ -115,7 +115,7 @@ public struct ProfileView: View {
     }
     
     private var avatarSection: some View {
-        Section("Avatar") {
+        Section(ProfileStrings.sectionAvatar.localized) {
             if let avatarUrl = viewModel.rider?.avatarUrl,
                let url = URL(string: avatarUrl) {
                 HStack {
@@ -133,22 +133,21 @@ public struct ProfileView: View {
                 }
             }
             
-            // TODO: Add image picker when PhotosUI is available
-            Text("Avatar upload coming soon")
+                        Text(ProfileStrings.avatarUploadComingSoon.localized)
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }
     }
     
     private var locationSection: some View {
-        Section("Base Location") {
-            TextField("Location Name", text: $viewModel.locationName)
+                    Section(ProfileStrings.sectionBaseLocation.localized) {
+                        TextField(ProfileStrings.locationNamePlaceholder.localized, text: $viewModel.locationName)
             
             HStack {
-                TextField("Latitude", text: $viewModel.latitudeText)
+                            TextField(ProfileStrings.latitudePlaceholder.localized, text: $viewModel.latitudeText)
                     .keyboardType(.decimalPad)
                 
-                TextField("Longitude", text: $viewModel.longitudeText)
+                            TextField(ProfileStrings.longitudePlaceholder.localized, text: $viewModel.longitudeText)
                     .keyboardType(.decimalPad)
             }
             
@@ -160,7 +159,7 @@ public struct ProfileView: View {
                         ProgressView()
                             .controlSize(.small)
                     }
-                    Text("Save Location")
+                    Text(ProfileStrings.saveLocationButton.localized)
                 }
                 .frame(maxWidth: .infinity)
             }
@@ -169,9 +168,9 @@ public struct ProfileView: View {
     }
     
     private var sportsSection: some View {
-        Section("Sports") {
+        Section(ProfileStrings.sectionSports.localized) {
             if viewModel.allSports.isEmpty {
-                Text("Loading sports...")
+                Text(ProfileStrings.loadingSports.localized)
                     .foregroundStyle(.secondary)
             } else {
                 ForEach(viewModel.allSports) { sport in
@@ -200,13 +199,13 @@ public struct ProfileView: View {
     }
     
     private var dangerZoneSection: some View {
-        Section("Danger Zone") {
+        Section(ProfileStrings.sectionDangerZone.localized) {
             Button(role: .destructive) {
                 showDeleteConfirmation = true
             } label: {
                 HStack {
                     Image(systemName: "trash")
-                    Text("Delete Account")
+                    Text(ProfileStrings.deleteAccountButton.localized)
                 }
                 .frame(maxWidth: .infinity)
             }
@@ -230,24 +229,24 @@ private struct SportRow: View {
     var body: some View {
         DisclosureGroup(isExpanded: $isExpanded) {
             VStack(alignment: .leading, spacing: 12) {
-                Picker("Level", selection: $selectedLevel) {
+                Picker(ProfileStrings.levelPickerTitle.localized, selection: $selectedLevel) {
                     ForEach(SkillLevel.allCases, id: \.self) { level in
                         Text(level.displayName).tag(level)
                     }
                 }
                 .pickerStyle(.segmented)
                 
-                Toggle("Available as Mentor", isOn: $isMentor)
+                Toggle(ProfileStrings.availableAsMentorToggle.localized, isOn: $isMentor)
                 
                 HStack {
-                    Button("Save") {
+                    Button(ProfileStrings.saveButton.localized) {
                         onUpsert(selectedLevel, isMentor)
                     }
                     .buttonStyle(.borderedProminent)
                     .disabled(isLoading)
                     
                     if riderSport != nil {
-                        Button("Remove", role: .destructive) {
+                        Button(ProfileStrings.removeButton.localized, role: .destructive) {
                             onRemove()
                         }
                         .buttonStyle(.bordered)

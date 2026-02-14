@@ -27,24 +27,21 @@ struct GuestTabView: View {
             GuestWelcomeView(
             )
             .tabItem {
-                Label("Start", systemImage: "house")
+                Label(AppStrings.guestTabHome.localized, systemImage: "house")
             }
             .tag(GuestTab.welcome)
             
             PlacesRootView(
                 placesService: dependencies.placesService,
             )
-            .tabItem { Label("Spots", systemImage: "map") }
-            .tag(UserTab.spots)
-
             .tabItem {
-                Label("Odkrywaj", systemImage: "map")
+                Label(AppStrings.guestTabExplore.localized, systemImage: "map")
             }
             .tag(GuestTab.explore)
             
             Color.clear
                 .tabItem {
-                    Label("Zaloguj", systemImage: "person.crop.circle")
+                    Label(AppStrings.guestTabLogin.localized, systemImage: "person.crop.circle")
                 }
                 .tag(GuestTab.login)
         }

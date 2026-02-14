@@ -21,12 +21,11 @@ public struct AppError: Error, Equatable, Sendable, Identifiable {
 }
 
 public extension AppError {
-//    TODO: Api error mapping 
     static func from(_ error: Error) -> AppError {
         AppError(
-            title: "Coś poszło nie tak",
-            message: "Nie udało się pobrać danych. Spróbuj ponownie.",
-            recoverySuggestion: "Sprawdź połączenie z internetem."
+            title: CommonStrings.genericErrorTitle.localized,
+            message: CommonStrings.genericErrorMessage.localized,
+            recoverySuggestion: CommonStrings.genericErrorRecovery.localized
         )
     }
 }

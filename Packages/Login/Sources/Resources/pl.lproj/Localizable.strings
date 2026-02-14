@@ -1,0 +1,42 @@
+/* Login View */
+"login.navigation_title" = "Logowanie";
+"login.app_name" = "ShredMate";
+"login.subtitle" = "Zaloguj się, aby kontynuować";
+"login.email_placeholder" = "Email";
+"login.password_placeholder" = "Hasło";
+"login.sign_in_button" = "Zaloguj się";
+"login.forgot_password_button" = "Nie pamiętasz hasła?";
+"login.no_account_prompt" = "Nie masz konta?";
+"login.sign_up_button" = "Zarejestruj się";
+"login.error_title" = "Błąd";
+"login.ok" = "OK";
+
+/* Register View */
+"register.navigation_title" = "Załóż konto";
+"register.error_title" = "Błąd";
+"register.ok" = "OK";
+"register.header_title" = "Dołącz do ShredMate";
+"register.name_placeholder" = "Imię";
+"register.email_placeholder" = "Email";
+"register.password_placeholder" = "Hasło";
+"register.confirm_password_placeholder" = "Potwierdź hasło";
+"register.password_mismatch" = "Hasła nie są takie same";
+"register.password_hint" = "Hasło musi mieć co najmniej 8 znaków";
+"register.create_account_button" = "Załóż konto";
+"register.already_have_account" = "Masz już konto?";
+"register.sign_in_button" = "Zaloguj się";
+
+/* Forgot Password View */
+"forgot_password.navigation_title" = "Reset hasła";
+"forgot_password.error_title" = "Błąd";
+"forgot_password.ok" = "OK";
+"forgot_password.header_title" = "Nie pamiętasz hasła?";
+"forgot_password.header_subtitle" = "Podaj email, a wyślemy link do resetu hasła";
+"forgot_password.email_placeholder" = "Email";
+"forgot_password.send_reset_link_button" = "Wyślij link resetujący";
+"forgot_password.success_title" = "Sprawdź skrzynkę!";
+"forgot_password.success_message_format" = "Wysłaliśmy link do resetu hasła na %@";
+"forgot_password.back_to_sign_in_button" = "Wróć do logowania";
+
+/* Auth Flow */
+"auth_flow.close_accessibility_label" = "Zamknij logowanie";

@@ -12,12 +12,12 @@ struct SpotRowPresenter: Sendable {
         SpotRowViewData(
             id: place.id,
             title: place.name,
-            subtitle: "—", // TODO: from BE
+            subtitle: PlacesStrings.spotSubtitlePlaceholder.localized,
             description: place.description,
-            sportTag: sport.rawValue,
-            ratingText: "★ 4.2",      // TODO: from BE
-            ridersText: "Riders 18",  // TODO: from BE
-            mentorsText: "Mentorzy 4",
+            sportTag: sport.localizedTitle,
+            rating: 4.2,
+            ridersCount: 18,
+            mentorsCount: 4,
             avatar: place.avatarURL != nil ? .imageRemote(place.avatarURL) : .initials(initials(from: place.name))
         )
     }

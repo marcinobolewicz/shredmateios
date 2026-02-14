@@ -28,13 +28,13 @@ public struct ForgotPasswordView: View {
             }
             .padding(theme.spacing.md)
         }
-        .navigationTitle("Reset Password")
+        .navigationTitle(ForgotPasswordStrings.navigationTitle.localized)
         .navigationBarTitleDisplayMode(.large)
-        .alert("Error", isPresented: .init(
+        .alert(ForgotPasswordStrings.errorTitle.localized, isPresented: .init(
             get: { viewModel.errorMessage != nil },
             set: { if !$0 { viewModel.clearError() } }
         )) {
-            Button("OK") { viewModel.clearError() }
+            Button(ForgotPasswordStrings.ok.localized) { viewModel.clearError() }
         } message: {
             Text(viewModel.errorMessage ?? "")
         }
@@ -48,10 +48,10 @@ public struct ForgotPasswordView: View {
                 .font(.system(size: 50))
                 .foregroundStyle(theme.colors.warning)
 
-            Text("Forgot your password?")
+            Text(ForgotPasswordStrings.headerTitle.localized)
                 .dsTextStyle(.title2)
 
-            Text("Enter your email and we'll send you a reset link")
+            Text(ForgotPasswordStrings.headerSubtitle.localized)
                 .dsTextStyle(.subheadline)
                 .multilineTextAlignment(.center)
         }
@@ -59,7 +59,7 @@ public struct ForgotPasswordView: View {
     }
 
     private var formSection: some View {
-        DSTextField("Email", text: $viewModel.email)
+        DSTextField(ForgotPasswordStrings.emailPlaceholder.localized, text: $viewModel.email)
             .textContentType(.emailAddress)
             .keyboardType(.emailAddress)
             .textInputAutocapitalization(.never)
@@ -68,7 +68,7 @@ public struct ForgotPasswordView: View {
 
     private var resetButton: some View {
         DSLoadingButton(
-            "Send Reset Link",
+            ForgotPasswordStrings.sendResetLinkButton.localized,
             isLoading: viewModel.isLoading,
             isDisabled: !viewModel.isFormValid
         ) {
@@ -82,10 +82,10 @@ public struct ForgotPasswordView: View {
                 .font(.system(size: 60))
                 .foregroundStyle(theme.colors.success)
 
-            Text("Check your inbox!")
+            Text(ForgotPasswordStrings.successTitle.localized)
                 .dsTextStyle(.heading)
 
-            Text("We've sent a password reset link to \(viewModel.email)")
+            Text(ForgotPasswordStrings.successMessage(email: viewModel.email))
                 .dsTextStyle(.subheadline)
                 .multilineTextAlignment(.center)
         }
@@ -93,7 +93,7 @@ public struct ForgotPasswordView: View {
     }
 
     private var loginLink: some View {
-        Button("Back to Sign In") {
+        Button(ForgotPasswordStrings.backToSignInButton.localized) {
             viewModel.navigateBack()
         }
         .buttonStyle(.dsGhost)

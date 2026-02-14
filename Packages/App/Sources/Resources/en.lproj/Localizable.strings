@@ -1,0 +1,11 @@
+"app.guest_welcome_title" = "Guest Welcome";
+"app.guest_tab_home" = "Start";
+"app.guest_tab_explore" = "Explore";
+"app.guest_tab_login" = "Sign In";
+"app.user_tab_home" = "Home";
+"app.user_tab_spots" = "Spots";
+"app.user_tab_chat" = "Chat";
+"app.user_tab_profile" = "Profile";
+"app.home_navigation_title" = "Home";
+"app.home_welcome_title" = "Welcome to ShredMate!";
+"app.home_sign_out" = "Sign Out";
