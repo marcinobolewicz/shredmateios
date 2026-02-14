@@ -1,0 +1,8 @@
+"conversations.root_navigation_title" = "Konwersacje";
+"conversations.list_empty_title" = "Brak konwersacji";
+"conversations.list_empty_description" = "Rozpocznij nową rozmowę klikając +";
+"conversations.list_failed_title" = "Nie udało się wczytać";
+"conversations.list_failed_description" = "Sprawdź internet i spróbuj ponownie.";
+"conversations.new_conversation_title" = "Nowa konwersacja";
+"conversations.search_rider_placeholder" = "Szukaj ridera...";
+"conversations.chat_input_placeholder" = "Napisz wiadomość...";

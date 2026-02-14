@@ -28,7 +28,7 @@ public struct PlacesRootView: View {
                 placesService: placesService,
                 authState: authState
             )
-            .navigationTitle("Spots")
+            .navigationTitle(PlacesStrings.rootNavigationTitle.localized)
             .placesDestinations(
                 placesService: placesService
             )

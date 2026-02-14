@@ -2,6 +2,7 @@ import SwiftUI
 import Core
 import Auth
 import Theme
+import Common
 
 /// Login view with navigation to Register and ForgotPassword
 public struct LoginView: View {
@@ -23,13 +24,13 @@ public struct LoginView: View {
             }
             .padding(theme.spacing.md)
         }
-        .navigationTitle("Login")
+        .navigationTitle(LoginStrings.navigationTitle.localized)
         .navigationBarTitleDisplayMode(.large)
-        .alert("Error", isPresented: .init(
+        .alert(CommonStrings.errorTitle.localized, isPresented: .init(
             get: { viewModel.errorMessage != nil },
             set: { if !$0 { viewModel.clearError() } }
         )) {
-            Button("OK") { viewModel.clearError() }
+            Button(CommonStrings.okButton.localized) { viewModel.clearError() }
         } message: {
             Text(viewModel.errorMessage ?? "")
         }
@@ -49,10 +50,10 @@ public struct LoginView: View {
                         .fill(.black)
                 )
 
-            Text("ShredMate")
+            Text(LoginStrings.appName.localized)
                 .dsTextStyle(.largeTitle)
 
-            Text("Sign in to continue")
+            Text(LoginStrings.subtitle.localized)
                 .dsTextStyle(.subheadline)
         }
         .padding(.vertical, theme.spacing.lg)
@@ -60,20 +61,20 @@ public struct LoginView: View {
 
     private var formSection: some View {
         VStack(spacing: theme.spacing.md) {
-            DSTextField("Email", text: $viewModel.email)
+            DSTextField(LoginStrings.emailPlaceholder.localized, text: $viewModel.email)
                 .textContentType(.emailAddress)
                 .keyboardType(.emailAddress)
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
 
-            DSSecureField("Password", text: $viewModel.password)
+            DSSecureField(LoginStrings.passwordPlaceholder.localized, text: $viewModel.password)
                 .textContentType(.password)
         }
     }
 
     private var actionsSection: some View {
         DSLoadingButton(
-            "Sign In",
+            LoginStrings.signInButton.localized,
             isLoading: viewModel.isLoading,
             isDisabled: !viewModel.isFormValid
         ) {
@@ -83,16 +84,16 @@ public struct LoginView: View {
 
     private var navigationLinks: some View {
         VStack(spacing: theme.spacing.md) {
-            Button("Forgot Password?") {
+            Button(LoginStrings.forgotPasswordButton.localized) {
                 viewModel.navigateToForgotPassword()
             }
             .buttonStyle(.dsGhost)
 
             HStack(spacing: theme.spacing.xxs) {
-                Text("Don't have an account?")
+                Text(LoginStrings.noAccountPrompt.localized)
                     .dsTextStyle(.subheadline)
 
-                Button("Sign Up") {
+                Button(LoginStrings.signUpButton.localized) {
                     viewModel.navigateToRegister()
                 }
                 .buttonStyle(.dsGhost)

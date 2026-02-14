@@ -23,7 +23,7 @@ public struct HomeView: View {
                 logoutButton
             }
             .padding()
-            .navigationTitle("Home")
+            .navigationTitle(AppStrings.homeNavigationTitle.localized)
         }
     }
     
@@ -41,7 +41,7 @@ public struct HomeView: View {
                         .fill(.black)
                 )
             
-            Text("Welcome to ShredMate!")
+            Text(AppStrings.homeWelcomeTitle.localized)
                 .font(.largeTitle)
                 .fontWeight(.bold)
         }
@@ -78,7 +78,7 @@ public struct HomeView: View {
             if authState.isLoading {
                 ProgressView()
             } else {
-                Text("Sign Out")
+                Text(AppStrings.homeSignOut.localized)
             }
         }
         .buttonStyle(.bordered)

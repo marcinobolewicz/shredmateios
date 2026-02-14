@@ -24,8 +24,8 @@ public struct ErrorAlertModifier: ViewModifier {
                 Alert(
                     title: Text(err.title),
                     message: Text([err.message, err.recoverySuggestion].compactMap { $0 }.joined(separator: "\n")),
-                    primaryButton: .default(Text("Spróbuj ponownie"), action: retry),
-                    secondaryButton: .cancel(Text("OK"))
+                    primaryButton: .default(Text(CommonStrings.retryButton.localized), action: retry),
+                    secondaryButton: .cancel(Text(CommonStrings.okButton.localized))
                 )
             }
     }

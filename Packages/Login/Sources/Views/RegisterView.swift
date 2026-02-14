@@ -2,6 +2,7 @@ import SwiftUI
 import Core
 import Auth
 import Theme
+import Common
 
 /// Register view for new user sign up
 public struct RegisterView: View {
@@ -23,13 +24,13 @@ public struct RegisterView: View {
             }
             .padding(theme.spacing.md)
         }
-        .navigationTitle("Create Account")
+        .navigationTitle(RegisterStrings.navigationTitle.localized)
         .navigationBarTitleDisplayMode(.large)
-        .alert("Error", isPresented: .init(
+        .alert(CommonStrings.errorTitle.localized, isPresented: .init(
             get: { viewModel.errorMessage != nil },
             set: { if !$0 { viewModel.clearError() } }
         )) {
-            Button("OK") { viewModel.clearError() }
+            Button(CommonStrings.okButton.localized) { viewModel.clearError() }
         } message: {
             Text(viewModel.errorMessage ?? "")
         }
@@ -43,7 +44,7 @@ public struct RegisterView: View {
                 .font(.system(size: 50))
                 .foregroundStyle(theme.colors.primary)
 
-            Text("Join ShredMate")
+            Text(RegisterStrings.headerTitle.localized)
                 .dsTextStyle(.title2)
         }
         .padding(.vertical, theme.spacing.md)
@@ -51,33 +52,33 @@ public struct RegisterView: View {
 
     private var formSection: some View {
         VStack(spacing: theme.spacing.md) {
-            DSTextField("Name", text: $viewModel.name)
+            DSTextField(RegisterStrings.namePlaceholder.localized, text: $viewModel.name)
                 .textContentType(.name)
                 .textInputAutocapitalization(.words)
 
-            DSTextField("Email", text: $viewModel.email)
+            DSTextField(RegisterStrings.emailPlaceholder.localized, text: $viewModel.email)
                 .textContentType(.emailAddress)
                 .keyboardType(.emailAddress)
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
 
-            DSSecureField("Password", text: $viewModel.password)
+            DSSecureField(RegisterStrings.passwordPlaceholder.localized, text: $viewModel.password)
                 .textContentType(.newPassword)
 
-            DSSecureField("Confirm Password", text: $viewModel.confirmPassword)
+            DSSecureField(RegisterStrings.confirmPasswordPlaceholder.localized, text: $viewModel.confirmPassword)
                 .textContentType(.newPassword)
 
             if viewModel.passwordMismatch {
-                DSErrorLabel("Passwords don't match")
+                DSErrorLabel(RegisterStrings.passwordMismatch.localized)
             }
 
-            DSHintLabel("Password must be at least 8 characters")
+            DSHintLabel(RegisterStrings.passwordHint.localized)
         }
     }
 
     private var registerButton: some View {
         DSLoadingButton(
-            "Create Account",
+            RegisterStrings.createAccountButton.localized,
             isLoading: viewModel.isLoading,
             isDisabled: !viewModel.isFormValid
         ) {
@@ -87,10 +88,10 @@ public struct RegisterView: View {
 
     private var loginLink: some View {
         HStack(spacing: theme.spacing.xxs) {
-            Text("Already have an account?")
+            Text(RegisterStrings.alreadyHaveAccount.localized)
                 .dsTextStyle(.subheadline)
 
-            Button("Sign In") {
+            Button(RegisterStrings.signInButton.localized) {
                 viewModel.navigateBack()
             }
             .buttonStyle(.dsGhost)

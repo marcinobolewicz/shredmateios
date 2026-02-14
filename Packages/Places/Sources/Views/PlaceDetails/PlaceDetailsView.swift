@@ -13,7 +13,7 @@ struct PlaceDetailsView: View {
 
     var body: some View {
         VStack {
-            Text("Places details")
+            Text(PlacesStrings.detailsTitle.localized)
                 .dsTextStyle(.title)
                 .padding(theme.spacing.md)
         }

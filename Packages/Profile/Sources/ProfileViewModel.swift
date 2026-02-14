@@ -62,7 +62,7 @@ public final class ProfileViewModel {
             rider = fetchedRider
             populateFieldsFromRider(fetchedRider)
         } catch {
-            self.error = "Failed to load profile: \(error.localizedDescription)"
+            self.error = ProfileStrings.failedLoadProfile(error.localizedDescription)
             return
         }
         
@@ -116,19 +116,19 @@ public final class ProfileViewModel {
         do {
             let updatedRider = try await riderService.updateMyRider(request)
             rider = updatedRider
-            successMessage = "Profile updated successfully"
+            successMessage = ProfileStrings.profileUpdatedSuccess.localized
             
             // Refresh authState rider
             await authState.fetchRiderProfile()
         } catch {
-            self.error = "Failed to update profile: \(error.localizedDescription)"
+            self.error = ProfileStrings.failedUpdateProfile(error.localizedDescription)
         }
     }
     
     /// Upload avatar image
     public func uploadAvatar() async {
         guard let imageData = avatarImage else {
-            error = "No image selected"
+            error = ProfileStrings.noImageSelected.localized
             return
         }
         
@@ -154,12 +154,12 @@ public final class ProfileViewModel {
                 )
             }
             
-            successMessage = "Avatar uploaded successfully"
+            successMessage = ProfileStrings.avatarUploadedSuccess.localized
             avatarImage = nil
             
             await authState.fetchRiderProfile()
         } catch {
-            self.error = "Failed to upload avatar: \(error.localizedDescription)"
+            self.error = ProfileStrings.failedUploadAvatar(error.localizedDescription)
         }
     }
     
@@ -171,7 +171,7 @@ public final class ProfileViewModel {
         
         guard let lat = Double(latitudeText),
               let lng = Double(longitudeText) else {
-            error = "Invalid coordinates"
+                        error = ProfileStrings.invalidCoordinates.localized
             return
         }
         
@@ -189,9 +189,9 @@ public final class ProfileViewModel {
         do {
             let updated = try await riderService.updateMyBaseLocation(request)
             baseLocation = updated
-            successMessage = "Location saved successfully"
+            successMessage = ProfileStrings.locationSavedSuccess.localized
         } catch {
-            self.error = "Failed to save location: \(error.localizedDescription)"
+            self.error = ProfileStrings.failedSaveLocation(error.localizedDescription)
         }
     }
     
@@ -216,7 +216,7 @@ public final class ProfileViewModel {
                 riderSports.append(updatedSport)
             }
         } catch {
-            self.error = "Failed to update sport: \(error.localizedDescription)"
+            self.error = ProfileStrings.failedUpdateSport(error.localizedDescription)
         }
     }
     
@@ -231,7 +231,7 @@ public final class ProfileViewModel {
             try await riderService.deleteMyRiderSport(sportId: sportId)
             riderSports.removeAll { $0.sportId == sportId }
         } catch {
-            self.error = "Failed to remove sport: \(error.localizedDescription)"
+            self.error = ProfileStrings.failedRemoveSport(error.localizedDescription)
         }
     }
     
@@ -256,7 +256,7 @@ public final class ProfileViewModel {
             try await riderService.deleteMyAccount()
             await authState.handleSessionInvalidation()
         } catch {
-            self.error = "Failed to delete account: \(error.localizedDescription)"
+            self.error = ProfileStrings.failedDeleteAccount(error.localizedDescription)
             isLoading = false
         }
     }
@@ -279,17 +279,17 @@ public final class ProfileViewModel {
         let trimmed = displayName.trimmingCharacters(in: .whitespacesAndNewlines)
         
         if trimmed.isEmpty {
-            error = "Display name is required"
+            error = ProfileStrings.displayNameRequired.localized
             return false
         }
         
         if trimmed.count > 40 {
-            error = "Display name must be 40 characters or less"
+            error = ProfileStrings.displayNameMaxLength(40)
             return false
         }
         
         if description.count > 1000 {
-            error = "Description must be 1000 characters or less"
+            error = ProfileStrings.descriptionMaxLength(1000)
             return false
         }
         
@@ -299,17 +299,17 @@ public final class ProfileViewModel {
     private func validateLocationFields() -> Bool {
         guard let lat = Double(latitudeText),
               let lng = Double(longitudeText) else {
-            error = "Please enter valid coordinates"
+            error = ProfileStrings.enterValidCoordinates.localized
             return false
         }
         
         if lat < -90 || lat > 90 {
-            error = "Latitude must be between -90 and 90"
+            error = ProfileStrings.latitudeRangeError.localized
             return false
         }
         
         if lng < -180 || lng > 180 {
-            error = "Longitude must be between -180 and 180"
+            error = ProfileStrings.longitudeRangeError.localized
             return false
         }
         

@@ -12,12 +12,21 @@ import Theme
 // MARK: - Models
 
 enum Sport: String, CaseIterable, Identifiable {
-    case snowboard = "Snowboard"
-    case narty = "Narty"
-    case kitesurfing = "Kitesurfing"
-    case wakeboard = "Wakeboard"
+    case snowboard
+    case narty
+    case kitesurfing
+    case wakeboard
 
     var id: String { rawValue }
+
+    var localizedTitle: String {
+        switch self {
+        case .snowboard: PlacesStrings.sportSnowboard.localized
+        case .narty: PlacesStrings.sportSki.localized
+        case .kitesurfing: PlacesStrings.sportKitesurfing.localized
+        case .wakeboard: PlacesStrings.sportWakeboard.localized
+        }
+    }
 }
 
 struct Spot: Identifiable, Equatable {
@@ -73,9 +82,9 @@ struct SpotRow: View {
                     .lineLimit(2)
 
                 HStack(spacing: theme.spacing.sm) {
-                    StatRating(value: Double(viewData.ratingText) ?? 0)
-                    StatText(label: "riders", value: Int(viewData.ridersText.filter(\.isNumber)) ?? 0)
-                    StatText(label: "mentors", value: Int(viewData.mentorsText.filter(\.isNumber)) ?? 0)
+                    StatRating(value: viewData.rating)
+                    StatText(label: PlacesStrings.ridersLabel.localized, value: viewData.ridersCount)
+                    StatText(label: PlacesStrings.mentorsLabel.localized, value: viewData.mentorsCount)
                 }
             }
 

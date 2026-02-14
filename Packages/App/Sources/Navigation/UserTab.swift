@@ -28,17 +28,17 @@ struct UserTabView: View {
                 authState: dependencies.authState,
                 riderService: dependencies.riderService
             )
-            .tabItem { Label("Home", systemImage: "house") }
+            .tabItem { Label(AppStrings.userTabHome.localized, systemImage: "house") }
             .tag(UserTab.home)
 
             PlacesRootView(
                 placesService: dependencies.placesService,
             )
-            .tabItem { Label("Spots", systemImage: "map") }
+            .tabItem { Label(AppStrings.userTabSpots.localized, systemImage: "map") }
             .tag(UserTab.spots)
 
             ConversationsView()
-            .tabItem { Label("Chat", systemImage: "message") }
+            .tabItem { Label(AppStrings.userTabChat.localized, systemImage: "message") }
             .tag(UserTab.messages)
 
             ProfileView(
@@ -47,7 +47,7 @@ struct UserTabView: View {
                     authState: dependencies.authState
                 )
             )
-            .tabItem { Label("Profil", systemImage: "person") }
+            .tabItem { Label(AppStrings.userTabProfile.localized, systemImage: "person") }
             .tag(UserTab.profile)
         }
     }

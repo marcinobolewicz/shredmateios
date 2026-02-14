@@ -34,14 +34,14 @@ public struct PlacesView: View {
 
     private var headerSection: some View {
         VStack(spacing: theme.spacing.sm) {
-            Picker("Display Mode", selection: $viewModel.displayMode) {
+            Picker(PlacesStrings.pickerDisplayMode.localized, selection: $viewModel.displayMode) {
                 ForEach(PlacesDisplayMode.allCases) { mode in
                     Text(mode.title).tag(mode)
                 }
             }
             .pickerStyle(.segmented)
 
-            DSSearchBar("Search places...", text: $viewModel.searchText)
+            DSSearchBar(PlacesStrings.searchPlaceholder.localized, text: $viewModel.searchText)
                 .task { await viewModel.loadOnAppear() }
         }
         .padding(theme.spacing.md)
@@ -62,7 +62,7 @@ public struct PlacesView: View {
             HStack(spacing: theme.spacing.sm) {
                 ForEach(Sport.allCases) { sport in
                     DSChip(
-                        title: sport.rawValue,
+                        title: sport.localizedTitle,
                         isSelected: viewModel.selectedSport == sport
                     ) {
                         withAnimation(.snappy(duration: Constants.Animation.chipDuration)) {

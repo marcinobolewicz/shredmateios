@@ -1,0 +1,26 @@
+/* Places */
+"places.root_navigation_title" = "Spots";
+"places.list_navigation_title" = "Explore";
+"places.details_title" = "Place details";
+
+"places.picker_display_mode" = "Display Mode";
+"places.display_mode_list" = "List";
+"places.display_mode_map" = "Map";
+"places.search_placeholder" = "Search places...";
+
+"places.empty_title" = "No places";
+"places.empty_description" = "Try changing filters or search query.";
+
+"places.failed_title" = "Could not load places";
+"places.failed_description" = "Check your internet connection and try again.";
+"places.refresh_button" = "Refresh";
+
+"places.sport_snowboard" = "Snowboard";
+"places.sport_ski" = "Ski";
+"places.sport_kitesurfing" = "Kitesurfing";
+"places.sport_wakeboard" = "Wakeboard";
+
+"places.riders_label" = "Riders";
+"places.mentors_label" = "Mentors";
+
+"places.spot_subtitle_placeholder" = "—";
