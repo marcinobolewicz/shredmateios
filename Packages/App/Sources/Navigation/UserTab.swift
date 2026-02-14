@@ -37,7 +37,11 @@ struct UserTabView: View {
             .tabItem { Label(AppStrings.userTabSpots.localized, systemImage: "map") }
             .tag(UserTab.spots)
 
-            ConversationsView()
+            ConversationsView(
+                repository: dependencies.chatRepository,
+                riderService: dependencies.riderService,
+                currentUserId: dependencies.authState.user?.id ?? ""
+            )
             .tabItem { Label(AppStrings.userTabChat.localized, systemImage: "message") }
             .tag(UserTab.messages)
 

@@ -8,7 +8,7 @@
 import Foundation
 
 struct ConversationRowViewData: Identifiable, Equatable, Sendable {
-    let id: UUID
+    let id: String
     let participantName: String
     let lastMessage: String
     let dateText: String

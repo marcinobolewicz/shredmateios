@@ -9,6 +9,15 @@ import Foundation
 
 public enum RiderAPI {
     
+    // MARK: - All Riders
+
+    /// Lists all riders.
+    ///
+    /// `GET /riders`
+    public static func all() -> Endpoint<[Rider]> {
+        .get("/riders", auth: .bearerToken)
+    }
+
     // MARK: - Profile
     public static func me() -> Endpoint<Rider> {
         .get("/riders/me", auth: .bearerToken)

@@ -9,17 +9,28 @@
 //
 
 import SwiftUI
-import Theme
+import Networking
 
 public struct ConversationsView: View {
-    public init() {}
+    private let repository: ChatRepository
+    private let riderService: any RiderServiceProtocol
+    private let currentUserId: String
+
+    public init(
+        repository: ChatRepository,
+        riderService: any RiderServiceProtocol,
+        currentUserId: String
+    ) {
+        self.repository = repository
+        self.riderService = riderService
+        self.currentUserId = currentUserId
+    }
 
     public var body: some View {
-        ConversationsRootView()
+        ConversationsRootView(
+            repository: repository,
+            riderService: riderService,
+            currentUserId: currentUserId
+        )
     }
-}
-
-#Preview {
-    ConversationsView()
-        .environment(AppTheme.default)
 }

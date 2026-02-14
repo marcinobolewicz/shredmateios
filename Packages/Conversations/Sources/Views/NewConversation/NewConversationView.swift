@@ -13,13 +13,13 @@ struct NewConversationView: View {
     @Environment(AppTheme.self) private var theme
     @Environment(ConversationsRouter.self) private var router
     @Environment(\.dismiss) private var dismiss
-    @State private var viewModel = NewConversationViewModel()
+    @State var viewModel: NewConversationViewModel
 
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
                 searchBar
-                ridersList
+                content
             }
             .background(theme.colors.background)
             .navigationTitle(ConversationsStrings.newConversationTitle.localized)
@@ -30,6 +30,28 @@ struct NewConversationView: View {
                 }
             }
             .task { viewModel.load() }
+        }
+    }
+
+    @ViewBuilder
+    private var content: some View {
+        switch viewModel.state {
+        case .idle, .loading:
+            ProgressView()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+        case .loaded:
+            ridersList
+
+        case .failed:
+            ContentUnavailableView {
+                Label(ConversationsStrings.listFailedTitle.localized, systemImage: "exclamationmark.triangle")
+            } description: {
+                Text(ConversationsStrings.listFailedDescription.localized)
+            } actions: {
+                Button(CommonStrings.retryButton.localized) { viewModel.retry() }
+                    .buttonStyle(.dsPrimary)
+            }
         }
     }
 
@@ -88,14 +110,18 @@ struct NewConversationView: View {
     }
 
     private func startConversation(with rider: RiderSearchRowViewData) {
-        dismiss()
+        Task {
+            await viewModel.startConversation(with: rider)
 
-        // Small delay to let the sheet dismiss before navigating
-        Task { @MainActor in
+            guard let conversation = viewModel.createdConversation else { return }
+
+            dismiss()
+
+            // Small delay to let the sheet dismiss before navigating
             try? await Task.sleep(for: .milliseconds(300))
             router.navigate(to: .chat(
-                conversationId: UUID(), // New conversation
-                participantName: rider.displayName
+                conversationId: conversation.id,
+                participantName: conversation.otherUser.name ?? conversation.otherUser.email ?? ""
             ))
         }
     }

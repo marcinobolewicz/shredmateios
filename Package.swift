@@ -19,6 +19,9 @@ let package = Package(
         .library(name: "Conversations", targets: ["Conversations"]),
         .library(name: "Theme", targets: ["Theme"])
     ],
+    dependencies: [
+        .package(url: "https://github.com/socketio/socket.io-client-swift", from: "16.1.1")
+    ],
     targets: [
         // Theme Package
         .target(
@@ -169,7 +172,14 @@ let package = Package(
         // Conversations Package
         .target(
             name: "Conversations",
-            dependencies: ["Core", "Networking", "Auth", "Common", "Theme"],
+            dependencies: [
+                "Core",
+                "Networking",
+                "Auth",
+                "Common",
+                "Theme",
+                .product(name: "SocketIO", package: "socket.io-client-swift")
+            ],
             path: "Packages/Conversations/Sources",
             resources: [
                 .process("Resources")

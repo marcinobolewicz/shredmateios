@@ -8,7 +8,7 @@
 import Foundation
 
 struct RiderSearchRowViewData: Identifiable, Equatable, Sendable {
-    let id: UUID
+    let id: String
     let displayName: String
     let avatarInitials: String
     let avatarURL: URL?

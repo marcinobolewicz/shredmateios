@@ -18,11 +18,9 @@ struct MessageBubbleView: View {
 
             VStack(alignment: viewData.isFromCurrentUser ? .trailing : .leading, spacing: 2) {
                 Text(viewData.text)
-                    .dsTextStyle(.body)
-                    .foregroundStyle(
-                        viewData.isFromCurrentUser
-                            ? theme.colors.primaryForeground
-                            : theme.colors.textPrimary
+                    .dsTextStyle(
+                        .body,
+                        color: viewData.isFromCurrentUser ? \.primaryForeground : nil
                     )
 
                 Text(viewData.timeText)

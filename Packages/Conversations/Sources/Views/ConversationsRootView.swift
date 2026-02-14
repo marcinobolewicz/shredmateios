@@ -7,12 +7,25 @@
 
 import SwiftUI
 import Theme
+import Networking
 
 public struct ConversationsRootView: View {
     @State private var router = ConversationsRouter()
-    @State private var viewModel = ConversationsListViewModel()
+    private let viewModel: ConversationsListViewModel
+    private let repository: ChatRepository
+    private let riderService: any RiderServiceProtocol
+    private let currentUserId: String
 
-    public init() {}
+    public init(
+        repository: ChatRepository,
+        riderService: any RiderServiceProtocol,
+        currentUserId: String
+    ) {
+        self.repository = repository
+        self.riderService = riderService
+        self.currentUserId = currentUserId
+        self.viewModel = ConversationsListViewModel(repository: repository)
+    }
 
     public var body: some View {
         @Bindable var router = router
@@ -29,12 +42,20 @@ public struct ConversationsRootView: View {
                         }
                     }
                 }
-                .conversationsDestinations()
+                .conversationsDestinations(
+                    repository: repository,
+                    currentUserId: currentUserId
+                )
         }
         .environment(router)
         .fullScreenCover(isPresented: $router.showNewConversation) {
-            NewConversationView()
-                .environment(router)
+            NewConversationView(
+                viewModel: NewConversationViewModel(
+                    repository: repository,
+                    riderService: riderService
+                )
+            )
+            .environment(router)
         }
     }
 }
