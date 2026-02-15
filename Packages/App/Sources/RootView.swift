@@ -1,8 +1,7 @@
 import SwiftUI
 import Networking
 import Login
-
-import SwiftUI
+import Conversations
 
 public struct RootView: View {
     private var dependencies: AppDependencies
@@ -40,11 +39,33 @@ public struct RootView: View {
         .task {
             await authState.restoreSession()
             router.flow = authState.isLoggedIn ? .user : .guest
+
+            if authState.isLoggedIn {
+                await connectChat()
+            }
         }
         .onChange(of: authState.isLoggedIn) { _, isLoggedIn in
             router.flow = isLoggedIn ? .user : .guest
+
+            if isLoggedIn {
+                Task { await connectChat() }
+            } else {
+                disconnectChat()
+            }
         }
         .environment(router)
+    }
+
+    // MARK: - Chat Lifecycle
+
+    private func connectChat() async {
+        await dependencies.chatLifecycleManager.onAuthenticated()
+        dependencies.chatEventHandler.startListening()
+    }
+
+    private func disconnectChat() {
+        dependencies.chatLifecycleManager.onLogout()
+        dependencies.chatEventHandler.stopListening()
     }
 }
 

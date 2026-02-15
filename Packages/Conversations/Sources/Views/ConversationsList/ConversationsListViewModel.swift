@@ -8,6 +8,7 @@
 import SwiftUI
 import Common
 import Networking
+import Observation
 
 @MainActor
 @Observable
@@ -18,6 +19,7 @@ final class ConversationsListViewModel {
 
     private let repository: ChatRepository
     private let presenter = ConversationRowPresenter()
+    private var isObserving = false
 
     init(repository: ChatRepository) {
         self.repository = repository
@@ -26,6 +28,7 @@ final class ConversationsListViewModel {
     // MARK: - Loading
 
     func loadOnAppear() {
+        startObservingRepository()
         guard case .idle = state else { return }
         load()
     }
@@ -72,6 +75,28 @@ final class ConversationsListViewModel {
     /// Re-maps rows from the repository. Call after socket events or mutations.
     func syncFromRepository() {
         mapRows()
+    }
+
+    // MARK: - Repository Observation
+
+    /// Starts observing repository changes (socket events, background refreshes).
+    /// Re-registers automatically until the ViewModel is deallocated.
+    private func startObservingRepository() {
+        guard !isObserving else { return }
+        isObserving = true
+        observeRepository()
+    }
+
+    private func observeRepository() {
+        withObservationTracking {
+            _ = repository.conversations
+        } onChange: { [weak self] in
+            Task { @MainActor [weak self] in
+                guard let self else { return }
+                self.syncFromRepository()
+                self.observeRepository()
+            }
+        }
     }
 
     // MARK: - Private

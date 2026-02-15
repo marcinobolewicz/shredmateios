@@ -29,6 +29,18 @@ struct NewConversationView: View {
                     Button(CommonStrings.cancelButton.localized) { dismiss() }
                 }
             }
+            .disabled(viewModel.isCreating)
+            .overlay {
+                if viewModel.isCreating {
+                    ZStack {
+                        Color.black.opacity(0.3)
+                            .ignoresSafeArea()
+                        ProgressView()
+                            .controlSize(.large)
+                            .tint(.white)
+                    }
+                }
+            }
             .task { viewModel.load() }
         }
     }

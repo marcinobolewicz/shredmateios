@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Networking
+import Observation
 
 @MainActor
 @Observable
@@ -17,6 +18,7 @@ final class ChatViewModel {
     private(set) var isLoadingOlder = false
     private(set) var hasOlderMessages = true
     private(set) var isSending = false
+    private(set) var anchorMessageId: String?
     var inputText: String = ""
 
     private let repository: ChatRepository
@@ -50,6 +52,7 @@ final class ChatViewModel {
 
     func loadOnAppear() {
         guard messages.isEmpty else { return }
+        startObservingRepository()
 
         Task {
             await repository.loadMessages(for: conversationId, refresh: true)
@@ -57,10 +60,31 @@ final class ChatViewModel {
         }
     }
 
+    // MARK: - Repository Observation
+
+    /// Starts observing repository changes (socket events, background refreshes).
+    /// Re-registers automatically until the ViewModel is deallocated.
+    private func startObservingRepository() {
+        observeRepository()
+    }
+
+    private func observeRepository() {
+        withObservationTracking {
+            _ = repository.messages(for: conversationId)
+        } onChange: { [weak self] in
+            Task { @MainActor [weak self] in
+                guard let self else { return }
+                self.syncMessages()
+                self.observeRepository()
+            }
+        }
+    }
+
     // MARK: - Older messages (infinite scroll up)
 
     func loadOlderMessages() {
         guard !isLoadingOlder, hasOlderMessages else { return }
+        anchorMessageId = messages.first?.id
         isLoadingOlder = true
 
         Task {
@@ -69,6 +93,11 @@ final class ChatViewModel {
             syncMessages()
             isLoadingOlder = false
         }
+    }
+
+    /// Clears the anchor after the view handled scroll preservation.
+    func consumeAnchor() {
+        anchorMessageId = nil
     }
 
     // MARK: - Send

@@ -71,7 +71,7 @@ public final class ChatLifecycleManager {
     /// Fetches the current access token and opens the socket connection.
     /// No-op if no token is available (logged-out state).
     public func onAuthenticated() async {
-        guard authState.isLoggedIn, !authState.isLoading else {
+        guard authState.isLoggedIn else {
             logger.debug("Skipping connect — not fully authenticated")
             return
         }

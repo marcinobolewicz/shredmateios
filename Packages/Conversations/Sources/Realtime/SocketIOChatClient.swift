@@ -148,7 +148,6 @@ public final class SocketIOChatClient: ChatRealtimeProviding, @unchecked Sendabl
             .reconnects(true),
             .reconnectAttempts(10),
             .reconnectWaitMax(5),
-            .connectParams(["token": token]),
             .forceNew(true)
         ]
 
@@ -159,7 +158,9 @@ public final class SocketIOChatClient: ChatRealtimeProviding, @unchecked Sendabl
         socket = sock
 
         registerEventHandlers(on: sock)
-        sock.connect()
+        // Send token via auth payload (Socket.IO v4: handshake.auth.token)
+        // instead of connectParams (which only sets handshake.query)
+        sock.connect(withPayload: ["token": token])
     }
 
     private func performDisconnect() {
