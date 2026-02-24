@@ -54,14 +54,14 @@ struct ConversationRowPresenter: Sendable {
 
 private enum Formatters {
     nonisolated(unsafe) static let iso8601: ISO8601DateFormatter = {
-        let f = ISO8601DateFormatter()
-        f.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        return f
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        return formatter
     }()
 
     nonisolated(unsafe) static let displayDate: DateFormatter = {
-        let f = DateFormatter()
-        f.dateFormat = "d.MM.yyyy"
-        return f
+        let formatter = DateFormatter()
+        formatter.dateFormat = "d.MM.yyyy"
+        return formatter
     }()
 }

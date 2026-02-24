@@ -42,10 +42,10 @@ public protocol ChatRealtimeProviding: Sendable {
     /// - Parameter newToken: The (possibly refreshed) `accessToken`.
     func reconnectIfNeeded(newToken: String)
 
-    /// An infinite stream of ``ChatRealtimeEvent`` values.
+    /// A single long-lived stream of ``ChatRealtimeEvent`` values.
     ///
-    /// A new stream is vended each time this property is accessed.
-    /// Only one consumer should iterate the stream at a time;
-    /// previous streams are invalidated on ``connect(token:)`` or ``disconnect()``.
+    /// The stream lives for the lifetime of the provider instance.
+    /// Only one consumer should iterate the stream at a time.
+    /// Reconnections reuse the same stream so consumers are never interrupted.
     var events: AsyncStream<ChatRealtimeEvent> { get }
 }

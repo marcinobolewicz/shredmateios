@@ -7,20 +7,20 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		App /* App */ = {isa = PBXBuildFile; productRef = AppPackage /* App */; };
-		ShredMateAppFile /* ShredMateApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = ShredMateAppSwift /* ShredMateApp.swift */; };
+		App /* App in Frameworks */ = {isa = PBXBuildFile; productRef = AppPackage /* App */; };
 		AssetsFile /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = Assets /* Assets.xcassets */; };
+		ShredMateAppFile /* ShredMateApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = ShredMateAppSwift /* ShredMateApp.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		ShredMateApp /* ShredMate.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ShredMate.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		Package /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
-		DevConfig /* Dev.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Dev.xcconfig; sourceTree = "<group>"; };
-		ProdConfig /* Prod.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Prod.xcconfig; sourceTree = "<group>"; };
-		LocalPackageRef /* ShredMate */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = ShredMate; path = .; sourceTree = "<group>"; };
-		ShredMateAppSwift /* ShredMateApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShredMateApp.swift; sourceTree = "<group>"; };
-		InfoPlist /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		Assets /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		DevConfig /* Dev.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Dev.xcconfig; sourceTree = "<group>"; };
+		EE03339B2F4DB97800ECE70E /* ShredMate.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ShredMate.entitlements; sourceTree = "<group>"; };
+		InfoPlist /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		Package /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
+		ProdConfig /* Prod.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Prod.xcconfig; sourceTree = "<group>"; };
+		ShredMateApp /* ShredMate.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ShredMate.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		ShredMateAppSwift /* ShredMateApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShredMateApp.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -28,13 +28,22 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				App /* App */,
+				App /* App in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		Configurations /* Configurations */ = {
+			isa = PBXGroup;
+			children = (
+				DevConfig /* Dev.xcconfig */,
+				ProdConfig /* Prod.xcconfig */,
+			);
+			path = Configurations;
+			sourceTree = "<group>";
+		};
 		MainGroup = {
 			isa = PBXGroup;
 			children = (
@@ -45,31 +54,23 @@
 			);
 			sourceTree = "<group>";
 		};
-		Configurations /* Configurations */ = {
-			isa = PBXGroup;
-			children = (
-				DevConfig /* Dev.xcconfig */,
-				ProdConfig /* Prod.xcconfig */,
-			);
-			path = Configurations;
-			sourceTree = "<group>";
-		};
-		ShredMate /* ShredMate */ = {
-			isa = PBXGroup;
-			children = (
-				ShredMateAppSwift /* ShredMateApp.swift */,
-				Assets /* Assets.xcassets */,
-				InfoPlist /* Info.plist */,
-			);
-			path = ShredMate;
-			sourceTree = "<group>";
-		};
 		Products /* Products */ = {
 			isa = PBXGroup;
 			children = (
 				ShredMateApp /* ShredMate.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		ShredMate /* ShredMate */ = {
+			isa = PBXGroup;
+			children = (
+				EE03339B2F4DB97800ECE70E /* ShredMate.entitlements */,
+				ShredMateAppSwift /* ShredMateApp.swift */,
+				Assets /* Assets.xcassets */,
+				InfoPlist /* Info.plist */,
+			);
+			path = ShredMate;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -305,6 +306,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = ShredMate/ShredMate.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
@@ -321,6 +323,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = pl.shredmate.app.dev;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -336,6 +339,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = ShredMate/ShredMate.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
@@ -352,6 +356,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = pl.shredmate.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -384,6 +389,13 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		LocalPackage /* XCLocalSwiftPackageReference "." */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = .;
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
 		AppPackage /* App */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -391,13 +403,6 @@
 			productName = App;
 		};
 /* End XCSwiftPackageProductDependency section */
-
-/* Begin XCLocalSwiftPackageReference section */
-		LocalPackage /* XCLocalSwiftPackageReference "." */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = .;
-		};
-/* End XCLocalSwiftPackageReference section */
 	};
 	rootObject = ProjectObject /* Project object */;
 }

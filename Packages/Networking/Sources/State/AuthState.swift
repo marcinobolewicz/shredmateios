@@ -185,4 +185,22 @@ public final class AuthState {
         guard let tokens = await authService.getTokens() else { return true }
         return tokens.isExpired
     }
+
+    /// Proactively refreshes the session if the access token is expired.
+    ///
+    /// - Returns: `true` if the refresh succeeded (or was not needed), `false` on failure.
+    @discardableResult
+    public func refreshSessionIfNeeded() async -> Bool {
+        guard await tokensNeedRefresh() else { return true }
+
+        do {
+            let response = try await authService.refreshSession()
+            user = response.user
+            logger.info("Session refreshed proactively")
+            return true
+        } catch {
+            logger.error("Proactive session refresh failed: \(error.localizedDescription)")
+            return false
+        }
+    }
 }

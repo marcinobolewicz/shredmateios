@@ -124,11 +124,16 @@ public final class ChatLifecycleManager {
             return
         }
 
-        // Proactively refresh if token may be expired
+        // Proactively refresh tokens if they may be expired
         if await authState.tokensNeedRefresh() {
-            logger.info("Tokens may be expired — triggering /auth/me to force refresh")
-            // fetchCurrentUser internally triggers the 401→refresh interceptor
-            // We don't need to handle the error — AuthState handles invalidation
+            logger.info("Tokens may be expired — refreshing session")
+            let refreshed = await authState.refreshSessionIfNeeded()
+            if !refreshed {
+                logger.warning("Token refresh failed on foreground — disconnecting")
+                realtimeClient.disconnect()
+                lastToken = nil
+                return
+            }
         }
 
         guard let token = await authState.getAccessToken() else {

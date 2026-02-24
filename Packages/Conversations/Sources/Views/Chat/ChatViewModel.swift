@@ -8,6 +8,7 @@
 import SwiftUI
 import Networking
 import Observation
+import Common
 
 @MainActor
 @Observable
@@ -23,18 +24,7 @@ final class ChatViewModel {
 
     private let repository: ChatRepository
     private let currentUserId: String
-
-    private let timeFormatter: DateFormatter = {
-        let f = DateFormatter()
-        f.dateFormat = "HH:mm"
-        return f
-    }()
-
-    private let isoFormatter: ISO8601DateFormatter = {
-        let f = ISO8601DateFormatter()
-        f.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        return f
-    }()
+    private let dateFormatting = DateFormatting.shared
 
     init(
         conversationId: String,
@@ -56,6 +46,7 @@ final class ChatViewModel {
 
         Task {
             await repository.loadMessages(for: conversationId, refresh: true)
+            hasOlderMessages = repository.hasMoreMessages[conversationId] ?? true
             syncMessages()
         }
     }
@@ -132,12 +123,12 @@ final class ChatViewModel {
     // MARK: - Private
 
     private func mapMessage(_ message: ChatMessage) -> MessageViewData {
-        let date = isoFormatter.date(from: message.createdAt)
+        let date = dateFormatting.parseISO8601(message.createdAt)
 
         return MessageViewData(
             id: message.id,
             text: message.content,
-            timeText: date.map { timeFormatter.string(from: $0) } ?? "",
+            timeText: date.map { dateFormatting.formatTime($0) } ?? "",
             isFromCurrentUser: message.senderId == currentUserId
         )
     }

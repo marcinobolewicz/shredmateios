@@ -71,6 +71,12 @@ public final class SocketIOChatClient: ChatRealtimeProviding, @unchecked Sendabl
         buildStream()
     }
 
+    deinit {
+        lock.lock()
+        streamContinuation?.finish()
+        lock.unlock()
+    }
+
     // MARK: - ChatRealtimeProviding
 
     public var isConnected: Bool {
