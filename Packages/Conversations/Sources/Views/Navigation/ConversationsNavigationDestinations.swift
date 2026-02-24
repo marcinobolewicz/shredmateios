@@ -6,8 +6,12 @@
 //
 
 import SwiftUI
+import Networking
 
 struct ConversationsNavigationDestinations: ViewModifier {
+    let repository: ChatRepository
+    let currentUserId: String
+
     func body(content: Content) -> some View {
         content
             .navigationDestination(for: ConversationsRoute.self) { route in
@@ -22,7 +26,9 @@ struct ConversationsNavigationDestinations: ViewModifier {
             ChatView(
                 viewModel: ChatViewModel(
                     conversationId: conversationId,
-                    participantName: participantName
+                    participantName: participantName,
+                    repository: repository,
+                    currentUserId: currentUserId
                 )
             )
         }
@@ -30,7 +36,13 @@ struct ConversationsNavigationDestinations: ViewModifier {
 }
 
 extension View {
-    func conversationsDestinations() -> some View {
-        modifier(ConversationsNavigationDestinations())
+    func conversationsDestinations(
+        repository: ChatRepository,
+        currentUserId: String
+    ) -> some View {
+        modifier(ConversationsNavigationDestinations(
+            repository: repository,
+            currentUserId: currentUserId
+        ))
     }
 }

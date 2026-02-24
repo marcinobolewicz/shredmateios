@@ -9,6 +9,9 @@ import Foundation
 
 /// Protocol for RiderService abstraction (enables testing)
 public protocol RiderServiceProtocol: Sendable {
+    // All Riders
+    func fetchAllRiders() async throws -> [Rider]
+
     // Profile
     func fetchMyRider() async throws -> Rider
     func updateMyRider(_ update: UpdateRiderRequest) async throws -> Rider
@@ -35,6 +38,12 @@ public final class RiderService: RiderServiceProtocol, Sendable {
         self.client = client
     }
     
+    // MARK: - All Riders
+
+    public func fetchAllRiders() async throws -> [Rider] {
+        try await client.send(RiderAPI.all())
+    }
+
     // MARK: - Profile
     
     public func fetchMyRider() async throws -> Rider {

@@ -52,6 +52,7 @@ struct ConversationsListView: View {
                         )
                         .listRowSeparator(.visible)
                         .listRowBackground(Color.clear)
+                        .onAppear { viewModel.onRowAppear(row) }
                         .onTapGesture {
                             router.navigate(to: .chat(
                                 conversationId: row.id,

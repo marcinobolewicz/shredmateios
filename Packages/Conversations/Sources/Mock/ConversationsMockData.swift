@@ -92,11 +92,11 @@ enum ConversationsMockData {
     }
 
     static let searchableRiders: [RiderSearchRowViewData] = [
-        RiderSearchRowViewData(id: UUID(), displayName: "Kasia Nowak", avatarInitials: "KN", avatarURL: nil),
-        RiderSearchRowViewData(id: UUID(), displayName: "Tomek Wiśniewski", avatarInitials: "TW", avatarURL: nil),
-        RiderSearchRowViewData(id: UUID(), displayName: "Ola Kowalska", avatarInitials: "OK", avatarURL: nil),
-        RiderSearchRowViewData(id: UUID(), displayName: "Marek Zieliński", avatarInitials: "MZ", avatarURL: nil),
-        RiderSearchRowViewData(id: UUID(), displayName: "Anna Wójcik", avatarInitials: "AW", avatarURL: nil),
+        RiderSearchRowViewData(id: UUID().uuidString, displayName: "Kasia Nowak", avatarInitials: "KN", avatarURL: nil),
+        RiderSearchRowViewData(id: UUID().uuidString, displayName: "Tomek Wiśniewski", avatarInitials: "TW", avatarURL: nil),
+        RiderSearchRowViewData(id: UUID().uuidString, displayName: "Ola Kowalska", avatarInitials: "OK", avatarURL: nil),
+        RiderSearchRowViewData(id: UUID().uuidString, displayName: "Marek Zieliński", avatarInitials: "MZ", avatarURL: nil),
+        RiderSearchRowViewData(id: UUID().uuidString, displayName: "Anna Wójcik", avatarInitials: "AW", avatarURL: nil),
     ]
 
     // MARK: - Helpers

@@ -8,7 +8,7 @@
 import Foundation
 
 struct MessageViewData: Identifiable, Equatable, Sendable {
-    let id: UUID
+    let id: String
     let text: String
     let timeText: String
     let isFromCurrentUser: Bool
