@@ -11,8 +11,8 @@ struct SpotRowViewData: Identifiable, Equatable, Sendable {
     let id: UUID
     let title: String
     let description: String
-    let sportTag: String
-    let sportId: UUID?
+    let sportTags: [String]
+    let sportIds: [UUID]
     let ridersCount: Int
     let mentorsCount: Int
     let avatar: Avatar

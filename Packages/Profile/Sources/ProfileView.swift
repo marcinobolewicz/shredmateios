@@ -177,12 +177,12 @@ public struct ProfileView: View {
                 ForEach(viewModel.allSports) { sport in
                     SportRow(
                         sport: sport,
-                        riderSport: viewModel.riderSport(for: sport.id),
-                        isLoading: viewModel.isSportLoading(sport.id),
+                        riderSport: viewModel.riderSport(for: sport.id.uuidString),
+                        isLoading: viewModel.isSportLoading(sport.id.uuidString),
                         onUpsert: { level, isMentor in
                             Task {
                                 await viewModel.upsertSport(
-                                    sportId: sport.id,
+                                    sportId: sport.id.uuidString,
                                     level: level,
                                     isMentor: isMentor
                                 )
@@ -190,7 +190,7 @@ public struct ProfileView: View {
                         },
                         onRemove: {
                             Task {
-                                await viewModel.removeSport(sportId: sport.id)
+                                await viewModel.removeSport(sportId: sport.id.uuidString)
                             }
                         }
                     )

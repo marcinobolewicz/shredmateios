@@ -8,26 +8,6 @@
 import SwiftUI
 import Theme
 
-// MARK: - Models
-// TODO: - replace with getched data!
-//enum Sport: String, CaseIterable, Identifiable {
-//    case snowboard
-//    case narty
-//    case kitesurfing
-//    case wakeboard
-//
-//    var id: String { rawValue }
-//
-//    var localizedTitle: String {
-//        switch self {
-//        case .snowboard: PlacesStrings.sportSnowboard.localized
-//        case .narty: PlacesStrings.sportSki.localized
-//        case .kitesurfing: PlacesStrings.sportKitesurfing.localized
-//        case .wakeboard: PlacesStrings.sportWakeboard.localized
-//        }
-//    }
-//}
-
 // MARK: - SpotRow
 
 struct SpotRow: View {
@@ -44,7 +24,10 @@ struct SpotRow: View {
                         .dsTextStyle(.heading)
                         .lineLimit(1)
                     Spacer()
-                    Tag(text: viewData.sportTag)
+//                    TODO: handle more than one row of tags
+                    ForEach(viewData.sportTags, id: \.self) { sportTag in
+                        Tag(text: sportTag)
+                    }
                 }
 
                 if !viewData.description.isEmpty {

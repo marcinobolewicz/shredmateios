@@ -23,7 +23,7 @@ final class PlaceDetailsViewModel {
     var showRolePicker = false
 
     let placeId: UUID
-    let sportId: UUID?
+    let sportIds: [UUID]
 
     // MARK: - Dependencies
 
@@ -34,12 +34,12 @@ final class PlaceDetailsViewModel {
 
     init(
         placeId: UUID,
-        sportId: UUID?,
+        sportIds: [UUID],
         placesService: any PlacesServiceProtocol,
         authState: AuthState
     ) {
         self.placeId = placeId
-        self.sportId = sportId
+        self.sportIds = sportIds
         self.placesService = placesService
         self.authState = authState
     }
@@ -47,11 +47,8 @@ final class PlaceDetailsViewModel {
     // MARK: - Join Place
 
     func joinWith(role: PlaceRiderRole) async {
-        guard let sportId else {
-            error = PlacesStrings.failedCheckIn("No sport available")
-            return
-        }
-
+        // TODO: check if user sports match spot types
+        guard let someSportId = sportIds.first else { return }
         isJoining = true
         error = nil
         defer { isJoining = false }
@@ -59,7 +56,7 @@ final class PlaceDetailsViewModel {
         do {
             let response = try await placesService.joinPlace(
                 placeId: placeId,
-                sportId: sportId,
+                sportId: someSportId,
                 role: role,
                 rating: nil
             )

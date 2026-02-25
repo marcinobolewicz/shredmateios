@@ -15,8 +15,8 @@ public struct PlaceDetailsViewData: Equatable, Hashable, Sendable {
     public let id: UUID
     public let name: String
     public let description: String
-    public let sportTag: String
-    public let sportId: UUID?
+    public let sportTags: [String]
+    public let sportIds: [UUID]
     public let ridersCount: Int
     public let mentorsCount: Int
     public let avatar: Avatar
@@ -25,8 +25,8 @@ public struct PlaceDetailsViewData: Equatable, Hashable, Sendable {
         id: UUID,
         name: String,
         description: String,
-        sportTag: String,
-        sportId: UUID?,
+        sportTags: [String],
+        sportIds: [UUID],
         ridersCount: Int,
         mentorsCount: Int,
         avatar: Avatar
@@ -34,8 +34,8 @@ public struct PlaceDetailsViewData: Equatable, Hashable, Sendable {
         self.id = id
         self.name = name
         self.description = description
-        self.sportTag = sportTag
-        self.sportId = sportId
+        self.sportTags = sportTags
+        self.sportIds = sportIds
         self.ridersCount = ridersCount
         self.mentorsCount = mentorsCount
         self.avatar = avatar
@@ -64,7 +64,7 @@ struct PlaceDetailsView: View {
         _viewModel = State(
             wrappedValue: PlaceDetailsViewModel(
                 placeId: viewData.id,
-                sportId: viewData.sportId,
+                sportIds: viewData.sportIds,
                 placesService: placesService,
                 authState: authState
             )
@@ -158,11 +158,9 @@ struct PlaceDetailsView: View {
             heroAvatar
                 .padding(.top, theme.spacing.md)
 
-            HStack(spacing: theme.spacing.xs) {
                 Text(viewData.name)
                     .dsTextStyle(.title)
-                sportBadge
-            }
+            sportBadges
 
             if !viewData.description.isEmpty {
                 Text(viewData.description)
@@ -207,13 +205,13 @@ struct PlaceDetailsView: View {
         .frame(width: 80, height: 80)
     }
 
-    private var sportBadge: some View {
-        Text(viewData.sportTag)
-            .font(.caption.weight(.semibold))
-            .foregroundStyle(theme.colors.primaryForeground)
-            .padding(.horizontal, theme.spacing.sm)
-            .padding(.vertical, theme.spacing.xxs + 2)
-            .background(Capsule().fill(theme.colors.primary))
+    private var sportBadges: some View {
+//        TODO: handle more than one row of pills 
+        HStack(spacing: theme.spacing.xs) {
+            ForEach(viewData.sportTags, id: \.self) { sportTag in
+                PillView(title: sportTag, theme: theme)
+            }
+        }
     }
 
     // MARK: - Tabs

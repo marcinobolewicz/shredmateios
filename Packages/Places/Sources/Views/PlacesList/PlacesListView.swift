@@ -48,8 +48,8 @@ struct PlacesListView: View {
                                 id: row.id,
                                 name: row.title,
                                 description: row.description,
-                                sportTag: row.sportTag,
-                                sportId: row.sportId,
+                                sportTags: row.sportTags,
+                                sportIds: row.sportIds,
                                 ridersCount: row.ridersCount,
                                 mentorsCount: row.mentorsCount,
                                 avatar: row.avatar
