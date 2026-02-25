@@ -38,12 +38,14 @@ public final class ProfileViewModel {
     // MARK: - Dependencies
     
     private let riderService: any RiderServiceProtocol
+    private let placesService: any PlacesServiceProtocol
     private let authState: AuthState
     
     // MARK: - Init
     
-    public init(riderService: any RiderServiceProtocol, authState: AuthState) {
+    public init(riderService: any RiderServiceProtocol, placesService: any PlacesServiceProtocol, authState: AuthState) {
         self.riderService = riderService
+        self.placesService = placesService
         self.authState = authState
     }
     

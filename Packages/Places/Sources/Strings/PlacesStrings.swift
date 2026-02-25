@@ -32,9 +32,45 @@ enum PlacesStrings: String {
     case ridersLabel = "places.riders_label"
     case mentorsLabel = "places.mentors_label"
 
+    case detailsRatingLabel = "places.details_rating_label"
+    case detailsRidersEmptyTitle = "places.details_riders_empty_title"
+    case detailsRidersEmptyDescription = "places.details_riders_empty_description"
+    case detailsMentorsEmptyTitle = "places.details_mentors_empty_title"
+    case detailsMentorsEmptyDescription = "places.details_mentors_empty_description"
+
     case spotSubtitlePlaceholder = "places.spot_subtitle_placeholder"
+
+    // MARK: - Check-In
+    case checkInButton = "places.check_in_button"
+    case checkOutButton = "places.check_out_button"
+    case checkInRoleTitle = "places.check_in_role_title"
+    case checkInRoleMessage = "places.check_in_role_message"
+    case roleRider = "places.role_rider"
+    case roleMentor = "places.role_mentor"
+    case cancelButton = "places.cancel_button"
+    case checkInErrorTitle = "places.check_in_error_title"
+    case checkedInAsFormat = "places.checked_in_as_format"
+    case checkedInElsewhereFormat = "places.checked_in_elsewhere_format"
+    case failedCheckInFormat = "places.failed_check_in_format"
+    case failedCheckOutFormat = "places.failed_check_out_format"
 
     var localized: String {
         NSLocalizedString(rawValue, bundle: .module, comment: "")
+    }
+
+    static func checkedInAs(_ role: String) -> String {
+        String(format: NSLocalizedString(PlacesStrings.checkedInAsFormat.rawValue, bundle: .module, comment: ""), role)
+    }
+
+    static func checkedInElsewhere(_ placeName: String) -> String {
+        String(format: NSLocalizedString(PlacesStrings.checkedInElsewhereFormat.rawValue, bundle: .module, comment: ""), placeName)
+    }
+
+    static func failedCheckIn(_ error: String) -> String {
+        String(format: NSLocalizedString(PlacesStrings.failedCheckInFormat.rawValue, bundle: .module, comment: ""), error)
+    }
+
+    static func failedCheckOut(_ error: String) -> String {
+        String(format: NSLocalizedString(PlacesStrings.failedCheckOutFormat.rawValue, bundle: .module, comment: ""), error)
     }
 }

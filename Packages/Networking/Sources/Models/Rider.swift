@@ -99,14 +99,27 @@ public struct UpdateBaseLocationRequest: Codable, Sendable {
 
 /// Sport definition
 public struct Sport: Codable, Sendable, Equatable, Identifiable {
-    public let id: String
+    public let id: UUID
     public let name: String
-    public let icon: String?
+    public let slug: String
+    public let createdByUserId: String?
+    public let createdAt: Date?
+    public let updatedAt: Date?
     
-    public init(id: String, name: String, icon: String? = nil) {
+    public init(
+        id: UUID,
+        name: String,
+        slug: String,
+        createdByUserId: String? = nil,
+        createdAt: Date? = nil,
+        updatedAt: Date? = nil
+    ) {
         self.id = id
         self.name = name
-        self.icon = icon
+        self.slug = slug
+        self.createdByUserId = createdByUserId
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
     }
 }
 

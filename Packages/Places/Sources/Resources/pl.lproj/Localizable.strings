@@ -24,3 +24,23 @@
 "places.mentors_label" = "Mentorzy";
 
 "places.spot_subtitle_placeholder" = "—";
+
+"places.details_rating_label" = "Ocena";
+"places.details_riders_empty_title" = "Brak riderów";
+"places.details_riders_empty_description" = "Riderzy odwiedzający ten spot pojawią się tutaj.";
+"places.details_mentors_empty_title" = "Brak mentorów";
+"places.details_mentors_empty_description" = "Mentorzy dostępni w tym spocie pojawią się tutaj.";
+
+/* Zameldowanie */
+"places.check_in_button" = "Zamelduj się";
+"places.check_out_button" = "Wymelduj się";
+"places.check_in_role_title" = "Zamelduj się jako";
+"places.check_in_role_message" = "Wybierz swoją rolę w tym spocie";
+"places.role_rider" = "Rider";
+"places.role_mentor" = "Mentor";
+"places.cancel_button" = "Anuluj";
+"places.check_in_error_title" = "Błąd zameldowania";
+"places.checked_in_as_format" = "Zameldowany jako %@";
+"places.checked_in_elsewhere_format" = "Już zameldowany w %@";
+"places.failed_check_in_format" = "Nie udało się zameldować: %@";
+"places.failed_check_out_format" = "Nie udało się wymeldować: %@";

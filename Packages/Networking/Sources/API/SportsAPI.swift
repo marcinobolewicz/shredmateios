@@ -10,6 +10,6 @@ import Foundation
 public enum SportsAPI {
     
     public static func all() -> Endpoint<[Sport]> {
-        .get("/sports", auth: .bearerToken)
+        .get("/sports")
     }
 }

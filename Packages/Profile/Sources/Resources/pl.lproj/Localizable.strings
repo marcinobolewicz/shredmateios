@@ -41,3 +41,7 @@
 "profile.enter_valid_coordinates" = "Wprowadź poprawne współrzędne";
 "profile.latitude_range_error" = "Szerokość musi być między -90 a 90";
 "profile.longitude_range_error" = "Długość musi być między -180 a 180";
+
+/* Zameldowanie */
+"profile.section_check_in" = "Aktualne zameldowanie";
+"profile.checked_in_as_format" = "Zameldowany jako %@";

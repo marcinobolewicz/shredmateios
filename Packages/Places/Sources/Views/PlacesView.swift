@@ -9,9 +9,10 @@ public struct PlacesView: View {
 
     public init(
             placesService: any PlacesServiceProtocol,
+            sportsService: any SportsServiceProtocol,
             authState: AuthState
     ) {
-        let repository = PlacesRepository(service: placesService)
+        let repository = PlacesRepository(service: placesService, sportsService: sportsService)
         let presenter = SpotRowPresenter()
 
         _viewModel = State(
@@ -34,17 +35,48 @@ public struct PlacesView: View {
 
     private var headerSection: some View {
         VStack(spacing: theme.spacing.sm) {
-            Picker(PlacesStrings.pickerDisplayMode.localized, selection: $viewModel.displayMode) {
-                ForEach(PlacesDisplayMode.allCases) { mode in
-                    Text(mode.title).tag(mode)
-                }
-            }
-            .pickerStyle(.segmented)
-
+            displayModePicker
             DSSearchBar(PlacesStrings.searchPlaceholder.localized, text: $viewModel.searchText)
-                .task { await viewModel.loadOnAppear() }
+                .onChange(of: viewModel.searchText) { _, _ in
+                    viewModel.load(force: true)
+                }
         }
-        .padding(theme.spacing.md)
+        .padding(.horizontal, theme.spacing.md)
+        .padding(.top, theme.spacing.sm)
+        .padding(.bottom, theme.spacing.xs)
+    }
+
+    private var displayModePicker: some View {
+        HStack(spacing: 0) {
+            ForEach(PlacesDisplayMode.allCases) { mode in
+                Button {
+                    withAnimation(.snappy(duration: Constants.Animation.chipDuration)) {
+                        viewModel.displayMode = mode
+                    }
+                } label: {
+                    Text(mode.title)
+                        .font(.subheadline)
+                        .fontWeight(viewModel.displayMode == mode ? .semibold : .regular)
+                        .foregroundStyle(
+                            viewModel.displayMode == mode
+                                ? theme.colors.primaryForeground
+                                : theme.colors.textPrimary
+                        )
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, theme.spacing.xs)
+                        .background(
+                            Capsule()
+                                .fill(
+                                    viewModel.displayMode == mode
+                                        ? theme.colors.primary
+                                        : theme.colors.surfaceTertiary
+                                )
+                        )
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .background(Capsule().fill(theme.colors.surfaceTertiary))
     }
 
     @ViewBuilder
@@ -59,19 +91,21 @@ public struct PlacesView: View {
 
     private var sportChips: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: theme.spacing.sm) {
-                ForEach(Sport.allCases) { sport in
+            HStack(spacing: theme.spacing.xs) {
+                ForEach(viewModel.sports) { sport in
                     DSChip(
-                        title: sport.localizedTitle,
+//                        TODO: localizable sport
+                        title: sport.slug,
                         isSelected: viewModel.selectedSport == sport
                     ) {
                         withAnimation(.snappy(duration: Constants.Animation.chipDuration)) {
-                            viewModel.selectedSport = sport
+                            viewModel.selectSport(sport)
                         }
                     }
                 }
             }
-            .padding(.vertical, theme.spacing.xxs)
+            .padding(.horizontal, theme.spacing.md)
+            .padding(.vertical, theme.spacing.xs)
         }
     }
 }

@@ -11,13 +11,15 @@ import Networking
 public struct PlacesRootView: View {
     @Environment(AuthState.self) private var authState
     private let placesService: PlacesServiceProtocol
-    
+    private let sportsService: SportsServiceProtocol
     @State private var router = PlacesRouter()
 
     public init(
         placesService: PlacesServiceProtocol,
+        sportsService: SportsServiceProtocol
     ) {
         self.placesService = placesService
+        self.sportsService = sportsService
     }
 
     public var body: some View {
@@ -26,6 +28,7 @@ public struct PlacesRootView: View {
         NavigationStack(path: $router.path) {
             PlacesView(
                 placesService: placesService,
+                sportsService: sportsService,
                 authState: authState
             )
             .navigationTitle(PlacesStrings.rootNavigationTitle.localized)

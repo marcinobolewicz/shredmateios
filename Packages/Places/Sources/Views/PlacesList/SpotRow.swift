@@ -6,55 +6,27 @@
 //
 
 import SwiftUI
-import Networking
 import Theme
 
 // MARK: - Models
-
-enum Sport: String, CaseIterable, Identifiable {
-    case snowboard
-    case narty
-    case kitesurfing
-    case wakeboard
-
-    var id: String { rawValue }
-
-    var localizedTitle: String {
-        switch self {
-        case .snowboard: PlacesStrings.sportSnowboard.localized
-        case .narty: PlacesStrings.sportSki.localized
-        case .kitesurfing: PlacesStrings.sportKitesurfing.localized
-        case .wakeboard: PlacesStrings.sportWakeboard.localized
-        }
-    }
-}
-
-struct Spot: Identifiable, Equatable {
-    let id: UUID = .init()
-    let name: String
-    let city: String
-    let region: String
-    let sport: Sport
-    let description: String
-    let rating: Double
-    let riders: Int
-    let mentors: Int
-    let avatar: Avatar
-
-    static func spot(with place: PlaceDto) -> Spot {
-        Spot(
-            name: place.name,
-            city: "",
-            region: "",
-            sport: .kitesurfing,
-            description: place.description ?? "",
-            rating: 3.3,
-            riders: 66,
-            mentors: 2,
-            avatar: .initials("AA")
-        )
-    }
-}
+// TODO: - replace with getched data!
+//enum Sport: String, CaseIterable, Identifiable {
+//    case snowboard
+//    case narty
+//    case kitesurfing
+//    case wakeboard
+//
+//    var id: String { rawValue }
+//
+//    var localizedTitle: String {
+//        switch self {
+//        case .snowboard: PlacesStrings.sportSnowboard.localized
+//        case .narty: PlacesStrings.sportSki.localized
+//        case .kitesurfing: PlacesStrings.sportKitesurfing.localized
+//        case .wakeboard: PlacesStrings.sportWakeboard.localized
+//        }
+//    }
+//}
 
 // MARK: - SpotRow
 
@@ -63,63 +35,71 @@ struct SpotRow: View {
     let viewData: SpotRowViewData
 
     var body: some View {
-        HStack(alignment: .top, spacing: theme.spacing.sm) {
+        HStack(spacing: theme.spacing.sm) {
             avatar
 
-            VStack(alignment: .leading, spacing: theme.spacing.xs) {
-                HStack {
+            VStack(alignment: .leading, spacing: theme.spacing.xxs) {
+                HStack(alignment: .firstTextBaseline) {
                     Text(viewData.title)
                         .dsTextStyle(.heading)
+                        .lineLimit(1)
                     Spacer()
                     Tag(text: viewData.sportTag)
                 }
 
-                Text(viewData.subtitle)
-                    .dsTextStyle(.subheadline)
-
-                Text(viewData.description)
-                    .dsTextStyle(.subheadline)
-                    .lineLimit(2)
+                if !viewData.description.isEmpty {
+                    Text(viewData.description)
+                        .dsTextStyle(.subheadline)
+                        .lineLimit(1)
+                }
 
                 HStack(spacing: theme.spacing.sm) {
-                    StatRating(value: viewData.rating)
                     StatText(label: PlacesStrings.ridersLabel.localized, value: viewData.ridersCount)
                     StatText(label: PlacesStrings.mentorsLabel.localized, value: viewData.mentorsCount)
                 }
             }
 
             Image(systemName: "chevron.right")
+                .font(.caption2.weight(.semibold))
                 .foregroundStyle(theme.colors.textTertiary)
-                .padding(.top, theme.spacing.xxs + 2)
         }
-        .padding(theme.spacing.sm)
-        .background(
-            RoundedRectangle(cornerRadius: theme.radius.lg, style: .continuous)
-                .fill(theme.colors.surface)
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: theme.radius.lg, style: .continuous)
-                .strokeBorder(theme.colors.border.opacity(0.3), lineWidth: 1)
-        )
+        .padding(.vertical, theme.spacing.sm)
+        .contentShape(Rectangle())
     }
 
     @ViewBuilder
     private var avatar: some View {
-        switch viewData.avatar {
-        case .initials(let text):
-            ZStack {
-                Circle().fill(theme.colors.surfaceTertiary)
-                Text(text)
-                    .font(.headline.weight(.semibold))
-                    .foregroundStyle(theme.colors.textSecondary)
+        Group {
+            switch viewData.avatar {
+            case .initials(let text):
+                ZStack {
+                    Circle().fill(theme.colors.surfaceTertiary)
+                    Text(text)
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundStyle(theme.colors.textSecondary)
+                }
+            case .imageRemote(let url):
+                if let url {
+                    AsyncImage(url: url) { phase in
+                        switch phase {
+                        case .success(let image):
+                            image.resizable().scaledToFill()
+                        default:
+                            Circle().fill(theme.colors.surfaceTertiary)
+                        }
+                    }
+                    .clipShape(Circle())
+                } else {
+                    Circle().fill(theme.colors.surfaceTertiary)
+                }
+            case .image(let name):
+                Image(name)
+                    .resizable()
+                    .scaledToFill()
+                    .clipShape(Circle())
             }
-            .frame(width: 46, height: 46)
-        case .imageRemote:
-            Circle().fill(theme.colors.surfaceTertiary)
-                .frame(width: 46, height: 46)
-        case .image:
-            EmptyView()
         }
+        .frame(width: 44, height: 44)
     }
 }
 
@@ -138,22 +118,6 @@ private struct Tag: View {
             .background(
                 Capsule().fill(theme.colors.surfaceTertiary)
             )
-    }
-}
-
-private struct StatRating: View {
-    @Environment(AppTheme.self) private var theme
-    let value: Double
-
-    var body: some View {
-        HStack(spacing: theme.spacing.xxs + 2) {
-            Image(systemName: "star.fill")
-                .font(.system(size: 12, weight: .semibold))
-                .foregroundStyle(theme.colors.warning)
-            Text(String(format: "%.1f", value))
-                .font(.subheadline.weight(.semibold))
-                .foregroundStyle(theme.colors.textPrimary)
-        }
     }
 }
 

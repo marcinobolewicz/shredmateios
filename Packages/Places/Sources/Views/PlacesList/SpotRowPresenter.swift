@@ -8,16 +8,17 @@
 import Foundation
 
 struct SpotRowPresenter: Sendable {
-    func map(place: Place, sport: Sport) -> SpotRowViewData {
-        SpotRowViewData(
+    func map(place: Place) -> SpotRowViewData {
+        let firstSport = place.sports.first
+        let sportTag = firstSport?.name ?? ""
+        return SpotRowViewData(
             id: place.id,
             title: place.name,
-            subtitle: PlacesStrings.spotSubtitlePlaceholder.localized,
             description: place.description,
-            sportTag: sport.localizedTitle,
-            rating: 4.2,
-            ridersCount: 18,
-            mentorsCount: 4,
+            sportTag: sportTag,
+            sportId: firstSport?.id,
+            ridersCount: place.ridersCount,
+            mentorsCount: place.mentorsCount,
             avatar: place.avatarURL != nil ? .imageRemote(place.avatarURL) : .initials(initials(from: place.name))
         )
     }

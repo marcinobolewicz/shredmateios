@@ -59,6 +59,10 @@ enum ProfileStrings: String {
     case latitudeRangeError = "profile.latitude_range_error"
     case longitudeRangeError = "profile.longitude_range_error"
 
+    // MARK: - Check-In
+    case sectionCheckIn = "profile.section_check_in"
+    case checkedInAsFormat = "profile.checked_in_as_format"
+
     var localized: String {
         NSLocalizedString(rawValue, bundle: .module, comment: "")
     }
@@ -97,5 +101,9 @@ enum ProfileStrings: String {
 
     static func descriptionMaxLength(_ max: Int) -> String {
         String(format: NSLocalizedString(ProfileStrings.descriptionMaxLengthFormat.rawValue, bundle: .module, comment: ""), max)
+    }
+
+    static func checkedInAs(_ role: String) -> String {
+        String(format: NSLocalizedString(ProfileStrings.checkedInAsFormat.rawValue, bundle: .module, comment: ""), role)
     }
 }

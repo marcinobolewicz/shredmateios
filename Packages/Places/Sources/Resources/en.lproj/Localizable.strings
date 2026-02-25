@@ -24,3 +24,23 @@
 "places.mentors_label" = "Mentors";
 
 "places.spot_subtitle_placeholder" = "—";
+
+"places.details_rating_label" = "Rating";
+"places.details_riders_empty_title" = "No riders yet";
+"places.details_riders_empty_description" = "Riders who visit this spot will appear here.";
+"places.details_mentors_empty_title" = "No mentors yet";
+"places.details_mentors_empty_description" = "Mentors available at this spot will appear here.";
+
+/* Check-In */
+"places.check_in_button" = "Check In";
+"places.check_out_button" = "Check Out";
+"places.check_in_role_title" = "Check In As";
+"places.check_in_role_message" = "Choose your role at this spot";
+"places.role_rider" = "Rider";
+"places.role_mentor" = "Mentor";
+"places.cancel_button" = "Cancel";
+"places.check_in_error_title" = "Check-In Error";
+"places.checked_in_as_format" = "Checked in as %@";
+"places.checked_in_elsewhere_format" = "Already checked in at %@";
+"places.failed_check_in_format" = "Failed to check in: %@";
+"places.failed_check_out_format" = "Failed to check out: %@";

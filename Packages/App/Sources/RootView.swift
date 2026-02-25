@@ -37,6 +37,7 @@ public struct RootView: View {
             if authState.isLoading { LoadingOverlay() }
         }
         .task {
+            async let _ = dependencies.sportsService.fetchSports()
             await authState.restoreSession()
             router.flow = authState.isLoggedIn ? .user : .guest
 

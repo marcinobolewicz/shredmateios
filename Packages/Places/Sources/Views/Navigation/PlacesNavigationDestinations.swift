@@ -10,6 +10,7 @@ import Networking
 
 public struct PlacesNavigationDestinations: ViewModifier {
     let placesService: PlacesServiceProtocol
+    @Environment(AuthState.self) private var authState
 
     public func body(content: Content) -> some View {
         content
@@ -21,13 +22,13 @@ public struct PlacesNavigationDestinations: ViewModifier {
     @ViewBuilder
     private func destination(for route: PlacesRoute) -> some View {
         switch route {
-        case .placeDetails(let id):
+        case .placeDetails(let viewData):
             PlaceDetailsView(
-//                placesService: dependencies.placesService,
-//                authState: dependencies.authState
+                viewData: viewData,
+                placesService: placesService,
+                authState: authState
             )
         }
-
     }
 }
 

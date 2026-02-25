@@ -21,7 +21,8 @@ enum PlacesDisplayMode: String, CaseIterable, Identifiable {
 public final class PlacesViewModel {
 
     private(set) var rows: [SpotRowViewData] = []
-    var selectedSport: Sport = .snowboard
+    var sports: [PlaceSport] = []
+    var selectedSport: PlaceSport? = nil
     var displayMode: PlacesDisplayMode = .list
     var searchText: String = ""
     private(set) var state: LoadState = .idle
@@ -41,63 +42,68 @@ public final class PlacesViewModel {
 
     func loadOnAppear() {
         guard case .idle = state else { return }
+        loadSports()
         load()
     }
-
-    public func refresh() {
+    
+    private func loadSports() {
+        guard sports.isEmpty else { return }
+        Task { [weak self] in
+            guard let self else { return }
+            
+            do {
+                self.sports = try await repository.fetchSports()
+            } catch {
+                self.state = .failed(.from(error))
+            }
+        }
+    }
+    
+    func refresh() {
         load(force: true)
     }
 
-    public func load(force: Bool = false) {
+    func load(force: Bool = false) {
         if case .loading = state { return }
         loadTask?.cancel()
 
         state = .loading
 
-        let sport = selectedSport
-        let sportSlug = sport.slug
+        let sportSlug = selectedSport?.slug
 
         loadTask = Task { [weak self] in
             guard let self else { return }
 
             do {
-                let places = try await repository.fetchPlaces(for: nil)
+                let places = try await repository.fetchPlaces(for: sportSlug)
                 try Task.checkCancellation()
 
                 let filtered = self.applySearch(places: places, text: self.searchText)
-                let rows = filtered.map { presenter.map(place: $0, sport: sport) }
+                let rows = filtered.map { presenter.map(place: $0) }
 
                 self.rows = rows
                 self.state = .loaded
             } catch is CancellationError {
-                // no state change if cancel is caused by sport change
                 self.state = .idle
             } catch {
                 self.state = .failed(.from(error))
             }
         }
     }
+    
+    func selectSport(_ sport: PlaceSport) {
+        selectedSport = sport
+        load(force: true)
+    }
 
-    func onSportChanged(_ sport: Sport) {
+    func onSportChanged(_ sport: PlaceSport) {
         selectedSport = sport
         load(force: true)
     }
 
     func applySearch(places: [Place], text: String) -> [Place] {
-        let q = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !q.isEmpty else { return places }
-        return places.filter { $0.name.localizedCaseInsensitiveContains(q) }
+        let query = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !query.isEmpty else { return places }
+        return places.filter { $0.name.localizedCaseInsensitiveContains(query) }
     }
 }
-
-extension Sport {
-    var slug: String {
-        switch self {
-        case .snowboard: return "snowboard"
-        case .narty: return "ski"
-        case .kitesurfing: return "kitesurfing"
-        case .wakeboard: return "wakeboard"
-        }
-    }
-}
-

@@ -33,6 +33,7 @@ struct UserTabView: View {
 
             PlacesRootView(
                 placesService: dependencies.placesService,
+                sportsService: dependencies.sportsService
             )
             .tabItem { Label(AppStrings.userTabSpots.localized, systemImage: "map") }
             .tag(UserTab.spots)
@@ -48,6 +49,7 @@ struct UserTabView: View {
             ProfileView(
                 viewModel: ProfileViewModel(
                     riderService: dependencies.riderService,
+                    placesService: dependencies.placesService,
                     authState: dependencies.authState
                 )
             )

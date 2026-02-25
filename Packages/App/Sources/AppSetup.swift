@@ -9,6 +9,7 @@ public final class AppDependencies {
     public let authState: AuthState
     public let riderService: any RiderServiceProtocol
     public let placesService: any PlacesServiceProtocol
+    public let sportsService: any SportsServiceProtocol
     public let chatService: any ChatServiceProtocol
     public let chatRealtimeClient: ChatRealtimeProviding
     public let chatRepository: ChatRepository
@@ -19,6 +20,7 @@ public final class AppDependencies {
         authState: AuthState,
         riderService: any RiderServiceProtocol,
         placesService: any PlacesServiceProtocol,
+        sportsService: any SportsServiceProtocol,
         chatService: any ChatServiceProtocol,
         chatRealtimeClient: ChatRealtimeProviding,
         chatRepository: ChatRepository,
@@ -28,6 +30,7 @@ public final class AppDependencies {
         self.authState = authState
         self.riderService = riderService
         self.placesService = placesService
+        self.sportsService = sportsService
         self.chatService = chatService
         self.chatRealtimeClient = chatRealtimeClient
         self.chatRepository = chatRepository
@@ -45,7 +48,7 @@ public struct AppSetup {
         let (httpClient, authState) = configureAuth()
         let services = configureServices(httpClient: httpClient)
         let chat = configureChat(httpClient: httpClient, authState: authState)
-
+        
         registerDependencies(
             authState: authState,
             httpClient: httpClient,
@@ -57,6 +60,7 @@ public struct AppSetup {
             authState: authState,
             riderService: services.rider,
             placesService: services.places,
+            sportsService: services.sports,
             chatService: chat.service,
             chatRealtimeClient: chat.realtimeClient,
             chatRepository: chat.repository,
@@ -100,12 +104,14 @@ public struct AppSetup {
     private struct Services {
         let rider: any RiderServiceProtocol
         let places: any PlacesServiceProtocol
+        let sports: any SportsServiceProtocol
     }
 
     private static func configureServices(httpClient: AuthenticatingHTTPClient) -> Services {
         Services(
             rider: RiderService(client: httpClient),
-            places: PlacesService(client: httpClient)
+            places: PlacesService(client: httpClient),
+            sports: SportsServiceService(client: httpClient)
         )
     }
 

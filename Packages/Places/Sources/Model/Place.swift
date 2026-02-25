@@ -13,6 +13,15 @@ public struct Place: Identifiable, Equatable, Sendable {
     public let description: String
     public let avatarURL: URL?
     public let location: GeoPoint?
+    public let sports: [PlaceSport]
+    public let ridersCount: Int
+    public let mentorsCount: Int
+}
+
+public struct PlaceSport: Equatable, Sendable, Identifiable {
+    public let id: UUID
+    public let name: String
+    public let slug: String
 }
 
 public struct GeoPoint: Equatable, Sendable {
