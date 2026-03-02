@@ -49,7 +49,7 @@ struct UserTabView: View {
             ProfileView(
                 viewModel: ProfileViewModel(
                     riderService: dependencies.riderService,
-                    placesService: dependencies.placesService,
+                    sportsService: dependencies.sportsService,
                     authState: dependencies.authState
                 )
             )

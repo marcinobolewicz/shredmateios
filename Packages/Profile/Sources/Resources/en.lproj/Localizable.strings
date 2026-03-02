@@ -8,9 +8,11 @@
 "profile.display_name_placeholder" = "Display Name";
 "profile.type_picker_title" = "Type";
 "profile.description_label" = "Description";
+"profile.public_profile_toggle" = "Public profile";
 "profile.save_profile_button" = "Save Profile";
 "profile.section_avatar" = "Avatar";
 "profile.avatar_upload_coming_soon" = "Avatar upload coming soon";
+"profile.change_avatar_badge" = "Change";
 "profile.section_base_location" = "Base Location";
 "profile.location_name_placeholder" = "Location Name";
 "profile.latitude_placeholder" = "Latitude";

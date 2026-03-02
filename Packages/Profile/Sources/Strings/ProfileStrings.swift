@@ -15,10 +15,12 @@ enum ProfileStrings: String {
     case displayNamePlaceholder = "profile.display_name_placeholder"
     case typePickerTitle = "profile.type_picker_title"
     case descriptionLabel = "profile.description_label"
+    case publicProfileToggle = "profile.public_profile_toggle"
     case saveProfileButton = "profile.save_profile_button"
 
     case sectionAvatar = "profile.section_avatar"
     case avatarUploadComingSoon = "profile.avatar_upload_coming_soon"
+    case changeAvatarBadge = "profile.change_avatar_badge"
 
     case sectionBaseLocation = "profile.section_base_location"
     case locationNamePlaceholder = "profile.location_name_placeholder"

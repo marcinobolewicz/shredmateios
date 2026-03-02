@@ -54,16 +54,22 @@ public struct Rider: Codable, Sendable, Equatable, Identifiable {
 public struct UpdateRiderRequest: Codable, Sendable {
     public let type: RiderType?
     public let displayName: String?
+    public let avatarUrl: String?
     public let description: String?
+    public let isPublic: Bool?
     
     public init(
         type: RiderType? = nil,
         displayName: String? = nil,
-        description: String? = nil
+        avatarUrl: String? = nil,
+        description: String? = nil,
+        isPublic: Bool? = nil
     ) {
         self.type = type
         self.displayName = displayName
+        self.avatarUrl = avatarUrl
         self.description = description
+        self.isPublic = isPublic
     }
 }
 

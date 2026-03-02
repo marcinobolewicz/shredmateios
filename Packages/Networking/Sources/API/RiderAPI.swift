@@ -24,7 +24,20 @@ public enum RiderAPI {
     }
     
     public static func updateMe(_ request: UpdateRiderRequest) -> Endpoint<Rider> {
-        .patch("/riders/me", body: request, auth: .bearerToken)
+        var payload: [String: Any] = [:]
+        if let displayName = request.displayName { payload["displayName"] = displayName }
+        if let avatarUrl = request.avatarUrl { payload["avatarUrl"] = avatarUrl }
+        if let description = request.description { payload["description"] = description }
+        if let isPublic = request.isPublic { payload["isPublic"] = isPublic }
+
+        let data = (try? JSONSerialization.data(withJSONObject: payload)) ?? Data("{}".utf8)
+
+        return Endpoint(
+            method: .patch,
+            path: "/riders/me",
+            auth: .bearerToken,
+            body: .raw(data, contentType: "application/json")
+        )
     }
     
     public static func uploadAvatar(imageData: Data, fileName: String = "avatar.jpg", mimeType: String = "image/jpeg") -> Endpoint<AvatarUploadResponse> {
