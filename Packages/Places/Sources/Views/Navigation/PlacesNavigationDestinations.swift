@@ -28,6 +28,8 @@ public struct PlacesNavigationDestinations: ViewModifier {
                 placesService: placesService,
                 authState: authState
             )
+        case .riderCard(let viewData):
+            RiderCardView(viewData: viewData)
         }
     }
 }

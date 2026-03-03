@@ -13,6 +13,8 @@ struct PlaceRiderRowPresenter: Sendable {
 
         return PlaceRiderRowViewData(
             id: entry.id,
+            riderId: entry.rider.id,
+            userId: entry.rider.userId,
             displayName: name,
             avatarInitials: initials(from: name),
             avatarURL: entry.rider.avatarUrl.flatMap(URL.init(string:)),

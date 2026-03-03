@@ -319,8 +319,11 @@ struct PlaceDetailsView: View {
         } else {
             LazyVStack(spacing: 0) {
                 ForEach(rows) { row in
-                    PlaceRiderRow(viewData: row)
-                        .padding(.vertical, theme.spacing.xs)
+                    NavigationLink(value: PlacesRoute.riderCard(row.riderCardData)) {
+                        PlaceRiderRow(viewData: row)
+                            .padding(.vertical, theme.spacing.xs)
+                    }
+                    .buttonStyle(.plain)
 
                     if row.id != rows.last?.id {
                         Divider()
