@@ -20,15 +20,15 @@ public enum PlacesAPI {
         placeId: UUID,
         sportSlug: String? = nil,
         sportId: UUID? = nil
-    ) -> Endpoint<[Rider]> {
+    ) -> Endpoint<[PlaceRiderPresence]> {
         var query: [URLQueryItem] = []
         if let sportSlug {
             query.append(URLQueryItem(name: "sportSlug", value: sportSlug))
         }
         if let sportId {
-            query.append(URLQueryItem(name: "sportId", value: sportId.uuidString))
+            query.append(URLQueryItem(name: "sportId", value: sportId.uuidString.lowercased()))
         }
-        return .get("/places/\(placeId.uuidString)/riders", query: query)
+        return .get("/places/\(placeId.uuidString.lowercased())/riders", query: query, auth: .bearerToken)
     }
 
     // MARK: - Join Place
@@ -37,6 +37,6 @@ public enum PlacesAPI {
         placeId: UUID,
         request: JoinPlaceRequest
     ) -> Endpoint<PlaceJoinResponse> {
-        .post("/places/\(placeId.uuidString)/join", body: request, auth: .bearerToken)
+        .post("/places/\(placeId.uuidString.lowercased())/join", body: request, auth: .bearerToken)
     }
 }

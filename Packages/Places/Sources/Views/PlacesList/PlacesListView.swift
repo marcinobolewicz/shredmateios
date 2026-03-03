@@ -50,6 +50,7 @@ struct PlacesListView: View {
                                 description: row.description,
                                 sportTags: row.sportTags,
                                 sportIds: row.sportIds,
+                                sportSlugs: row.sportSlugs,
                                 ridersCount: row.ridersCount,
                                 mentorsCount: row.mentorsCount,
                                 avatar: row.avatar

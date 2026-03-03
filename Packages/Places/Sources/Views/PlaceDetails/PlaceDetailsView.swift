@@ -17,9 +17,22 @@ public struct PlaceDetailsViewData: Equatable, Hashable, Sendable {
     public let description: String
     public let sportTags: [String]
     public let sportIds: [UUID]
+    public let sportSlugs: [String]
     public let ridersCount: Int
     public let mentorsCount: Int
     public let avatar: Avatar
+
+    public struct SportFilter: Equatable, Hashable, Sendable, Identifiable {
+        public let id: String
+        public let title: String
+        public let slug: String
+
+        public init(slug: String, title: String) {
+            self.id = slug
+            self.slug = slug
+            self.title = title
+        }
+    }
 
     public init(
         id: UUID,
@@ -27,6 +40,7 @@ public struct PlaceDetailsViewData: Equatable, Hashable, Sendable {
         description: String,
         sportTags: [String],
         sportIds: [UUID],
+        sportSlugs: [String],
         ridersCount: Int,
         mentorsCount: Int,
         avatar: Avatar
@@ -36,9 +50,14 @@ public struct PlaceDetailsViewData: Equatable, Hashable, Sendable {
         self.description = description
         self.sportTags = sportTags
         self.sportIds = sportIds
+        self.sportSlugs = sportSlugs
         self.ridersCount = ridersCount
         self.mentorsCount = mentorsCount
         self.avatar = avatar
+    }
+
+    public var sportFilters: [SportFilter] {
+        zip(sportSlugs, sportTags).map { SportFilter(slug: $0.0, title: $0.1) }
     }
 }
 
@@ -65,6 +84,7 @@ struct PlaceDetailsView: View {
             wrappedValue: PlaceDetailsViewModel(
                 placeId: viewData.id,
                 sportIds: viewData.sportIds,
+                sportFilters: viewData.sportFilters,
                 placesService: placesService,
                 authState: authState
             )
@@ -83,7 +103,9 @@ struct PlaceDetailsView: View {
         .background(theme.colors.background)
         .navigationTitle(viewData.name)
         .navigationBarTitleDisplayMode(.inline)
-        .task { }
+        .task {
+            await viewModel.loadRiders()
+        }
         .alert(
             PlacesStrings.checkInErrorTitle.localized,
             isPresented: .init(
@@ -160,7 +182,7 @@ struct PlaceDetailsView: View {
 
                 Text(viewData.name)
                     .dsTextStyle(.title)
-            sportBadges
+            sportFiltersSection
 
             if !viewData.description.isEmpty {
                 Text(viewData.description)
@@ -170,7 +192,7 @@ struct PlaceDetailsView: View {
             }
         }
         .frame(maxWidth: .infinity)
-        .padding(.bottom, theme.spacing.lg)
+        .padding(.bottom, theme.spacing.sm)
     }
 
     @ViewBuilder
@@ -205,15 +227,6 @@ struct PlaceDetailsView: View {
         .frame(width: 80, height: 80)
     }
 
-    private var sportBadges: some View {
-//        TODO: handle more than one row of pills 
-        HStack(spacing: theme.spacing.xs) {
-            ForEach(viewData.sportTags, id: \.self) { sportTag in
-                PillView(title: sportTag, theme: theme)
-            }
-        }
-    }
-
     // MARK: - Tabs
 
     private var tabSection: some View {
@@ -245,39 +258,77 @@ struct PlaceDetailsView: View {
             }
         }
         .padding(.horizontal, theme.spacing.md)
-        .padding(.top, theme.spacing.lg)
+        .padding(.top, theme.spacing.sm)
     }
 
     private func tabTitle(for tab: DetailTab) -> String {
         switch tab {
         case .riders:
-            return "\(PlacesStrings.ridersLabel.localized) (\(viewData.ridersCount))"
+            return "\(PlacesStrings.ridersLabel.localized) (\(viewModel.ridersCount))"
         case .mentors:
-            return "\(PlacesStrings.mentorsLabel.localized) (\(viewData.mentorsCount))"
+            return "\(PlacesStrings.mentorsLabel.localized) (\(viewModel.mentorsCount))"
         }
     }
 
-    // MARK: - Content (placeholder for future rider list)
+    // MARK: - Content
 
     private var contentSection: some View {
         VStack(spacing: theme.spacing.md) {
-            switch selectedTab {
-            case .riders:
-                placeholderList(
-                    title: PlacesStrings.detailsRidersEmptyTitle.localized,
-                    subtitle: PlacesStrings.detailsRidersEmptyDescription.localized,
-                    icon: "figure.snowboarding"
-                )
-            case .mentors:
-                placeholderList(
-                    title: PlacesStrings.detailsMentorsEmptyTitle.localized,
-                    subtitle: PlacesStrings.detailsMentorsEmptyDescription.localized,
-                    icon: "person.badge.shield.checkmark"
-                )
+            if viewModel.isLoadingRiders {
+                ProgressView()
+                    .frame(maxWidth: .infinity, minHeight: 120)
+            } else {
+                switch selectedTab {
+                case .riders:
+                    ridersList(
+                        rows: viewModel.ridersRows,
+                        emptyTitle: PlacesStrings.detailsRidersEmptyTitle.localized,
+                        emptySubtitle: PlacesStrings.detailsRidersEmptyDescription.localized,
+                        emptyIcon: "figure.snowboarding"
+                    )
+                case .mentors:
+                    ridersList(
+                        rows: viewModel.mentorsRows,
+                        emptyTitle: PlacesStrings.detailsMentorsEmptyTitle.localized,
+                        emptySubtitle: PlacesStrings.detailsMentorsEmptyDescription.localized,
+                        emptyIcon: "person.badge.shield.checkmark"
+                    )
+                }
             }
         }
-        .padding(.top, theme.spacing.md)
+        .padding(.top, theme.spacing.xs)
         .padding(.horizontal, theme.spacing.md)
+    }
+
+    @ViewBuilder
+    private var sportFiltersSection: some View {
+        if !viewModel.sportFilters.isEmpty {
+            PlaceSportFiltersRow(
+                filters: viewModel.sportFilters,
+                selectedSportSlug: viewModel.selectedSportSlug
+            ) { sportSlug in
+                Task { await viewModel.selectSport(sportSlug) }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func ridersList(rows: [PlaceRiderRowViewData], emptyTitle: String, emptySubtitle: String, emptyIcon: String) -> some View {
+        if rows.isEmpty {
+            placeholderList(title: emptyTitle, subtitle: emptySubtitle, icon: emptyIcon)
+        } else {
+            LazyVStack(spacing: 0) {
+                ForEach(rows) { row in
+                    PlaceRiderRow(viewData: row)
+                        .padding(.vertical, theme.spacing.xs)
+
+                    if row.id != rows.last?.id {
+                        Divider()
+                            .overlay(theme.colors.border.opacity(0.35))
+                    }
+                }
+            }
+        }
     }
 
     private func placeholderList(title: String, subtitle: String, icon: String) -> some View {

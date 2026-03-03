@@ -9,7 +9,7 @@ import Foundation
 
 public protocol PlacesServiceProtocol: Sendable {
     func fetchPlaces(sportSlug: String?) async throws -> [PlaceDto]
-    func fetchPlaceRiders(placeId: UUID, sportSlug: String?, sportId: UUID?) async throws -> [Rider]
+    func fetchPlaceRiders(placeId: UUID, sportSlug: String?, sportId: UUID?) async throws -> [PlaceRiderPresence]
     func joinPlace(placeId: UUID, sportId: UUID, role: PlaceRiderRole, rating: Int?) async throws -> PlaceJoinResponse
 }
 
@@ -25,7 +25,7 @@ public final class PlacesService: PlacesServiceProtocol, Sendable {
         try await client.send(PlacesAPI.places(sportSlug: sportSlug))
     }
 
-    public func fetchPlaceRiders(placeId: UUID, sportSlug: String? = nil, sportId: UUID? = nil) async throws -> [Rider] {
+    public func fetchPlaceRiders(placeId: UUID, sportSlug: String? = nil, sportId: UUID? = nil) async throws -> [PlaceRiderPresence] {
         try await client.send(PlacesAPI.placeRiders(placeId: placeId, sportSlug: sportSlug, sportId: sportId))
     }
 

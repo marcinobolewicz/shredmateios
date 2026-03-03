@@ -11,12 +11,14 @@ struct SpotRowPresenter: Sendable {
     func map(place: Place) -> SpotRowViewData {
         let sportTags = place.sports.map { $0.name }
         let sportIds = place.sports.map { $0.id }
+        let sportSlugs = place.sports.map { $0.slug }
         return SpotRowViewData(
             id: place.id,
             title: place.name,
             description: place.description,
             sportTags: sportTags,
             sportIds: sportIds,
+            sportSlugs: sportSlugs,
             ridersCount: place.ridersCount,
             mentorsCount: place.mentorsCount,
             avatar: place.avatarURL != nil ? .imageRemote(place.avatarURL) : .initials(initials(from: place.name))

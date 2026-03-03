@@ -18,36 +18,88 @@ final class PlaceDetailsViewModel {
     private(set) var hasJoined = false
     private(set) var joinedRole: PlaceRiderRole?
     private(set) var isJoining = false
+    private(set) var isLoadingRiders = false
     private(set) var error: String?
+    private(set) var riderEntries: [PlaceRiderPresence] = []
+    private(set) var selectedSportSlug: String?
 
     var showRolePicker = false
 
     let placeId: UUID
     let sportIds: [UUID]
+    let sportFilters: [PlaceDetailsViewData.SportFilter]
 
     // MARK: - Dependencies
 
     private let placesService: any PlacesServiceProtocol
     private let authState: AuthState
+    private let rowPresenter: PlaceRiderRowPresenter
+    private var lastLoadedSportSlug: String?
 
     // MARK: - Init
 
     init(
         placeId: UUID,
         sportIds: [UUID],
+        sportFilters: [PlaceDetailsViewData.SportFilter],
         placesService: any PlacesServiceProtocol,
-        authState: AuthState
+        authState: AuthState,
+        rowPresenter: PlaceRiderRowPresenter = .init()
     ) {
         self.placeId = placeId
         self.sportIds = sportIds
+        self.sportFilters = sportFilters
         self.placesService = placesService
         self.authState = authState
+        self.rowPresenter = rowPresenter
+        self.selectedSportSlug = nil
+    }
+
+    var ridersRows: [PlaceRiderRowViewData] {
+        riderEntries
+            .filter { $0.role != .mentor }
+            .map(rowPresenter.map)
+    }
+
+    var mentorsRows: [PlaceRiderRowViewData] {
+        riderEntries
+            .filter { $0.role == .mentor }
+            .map(rowPresenter.map)
+    }
+
+    var ridersCount: Int { ridersRows.count }
+
+    var mentorsCount: Int { mentorsRows.count }
+
+    func selectSport(_ sportSlug: String) async {
+        guard selectedSportSlug != sportSlug else { return }
+        selectedSportSlug = sportSlug
+        await loadRiders(force: true)
+    }
+
+    func loadRiders(force: Bool = false) async {
+        guard !isLoadingRiders else { return }
+        if !force, !riderEntries.isEmpty, lastLoadedSportSlug == selectedSportSlug { return }
+
+        isLoadingRiders = true
+        error = nil
+        defer { isLoadingRiders = false }
+
+        do {
+            riderEntries = try await placesService.fetchPlaceRiders(
+                placeId: placeId,
+                sportSlug: selectedSportSlug,
+                sportId: nil
+            )
+            lastLoadedSportSlug = selectedSportSlug
+        } catch {
+            self.error = error.localizedDescription
+        }
     }
 
     // MARK: - Join Place
 
     func joinWith(role: PlaceRiderRole) async {
-        // TODO: check if user sports match spot types
         guard let someSportId = sportIds.first else { return }
         isJoining = true
         error = nil
