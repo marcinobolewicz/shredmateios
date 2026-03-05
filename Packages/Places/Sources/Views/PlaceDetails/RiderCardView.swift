@@ -33,6 +33,15 @@ struct RiderCardView: View {
     @Environment(AppTheme.self) private var theme
 
     let viewData: RiderCardViewData
+    let onMessageTap: (_ userId: UUID, _ displayName: String) -> Void
+
+    init(
+        viewData: RiderCardViewData,
+        onMessageTap: @escaping (_ userId: UUID, _ displayName: String) -> Void = { _, _ in }
+    ) {
+        self.viewData = viewData
+        self.onMessageTap = onMessageTap
+    }
 
     var body: some View {
         ScrollView {
@@ -100,7 +109,9 @@ struct RiderCardView: View {
     }
 
     private var messageButton: some View {
-        Button("Napisz wiadomość") {}
+        Button("Napisz wiadomość") {
+            onMessageTap(viewData.userId, viewData.displayName)
+        }
             .buttonStyle(.dsPrimary)
     }
 }

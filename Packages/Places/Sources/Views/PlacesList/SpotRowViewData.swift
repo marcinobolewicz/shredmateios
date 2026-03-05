@@ -11,6 +11,8 @@ struct SpotRowViewData: Identifiable, Equatable, Sendable {
     let id: UUID
     let title: String
     let description: String
+    let latitude: Double?
+    let longitude: Double?
     let sportTags: [String]
     let sportIds: [UUID]
     let sportSlugs: [String]

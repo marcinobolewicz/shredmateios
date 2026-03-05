@@ -16,6 +16,8 @@ struct SpotRowPresenter: Sendable {
             id: place.id,
             title: place.name,
             description: place.description,
+            latitude: place.location?.lat,
+            longitude: place.location?.lng,
             sportTags: sportTags,
             sportIds: sportIds,
             sportSlugs: sportSlugs,

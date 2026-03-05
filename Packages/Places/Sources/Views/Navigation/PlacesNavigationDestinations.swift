@@ -7,9 +7,11 @@
 
 import SwiftUI
 import Networking
+import Foundation
 
 public struct PlacesNavigationDestinations: ViewModifier {
     let placesService: PlacesServiceProtocol
+    let onOpenChat: (_ userId: UUID, _ displayName: String) -> Void
     @Environment(AuthState.self) private var authState
 
     public func body(content: Content) -> some View {
@@ -29,13 +31,24 @@ public struct PlacesNavigationDestinations: ViewModifier {
                 authState: authState
             )
         case .riderCard(let viewData):
-            RiderCardView(viewData: viewData)
+            RiderCardView(
+                viewData: viewData,
+                onMessageTap: onOpenChat
+            )
         }
     }
 }
 
 public extension View {
-    func placesDestinations(placesService: PlacesServiceProtocol) -> some View {
-        modifier(PlacesNavigationDestinations(placesService: placesService))
+    func placesDestinations(
+        placesService: PlacesServiceProtocol,
+        onOpenChat: @escaping (_ userId: UUID, _ displayName: String) -> Void = { _, _ in }
+    ) -> some View {
+        modifier(
+            PlacesNavigationDestinations(
+                placesService: placesService,
+                onOpenChat: onOpenChat
+            )
+        )
     }
 }
