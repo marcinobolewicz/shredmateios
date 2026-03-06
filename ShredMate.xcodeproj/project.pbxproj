@@ -70,7 +70,9 @@
 				EE03339B2F4DB97800ECE70E /* ShredMate.entitlements */,
 				ShredMateAppSwift /* ShredMateApp.swift */,
 				Assets /* Assets.xcassets */,
-				InfoPlist /* Info.plist */,					GoogleServiceInfoPlist /* GoogleService-Info.plist */,			);
+				InfoPlist /* Info.plist */,
+				GoogleServiceInfoPlist /* GoogleService-Info.plist */,
+			);
 			path = ShredMate;
 			sourceTree = "<group>";
 		};
@@ -84,6 +86,7 @@
 				ShredMateSourcesBuildPhase /* Sources */,
 				ShredMateFrameworks /* Frameworks */,
 				ShredMateResourcesBuildPhase /* Resources */,
+				CrashlyticsPhase /* Crashlytics */,
 				SwiftLintPhase /* SwiftLint */,
 			);
 			buildRules = (
@@ -148,6 +151,26 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		CrashlyticsPhase /* Crashlytics */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${TARGET_NAME}",
+				"$(SRCROOT)/$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
+			);
+			name = Crashlytics;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "${BUILD_DIR%Build/*}SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run";
+		};
 		SwiftLintPhase /* SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
@@ -316,7 +339,9 @@
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 2VL6ZJ5JTY;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = NO;
+				GOOGLE_APP_ID = "1:620509939173:ios:be6128edb90a2995f11b0c";
 				INFOPLIST_FILE = ShredMate/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -354,7 +379,9 @@
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 2VL6ZJ5JTY;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = NO;
+				GOOGLE_APP_ID = "1:620509939173:ios:be6128edb90a2995f11b0c";
 				INFOPLIST_FILE = ShredMate/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
