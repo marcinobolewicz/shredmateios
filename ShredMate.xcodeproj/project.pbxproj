@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		App /* App in Frameworks */ = {isa = PBXBuildFile; productRef = AppPackage /* App */; };
 		AssetsFile /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = Assets /* Assets.xcassets */; };
+		GoogleServiceInfoFile /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = GoogleServiceInfoPlist /* GoogleService-Info.plist */; };
 		ShredMateAppFile /* ShredMateApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = ShredMateAppSwift /* ShredMateApp.swift */; };
 /* End PBXBuildFile section */
 
@@ -16,6 +17,7 @@
 		Assets /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		DevConfig /* Dev.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Dev.xcconfig; sourceTree = "<group>"; };
 		EE03339B2F4DB97800ECE70E /* ShredMate.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ShredMate.entitlements; sourceTree = "<group>"; };
+		GoogleServiceInfoPlist /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		InfoPlist /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		Package /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		ProdConfig /* Prod.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Prod.xcconfig; sourceTree = "<group>"; };
@@ -68,8 +70,7 @@
 				EE03339B2F4DB97800ECE70E /* ShredMate.entitlements */,
 				ShredMateAppSwift /* ShredMateApp.swift */,
 				Assets /* Assets.xcassets */,
-				InfoPlist /* Info.plist */,
-			);
+				InfoPlist /* Info.plist */,					GoogleServiceInfoPlist /* GoogleService-Info.plist */,			);
 			path = ShredMate;
 			sourceTree = "<group>";
 		};
@@ -140,6 +141,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AssetsFile /* Assets.xcassets in Resources */,
+				GoogleServiceInfoFile /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

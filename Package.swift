@@ -20,7 +20,8 @@ let package = Package(
         .library(name: "Theme", targets: ["Theme"])
     ],
     dependencies: [
-        .package(url: "https://github.com/socketio/socket.io-client-swift", from: "16.1.1")
+        .package(url: "https://github.com/socketio/socket.io-client-swift", from: "16.1.1"),
+        .package(url: "https://github.com/firebase/firebase-ios-sdk", from: "11.0.0")
     ],
     targets: [
         // Theme Package
@@ -118,7 +119,11 @@ let package = Package(
         // App Package
         .target(
             name: "App",
-            dependencies: ["Core", "Networking", "Auth", "Login", "Profile", "Places", "Conversations", "Theme"],
+            dependencies: [
+                "Core", "Networking", "Auth", "Login", "Profile", "Places", "Conversations", "Theme",
+                .product(name: "FirebaseCrashlytics", package: "firebase-ios-sdk"),
+                .product(name: "FirebaseMessaging", package: "firebase-ios-sdk")
+            ],
             path: "Packages/App/Sources",
             resources: [
                 .process("Resources")
