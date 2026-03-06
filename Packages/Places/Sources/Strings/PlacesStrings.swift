@@ -37,6 +37,7 @@ enum PlacesStrings: String {
     case detailsRidersEmptyDescription = "places.details_riders_empty_description"
     case detailsMentorsEmptyTitle = "places.details_mentors_empty_title"
     case detailsMentorsEmptyDescription = "places.details_mentors_empty_description"
+    case mapDetailsButton = "places.map_details_button"
 
     case spotSubtitlePlaceholder = "places.spot_subtitle_placeholder"
 

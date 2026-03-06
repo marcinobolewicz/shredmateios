@@ -6,6 +6,7 @@ struct PlaceMapPinViewData: Identifiable {
     let coordinate: CLLocationCoordinate2D
     let title: String
     let description: String
+    let placeDetailsData: PlaceDetailsViewData
 }
 
 struct PlacesMapPresenter {
@@ -31,7 +32,18 @@ struct PlacesMapPresenter {
                 id: row.id,
                 coordinate: CLLocationCoordinate2D(latitude: latitude, longitude: longitude),
                 title: row.title,
-                description: infoText
+                description: infoText,
+                placeDetailsData: PlaceDetailsViewData(
+                    id: row.id,
+                    name: row.title,
+                    description: row.description,
+                    sportTags: row.sportTags,
+                    sportIds: row.sportIds,
+                    sportSlugs: row.sportSlugs,
+                    ridersCount: row.ridersCount,
+                    mentorsCount: row.mentorsCount,
+                    avatar: row.avatar
+                )
             )
         }
     }

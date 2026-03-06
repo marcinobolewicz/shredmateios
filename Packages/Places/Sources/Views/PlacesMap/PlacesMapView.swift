@@ -4,6 +4,7 @@ import Theme
 
 struct PlacesMapView: View {
     @Environment(AppTheme.self) private var theme
+    @Environment(PlacesRouter.self) private var router
     @Bindable var viewModel: PlacesViewModel
     private let presenter = PlacesMapPresenter()
     
@@ -16,10 +17,16 @@ struct PlacesMapView: View {
     
     var body: some View {
         Map(coordinateRegion: $region, annotationItems: pins) { pin in
-            MapAnnotation(coordinate: pin.coordinate) {
+            MapAnnotation(coordinate: pin.coordinate, anchorPoint: CGPoint(x: 0.5, y: 1.0)) {
                 mapPinAnnotation(pin)
             }
         }
+        .gesture(
+            TapGesture().onEnded {
+                selectedPinId = nil
+            },
+            including: .gesture
+        )
         .onAppear {
             syncRegion()
         }
@@ -32,7 +39,7 @@ struct PlacesMapView: View {
     }
 
     private func mapPinAnnotation(_ pin: PlaceMapPinViewData) -> some View {
-        VStack(spacing: theme.spacing.xxs) {
+        VStack(spacing: theme.spacing.xs) {
             if selectedPinId == pin.id {
                 pinCallout(pin)
             }
@@ -60,6 +67,13 @@ struct PlacesMapView: View {
                 .dsTextStyle(.caption)
                 .foregroundStyle(theme.colors.textSecondary)
                 .lineLimit(2)
+
+            Button(PlacesStrings.mapDetailsButton.localized) {
+                router.navigate(to: .placeDetails(pin.placeDetailsData))
+            }
+            .font(.caption.weight(.semibold))
+            .foregroundStyle(theme.colors.primary)
+            .buttonStyle(.plain)
         }
         .frame(width: 180, alignment: .leading)
         .padding(.horizontal, theme.spacing.sm)
@@ -70,6 +84,11 @@ struct PlacesMapView: View {
             RoundedRectangle(cornerRadius: 12, style: .continuous)
                 .stroke(theme.colors.border.opacity(0.35), lineWidth: 1)
         )
+        .onTapGesture {
+            withAnimation(.snappy(duration: 0.2)) {
+                selectedPinId = nil
+            }
+        }
     }
 
     private func syncRegion() {

@@ -30,6 +30,7 @@
 "places.details_riders_empty_description" = "Riderzy odwiedzający ten spot pojawią się tutaj.";
 "places.details_mentors_empty_title" = "Brak mentorów";
 "places.details_mentors_empty_description" = "Mentorzy dostępni w tym spocie pojawią się tutaj.";
+"places.map_details_button" = "Szczegóły";
 
 /* Zameldowanie */
 "places.check_in_button" = "Zamelduj się";
