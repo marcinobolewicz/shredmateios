@@ -25,6 +25,15 @@ public enum PlaceMapper {
             avatarURL: dto.avatarUrl,
             location: dto.location.map { GeoPoint(lat: $0.lat, lng: $0.lng) },
             sports: (dto.sports ?? []).map { PlaceSport(id: $0.id, name: $0.name, slug: $0.slug) },
+            tags: (dto.tags ?? []).map {
+                PlaceTag(
+                    id: $0.id,
+                    name: $0.name,
+                    slug: $0.slug,
+                    emoji: $0.emoji.map { _ in PlaceTagEmoji() },
+                    createdAt: $0.createdAt
+                )
+            },
             ridersCount: dto.ridersCount ?? 0,
             mentorsCount: dto.mentorsCount ?? 0
         )
