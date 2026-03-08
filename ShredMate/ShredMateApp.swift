@@ -19,7 +19,12 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
         UNUserNotificationCenter.current().delegate = self
         Messaging.messaging().delegate = self
 
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { _, _ in }
+        let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
+        UNUserNotificationCenter.current().requestAuthorization(
+            options: authOptions,
+            completionHandler: { _, _ in }
+        )
+
         application.registerForRemoteNotifications()
         return true
     }
@@ -28,12 +33,15 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
         Messaging.messaging().apnsToken = deviceToken
     }
 
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        print("[APNs] Failed to register: \(error)")
+    }
+
     // MARK: - MessagingDelegate
 
     nonisolated func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
-        if let token = fcmToken {
-            print("[FCM] Token: \(token)")
-        }
+        guard let token = fcmToken else { return }
+        print("[FCM] Token: \(token)")
     }
 
     // MARK: - UNUserNotificationCenterDelegate
@@ -44,6 +52,16 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
         withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
     ) {
         completionHandler([.banner, .sound, .badge])
+    }
+
+    // Wymagane przy wyłączonym swizzlingu — przekazuje dane powiadomienia do Firebase
+    func application(
+        _ application: UIApplication,
+        didReceiveRemoteNotification userInfo: [AnyHashable: Any],
+        fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
+    ) {
+        Messaging.messaging().appDidReceiveMessage(userInfo)
+        completionHandler(.newData)
     }
 }
 

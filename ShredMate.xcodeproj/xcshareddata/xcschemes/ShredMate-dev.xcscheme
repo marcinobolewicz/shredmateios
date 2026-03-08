@@ -15,9 +15,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "ShredMateTarget"
-               BuildableName = "ShredMate.app"
-               BlueprintName = "ShredMate"
+               BlueprintIdentifier = "DevTarget"
+               BuildableName = "ShredMate Dev.app"
+               BlueprintName = "ShredMate Dev"
                ReferencedContainer = "container:ShredMate.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -44,9 +44,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "ShredMateTarget"
-            BuildableName = "ShredMate.app"
-            BlueprintName = "ShredMate"
+            BlueprintIdentifier = "DevTarget"
+            BuildableName = "ShredMate Dev.app"
+            BlueprintName = "ShredMate Dev"
             ReferencedContainer = "container:ShredMate.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -61,15 +61,15 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "ShredMateTarget"
-            BuildableName = "ShredMate.app"
-            BlueprintName = "ShredMate"
+            BlueprintIdentifier = "DevTarget"
+            BuildableName = "ShredMate Dev.app"
+            BlueprintName = "ShredMate Dev"
             ReferencedContainer = "container:ShredMate.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
    <AnalyzeAction
-      buildConfiguration = "Debug">
+      buildConfiguration = "Release">
    </AnalyzeAction>
    <ArchiveAction
       buildConfiguration = "Release"
