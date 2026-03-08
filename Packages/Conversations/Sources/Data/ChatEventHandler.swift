@@ -32,6 +32,10 @@ public final class ChatEventHandler {
 
     private var listenerTask: Task<Void, Never>?
 
+    /// Callback invoked when a new message arrives via socket.
+    /// The App layer sets this to post an in-app notification banner.
+    public var onMessageReceived: ((_ senderName: String, _ text: String, _ conversationId: String) -> Void)?
+
     // MARK: - Init
 
     public init(realtimeClient: ChatRealtimeProviding, repository: ChatRepository) {
@@ -79,6 +83,11 @@ public final class ChatEventHandler {
 
         case .messageNew(let payload):
             repository.handleMessageNew(payload)
+            let senderName = repository.conversations
+                .first(where: { $0.id == payload.conversationId })?
+                .otherUser.name
+            let preview = payload.text ?? ""
+            onMessageReceived?(senderName ?? "", preview, payload.conversationId)
 
         case .conversationUpdated(let payload):
             repository.handleConversationUpdated(payload)

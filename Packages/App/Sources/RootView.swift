@@ -36,6 +36,7 @@ public struct RootView: View {
 
             if authState.isLoading { LoadingOverlay() }
         }
+        .inAppNotificationOverlay(center: dependencies.notificationCenter)
         .task {
             async let _ = dependencies.sportsService.fetchSports()
             await authState.restoreSession()
@@ -43,13 +44,17 @@ public struct RootView: View {
 
             if authState.isLoggedIn {
                 await connectChat()
+                await PushNotificationsBridge.requestAuthorizationAfterLogin()
             }
         }
         .onChange(of: authState.isLoggedIn) { _, isLoggedIn in
             router.flow = isLoggedIn ? .user : .guest
 
             if isLoggedIn {
-                Task { await connectChat() }
+                Task {
+                    await connectChat()
+                    await PushNotificationsBridge.requestAuthorizationAfterLogin()
+                }
             } else {
                 disconnectChat()
             }

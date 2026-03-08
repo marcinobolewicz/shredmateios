@@ -7,6 +7,7 @@ import Conversations
 @Observable
 public final class AppDependencies {
     public let authState: AuthState
+    public let pushDeviceService: any PushDeviceServiceProtocol
     public let riderService: any RiderServiceProtocol
     public let placesService: any PlacesServiceProtocol
     public let sportsService: any SportsServiceProtocol
@@ -15,9 +16,11 @@ public final class AppDependencies {
     public let chatRepository: ChatRepository
     public let chatLifecycleManager: ChatLifecycleManager
     public let chatEventHandler: ChatEventHandler
+    public let notificationCenter: InAppNotificationCenter
 
     public init(
         authState: AuthState,
+        pushDeviceService: any PushDeviceServiceProtocol,
         riderService: any RiderServiceProtocol,
         placesService: any PlacesServiceProtocol,
         sportsService: any SportsServiceProtocol,
@@ -25,9 +28,11 @@ public final class AppDependencies {
         chatRealtimeClient: ChatRealtimeProviding,
         chatRepository: ChatRepository,
         chatLifecycleManager: ChatLifecycleManager,
-        chatEventHandler: ChatEventHandler
+        chatEventHandler: ChatEventHandler,
+        notificationCenter: InAppNotificationCenter
     ) {
         self.authState = authState
+        self.pushDeviceService = pushDeviceService
         self.riderService = riderService
         self.placesService = placesService
         self.sportsService = sportsService
@@ -36,6 +41,7 @@ public final class AppDependencies {
         self.chatRepository = chatRepository
         self.chatLifecycleManager = chatLifecycleManager
         self.chatEventHandler = chatEventHandler
+        self.notificationCenter = notificationCenter
     }
 }
 
@@ -45,19 +51,32 @@ public struct AppSetup {
     
     /// Configure app dependencies and return all dependencies for root view
     public static func configure() -> AppDependencies {
-        let (httpClient, authState) = configureAuth()
-        let services = configureServices(httpClient: httpClient)
-        let chat = configureChat(httpClient: httpClient, authState: authState)
+        let auth = configureAuth()
+        let services = configureServices(httpClient: auth.httpClient)
+        let chat = configureChat(httpClient: auth.httpClient, authState: auth.authState)
+        let notificationCenter = InAppNotificationCenter()
         
+        // Wire socket → in-app banner
+        chat.eventHandler.onMessageReceived = { [weak notificationCenter] senderName, text, conversationId in
+            let notification = InAppNotification(
+                title: senderName.isEmpty ? "Nowa wiadomość" : senderName,
+                body: text,
+                conversationId: conversationId
+            )
+            notificationCenter?.post(notification)
+        }
+
         registerDependencies(
-            authState: authState,
-            httpClient: httpClient,
+            authState: auth.authState,
+            httpClient: auth.httpClient,
+            pushDeviceService: auth.pushDeviceService,
             services: services,
             chat: chat
         )
 
         return AppDependencies(
-            authState: authState,
+            authState: auth.authState,
+            pushDeviceService: auth.pushDeviceService,
             riderService: services.rider,
             placesService: services.places,
             sportsService: services.sports,
@@ -65,20 +84,33 @@ public struct AppSetup {
             chatRealtimeClient: chat.realtimeClient,
             chatRepository: chat.repository,
             chatLifecycleManager: chat.lifecycleManager,
-            chatEventHandler: chat.eventHandler
+            chatEventHandler: chat.eventHandler,
+            notificationCenter: notificationCenter
         )
     }
 
     // MARK: - Auth
 
-    private static func configureAuth() -> (AuthenticatingHTTPClient, AuthState) {
+    private struct AuthDependencies {
+        let httpClient: AuthenticatingHTTPClient
+        let authState: AuthState
+        let pushDeviceService: any PushDeviceServiceProtocol
+    }
+
+    private static func configureAuth() -> AuthDependencies {
         let baseURL = URL(string: "https://api.shredmate.eu/api/v1")!
         let tokenStorage = TokenStorage()
+        let pushDeviceStorage = PushDeviceStorage()
         let tokenProvider = DefaultTokenProvider(tokenStorage: tokenStorage, baseURL: baseURL)
 
         let httpClient = AuthenticatingHTTPClient(
             baseURL: baseURL,
             tokenProvider: tokenProvider
+        )
+
+        let pushDeviceService = PushDeviceService(
+            client: httpClient,
+            storage: pushDeviceStorage
         )
 
         let authService = AuthService(client: httpClient, tokenStorage: tokenStorage)
@@ -87,7 +119,8 @@ public struct AppSetup {
         let authState = AuthState(
             authService: authService,
             riderService: riderService,
-            tokenStorage: tokenStorage
+            tokenStorage: tokenStorage,
+            pushDeviceService: pushDeviceService
         )
 
         Task { @MainActor in
@@ -96,7 +129,11 @@ public struct AppSetup {
             }
         }
 
-        return (httpClient, authState)
+        return AuthDependencies(
+            httpClient: httpClient,
+            authState: authState,
+            pushDeviceService: pushDeviceService
+        )
     }
 
     // MARK: - Services
@@ -155,12 +192,14 @@ public struct AppSetup {
     private static func registerDependencies(
         authState: AuthState,
         httpClient: AuthenticatingHTTPClient,
+        pushDeviceService: any PushDeviceServiceProtocol,
         services: Services,
         chat: ChatDependencies
     ) {
         let container = DIContainer.shared
         container.register(AuthState.self) { authState }
         container.register(AuthenticatingHTTPClient.self) { httpClient }
+        container.register(PushDeviceServiceProtocol.self) { pushDeviceService }
         container.register(RiderServiceProtocol.self) { services.rider }
         container.register(PlacesServiceProtocol.self) { services.places }
         container.register(ChatServiceProtocol.self) { chat.service }

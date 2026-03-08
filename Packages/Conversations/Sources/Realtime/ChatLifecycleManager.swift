@@ -9,6 +9,7 @@ import Foundation
 #if canImport(UIKit)
 import UIKit
 #endif
+import UserNotifications
 import Networking
 import os.log
 
@@ -49,6 +50,7 @@ public final class ChatLifecycleManager {
 
     private var lastToken: String?
     private nonisolated(unsafe) var foregroundObserver: (any NSObjectProtocol)?
+    private nonisolated(unsafe) var backgroundObserver: (any NSObjectProtocol)?
 
     // MARK: - Init
 
@@ -56,10 +58,14 @@ public final class ChatLifecycleManager {
         self.realtimeClient = realtimeClient
         self.authState = authState
         observeForeground()
+        observeBackground()
     }
 
     deinit {
         if let observer = foregroundObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
+        if let observer = backgroundObserver {
             NotificationCenter.default.removeObserver(observer)
         }
     }
@@ -109,6 +115,31 @@ public final class ChatLifecycleManager {
         #endif
     }
 
+    private func observeBackground() {
+        #if canImport(UIKit)
+        backgroundObserver = NotificationCenter.default.addObserver(
+            forName: UIApplication.didEnterBackgroundNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            Task { @MainActor [weak self] in
+                self?.handleBackgroundTransition()
+            }
+        }
+        #endif
+    }
+
+    /// Disconnects the socket immediately when the app enters background.
+    ///
+    /// This ensures the backend marks the user as offline so APNs push
+    /// notifications are delivered without the ~30 s delay that occurs
+    /// while iOS keeps a suspended socket alive.
+    private func handleBackgroundTransition() {
+        guard lastToken != nil else { return }
+        logger.info("App entering background — disconnecting socket for push delivery")
+        realtimeClient.disconnect()
+    }
+
     /// Runs when the app returns to the foreground.
     ///
     /// 1. Checks whether authentication is still valid.
@@ -116,6 +147,8 @@ public final class ChatLifecycleManager {
     /// 3. If the socket was simply disconnected (but token is OK), reconnects.
     private func handleForegroundResume() async {
         logger.info("App entering foreground — checking token & socket state")
+
+        clearBadge()
 
         guard authState.isLoggedIn else {
             logger.debug("Not logged in on foreground — disconnecting socket")
@@ -149,5 +182,15 @@ public final class ChatLifecycleManager {
         }
 
         realtimeClient.reconnectIfNeeded(newToken: token)
+    }
+
+    // MARK: - Badge
+
+    private func clearBadge() {
+        UNUserNotificationCenter.current().setBadgeCount(0) { error in
+            if let error {
+                logger.warning("Failed to clear badge: \(error.localizedDescription)")
+            }
+        }
     }
 }
