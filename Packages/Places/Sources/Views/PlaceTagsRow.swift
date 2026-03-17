@@ -13,12 +13,12 @@ private struct TagPillModifier: ViewModifier {
     let index: Int
 
     static let palette: [Color] = [
-        Color(red: 0.72, green: 0.62, blue: 0.96), // purple
-        Color(red: 0.58, green: 0.78, blue: 0.98), // blue
-        Color(red: 0.98, green: 0.62, blue: 0.78), // pink
-        Color(red: 0.99, green: 0.88, blue: 0.38), // yelow
-        Color(red: 0.58, green: 0.92, blue: 0.68), // green
-        Color(red: 0.99, green: 0.72, blue: 0.50)  // orange
+        Color(red: 0.92, green: 0.88, blue: 0.99), // purple
+        Color(red: 0.88, green: 0.94, blue: 1.00), // blue
+        Color(red: 1.00, green: 0.88, blue: 0.92), // pink
+        Color(red: 1.00, green: 0.97, blue: 0.75), // yellow
+        Color(red: 0.88, green: 0.98, blue: 0.92), // green
+        Color(red: 1.00, green: 0.90, blue: 0.80)  // orange
     ]
 
     func body(content: Content) -> some View {
