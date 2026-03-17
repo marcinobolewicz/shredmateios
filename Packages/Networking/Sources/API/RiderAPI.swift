@@ -24,19 +24,11 @@ public enum RiderAPI {
     }
     
     public static func updateMe(_ request: UpdateRiderRequest) -> Endpoint<Rider> {
-        var payload: [String: Any] = [:]
-        if let displayName = request.displayName { payload["displayName"] = displayName }
-        if let avatarUrl = request.avatarUrl { payload["avatarUrl"] = avatarUrl }
-        if let description = request.description { payload["description"] = description }
-        if let isPublic = request.isPublic { payload["isPublic"] = isPublic }
-
-        let data = (try? JSONSerialization.data(withJSONObject: payload)) ?? Data("{}".utf8)
-
-        return Endpoint(
+        Endpoint(
             method: .patch,
             path: "/riders/me",
             auth: .bearerToken,
-            body: .raw(data, contentType: "application/json")
+            body: .json(request, keys: .camelCase)
         )
     }
     
@@ -64,7 +56,12 @@ public enum RiderAPI {
     }
     
     public static func updateBaseLocation(_ request: UpdateBaseLocationRequest) -> Endpoint<RiderBaseLocation> {
-        .put("/riders/me/base-location", body: request, auth: .bearerToken)
+        Endpoint(
+            method: .put,
+            path: "/riders/me/base-location",
+            auth: .bearerToken,
+            body: .json(UpdateBaseLocationRequestDTO(request: request), keys: .camelCase)
+        )
     }
     
     // MARK: - Sports
@@ -80,4 +77,5 @@ public enum RiderAPI {
     public static func deleteSport(sportId: String) -> Endpoint<EmptyResponse> {
         .delete("/riders/me/sports/\(sportId)", auth: .bearerToken)
     }
+
 }

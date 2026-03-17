@@ -13,11 +13,17 @@
 "profile.section_avatar" = "Avatar";
 "profile.avatar_upload_coming_soon" = "Wgrywanie avatara wkrótce";
 "profile.change_avatar_badge" = "Zmień";
+"profile.description_placeholder" = "Napisz coś o sobie...";
 "profile.section_base_location" = "Lokalizacja bazowa";
 "profile.location_name_placeholder" = "Nazwa lokalizacji";
 "profile.latitude_placeholder" = "Szerokość";
 "profile.longitude_placeholder" = "Długość";
 "profile.save_location_button" = "Zapisz lokalizację";
+"profile.no_location_set" = "Brak lokalizacji";
+"profile.pick_on_map" = "Wybierz na mapie";
+"profile.tap_map_to_pin" = "Stuknij na mapie, aby ustawić pineskę";
+"profile.location_picker_title" = "Wybierz lokalizację";
+"profile.confirm_location_button" = "Potwierdź";
 "profile.section_sports" = "Sporty";
 "profile.loading_sports" = "Wczytywanie sportów...";
 "profile.section_danger_zone" = "Strefa niebezpieczna";

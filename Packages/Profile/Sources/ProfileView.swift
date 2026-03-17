@@ -10,11 +10,13 @@ import Networking
 import Common
 import PhotosUI
 import UIKit
+import MapKit
 
 public struct ProfileView: View {
 
     @State private var viewModel: ProfileViewModel
     @State private var showDeleteConfirmation = false
+    @State private var showLocationPicker = false
     @State private var selectedAvatarItem: PhotosPickerItem?
     private let avatarImageProcessor = AvatarImageProcessor()
 
@@ -53,6 +55,22 @@ public struct ProfileView: View {
             Button(CommonStrings.okButton.localized) { viewModel.clearMessages() }
         } message: {
             Text(viewModel.successMessage ?? "")
+        }
+        .sheet(isPresented: $showLocationPicker) {
+            let initialCoord: CLLocationCoordinate2D? = {
+                guard let lat = Double(viewModel.latitudeText),
+                      let lng = Double(viewModel.longitudeText) else { return nil }
+                return CLLocationCoordinate2D(latitude: lat, longitude: lng)
+            }()
+            MapLocationPickerView(
+                initialCoordinate: initialCoord,
+                initialLocationName: viewModel.locationName
+            ) { coord, name in
+                viewModel.latitudeText = String(format: "%.6f", coord.latitude)
+                viewModel.longitudeText = String(format: "%.6f", coord.longitude)
+                viewModel.locationName = name
+                Task { await viewModel.saveBaseLocation() }
+            }
         }
         .confirmationDialog(
             ProfileStrings.deleteAccountDialogTitle.localized,
@@ -107,12 +125,17 @@ public struct ProfileView: View {
 
                     TextEditor(text: $viewModel.description)
                         .frame(minHeight: 90)
+                        .overlay(alignment: .topLeading) {
+                            if viewModel.description.isEmpty {
+                                Text(ProfileStrings.descriptionPlaceholder.localized)
+                                    .foregroundStyle(.tertiary)
+                                    .padding(.top, 8)
+                                    .padding(.leading, 5)
+                                    .allowsHitTesting(false)
+                            }
+                        }
                 }
             }
-
-            Text(ProfileStrings.avatarUploadComingSoon.localized)
-                .font(.caption)
-                .foregroundStyle(.secondary)
 
             Toggle(ProfileStrings.publicProfileToggle.localized, isOn: $viewModel.isPublic)
 
@@ -170,29 +193,38 @@ public struct ProfileView: View {
 
     private var locationSection: some View {
         Section(ProfileStrings.sectionBaseLocation.localized) {
-            TextField(ProfileStrings.locationNamePlaceholder.localized, text: $viewModel.locationName)
-
-            HStack {
-                TextField(ProfileStrings.latitudePlaceholder.localized, text: $viewModel.latitudeText)
-                    .keyboardType(.decimalPad)
-
-                TextField(ProfileStrings.longitudePlaceholder.localized, text: $viewModel.longitudeText)
-                    .keyboardType(.decimalPad)
-            }
-
             Button {
-                Task { await viewModel.saveBaseLocation() }
+                showLocationPicker = true
             } label: {
                 HStack {
+                    VStack(alignment: .leading, spacing: 4) {
+                        if !viewModel.locationName.isEmpty {
+                            Text(viewModel.locationName)
+                                .foregroundStyle(.primary)
+                            if !viewModel.latitudeText.isEmpty {
+                                Text("\(viewModel.latitudeText), \(viewModel.longitudeText)")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                        } else if !viewModel.latitudeText.isEmpty {
+                            Text("\(viewModel.latitudeText), \(viewModel.longitudeText)")
+                                .foregroundStyle(.primary)
+                        } else {
+                            Text(ProfileStrings.noLocationSet.localized)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    Spacer()
                     if viewModel.isSaving {
                         ProgressView()
                             .controlSize(.small)
+                    } else {
+                        Image(systemName: "map")
+                            .foregroundStyle(.secondary)
                     }
-                    Text(ProfileStrings.saveLocationButton.localized)
                 }
-                .frame(maxWidth: .infinity)
             }
-            .disabled(viewModel.isSaving)
+            .buttonStyle(.plain)
         }
     }
 

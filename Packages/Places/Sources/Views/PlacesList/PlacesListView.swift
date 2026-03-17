@@ -49,6 +49,7 @@ struct PlacesListView: View {
                                 name: row.title,
                                 description: row.description,
                                 sportTags: row.sportTags,
+                                placeTags: row.placeTags,
                                 sportIds: row.sportIds,
                                 sportSlugs: row.sportSlugs,
                                 ridersCount: row.ridersCount,

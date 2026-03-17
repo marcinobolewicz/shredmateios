@@ -24,10 +24,6 @@ struct SpotRow: View {
                         .dsTextStyle(.heading)
                         .lineLimit(1)
                     Spacer()
-//                    TODO: handle more than one row of tags
-                    ForEach(viewData.sportTags, id: \.self) { sportTag in
-                        Tag(text: sportTag)
-                    }
                 }
 
                 if !viewData.description.isEmpty {
@@ -35,6 +31,8 @@ struct SpotRow: View {
                         .dsTextStyle(.subheadline)
                         .lineLimit(1)
                 }
+
+                PlaceTagsRow(tags: viewData.placeTags)
 
                 HStack(spacing: theme.spacing.sm) {
                     StatText(label: PlacesStrings.ridersLabel.localized, value: viewData.ridersCount)
@@ -87,22 +85,6 @@ struct SpotRow: View {
 }
 
 // MARK: - Supporting Views
-
-private struct Tag: View {
-    @Environment(AppTheme.self) private var theme
-    let text: String
-
-    var body: some View {
-        Text(text)
-            .font(.caption.weight(.semibold))
-            .foregroundStyle(theme.colors.textSecondary)
-            .padding(.horizontal, theme.spacing.xs + 2)
-            .padding(.vertical, theme.spacing.xxs + 2)
-            .background(
-                Capsule().fill(theme.colors.surfaceTertiary)
-            )
-    }
-}
 
 private struct StatText: View {
     @Environment(AppTheme.self) private var theme

@@ -22,11 +22,18 @@ enum ProfileStrings: String {
     case avatarUploadComingSoon = "profile.avatar_upload_coming_soon"
     case changeAvatarBadge = "profile.change_avatar_badge"
 
+    case descriptionPlaceholder = "profile.description_placeholder"
+
     case sectionBaseLocation = "profile.section_base_location"
     case locationNamePlaceholder = "profile.location_name_placeholder"
     case latitudePlaceholder = "profile.latitude_placeholder"
     case longitudePlaceholder = "profile.longitude_placeholder"
     case saveLocationButton = "profile.save_location_button"
+    case noLocationSet = "profile.no_location_set"
+    case pickOnMap = "profile.pick_on_map"
+    case tapMapToPin = "profile.tap_map_to_pin"
+    case locationPickerTitle = "profile.location_picker_title"
+    case confirmLocationButton = "profile.confirm_location_button"
 
     case sectionSports = "profile.section_sports"
     case loadingSports = "profile.loading_sports"

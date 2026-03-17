@@ -52,10 +52,14 @@ struct DefaultRequestBuilder: RequestBuilding {
         case .none:
             break
             
-        case .json(let encodable):
+        case .json(let encodable, let keyStrategy):
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
             do {
-                request.httpBody = try coding.makeEncoder().encode(AnyEncodable(encodable))
+                let encoder = coding.makeEncoder()
+                if keyStrategy == .camelCase {
+                    encoder.keyEncodingStrategy = .useDefaultKeys
+                }
+                request.httpBody = try encoder.encode(AnyEncodable(encodable))
             } catch {
                 throw NetworkError.encodingFailed
             }

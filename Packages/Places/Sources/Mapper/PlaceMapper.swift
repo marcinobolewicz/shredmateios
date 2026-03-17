@@ -30,8 +30,7 @@ public enum PlaceMapper {
                     id: $0.id,
                     name: $0.name,
                     slug: $0.slug,
-                    emoji: $0.emoji.map { _ in PlaceTagEmoji() },
-                    createdAt: $0.createdAt
+                    emoji: $0.emoji,
                 )
             },
             ridersCount: dto.ridersCount ?? 0,

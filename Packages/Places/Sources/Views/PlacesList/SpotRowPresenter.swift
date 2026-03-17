@@ -10,6 +10,7 @@ import Foundation
 struct SpotRowPresenter: Sendable {
     func map(place: Place) -> SpotRowViewData {
         let sportTags = place.sports.map { $0.name }
+        let placeTags = place.tags.map { $0.name }
         let sportIds = place.sports.map { $0.id }
         let sportSlugs = place.sports.map { $0.slug }
         return SpotRowViewData(
@@ -19,6 +20,7 @@ struct SpotRowPresenter: Sendable {
             latitude: place.location?.lat,
             longitude: place.location?.lng,
             sportTags: sportTags,
+            placeTags: placeTags,
             sportIds: sportIds,
             sportSlugs: sportSlugs,
             ridersCount: place.ridersCount,

@@ -7,14 +7,27 @@
 
 import Foundation
 
+/// JSON key encoding strategy for request bodies.
+public enum JSONKeyStrategy: Sendable, Equatable {
+    /// Converts camelCase keys to snake_case (default, follows `DefaultJSONCoding`)
+    case snakeCase
+    /// Preserves keys as-is (camelCase)
+    case camelCase
+}
+
 /// Represents the body of an HTTP request
 public enum RequestBody: Sendable {
     /// No body
     case none
-    
-    /// JSON-encoded body from an Encodable value
-    case json(any Encodable & Sendable)
-    
+
+    /// JSON-encoded body from an Encodable value.
+    ///
+    /// - Parameters:
+    ///   - value: The value to encode.
+    ///   - keys: Key encoding strategy. Defaults to `.snakeCase` to match `DefaultJSONCoding`.
+    ///           Pass `.camelCase` when the server expects camelCase keys.
+    case json(any Encodable & Sendable, keys: JSONKeyStrategy = .snakeCase)
+
     /// Raw data with custom content type
     case raw(Data, contentType: String)
     

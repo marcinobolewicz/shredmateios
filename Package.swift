@@ -21,7 +21,8 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/socketio/socket.io-client-swift", from: "16.1.1"),
-        .package(url: "https://github.com/firebase/firebase-ios-sdk", from: "11.0.0")
+        .package(url: "https://github.com/firebase/firebase-ios-sdk", from: "11.0.0"),
+        .package(url: "https://github.com/kean/Pulse.git", from: "5.0.0")
     ],
     targets: [
         // Theme Package
@@ -122,7 +123,9 @@ let package = Package(
             dependencies: [
                 "Core", "Networking", "Auth", "Login", "Profile", "Places", "Conversations", "Theme",
                 .product(name: "FirebaseCrashlytics", package: "firebase-ios-sdk"),
-                .product(name: "FirebaseMessaging", package: "firebase-ios-sdk")
+                .product(name: "FirebaseMessaging", package: "firebase-ios-sdk"),
+                .product(name: "Pulse", package: "Pulse"),
+                .product(name: "PulseUI", package: "Pulse")
             ],
             path: "Packages/App/Sources",
             resources: [

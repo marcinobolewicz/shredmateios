@@ -2,6 +2,7 @@ import SwiftUI
 import Networking
 import Core
 import Conversations
+import Pulse
 
 @MainActor
 @Observable
@@ -103,9 +104,16 @@ public struct AppSetup {
         let pushDeviceStorage = PushDeviceStorage()
         let tokenProvider = DefaultTokenProvider(tokenStorage: tokenStorage, baseURL: baseURL)
 
+        #if DEBUG
+        let networkSession: any NetworkSessioning = URLSessionProxy(configuration: .default)
+        #else
+        let networkSession: any NetworkSessioning = URLSession.shared
+        #endif
+
         let httpClient = AuthenticatingHTTPClient(
             baseURL: baseURL,
-            tokenProvider: tokenProvider
+            tokenProvider: tokenProvider,
+            session: networkSession
         )
 
         let pushDeviceService = PushDeviceService(

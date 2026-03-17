@@ -8,7 +8,6 @@ struct ProfileFormData: Sendable {
 }
 
 struct ProfileLocationFormData: Sendable {
-    let locationName: String
     let latitudeText: String
     let longitudeText: String
 }
@@ -24,11 +23,10 @@ struct ProfileFormPresenter: Sendable {
 
     func mapLocationForm(from location: RiderBaseLocation?) -> ProfileLocationFormData {
         guard let location else {
-            return ProfileLocationFormData(locationName: "", latitudeText: "", longitudeText: "")
+            return ProfileLocationFormData(latitudeText: "", longitudeText: "")
         }
 
         return ProfileLocationFormData(
-            locationName: location.name ?? "",
             latitudeText: String(format: "%.6f", location.latitude),
             longitudeText: String(format: "%.6f", location.longitude)
         )

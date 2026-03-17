@@ -77,7 +77,6 @@ public final class ProfileViewModel {
             isPublic = profileForm.isPublic
 
             let locationForm = presenter.mapLocationForm(from: snapshot.baseLocation)
-            locationName = locationForm.locationName
             latitudeText = locationForm.latitudeText
             longitudeText = locationForm.longitudeText
         } catch {
@@ -172,8 +171,7 @@ public final class ProfileViewModel {
         
         let request = UpdateBaseLocationRequest(
             latitude: lat,
-            longitude: lng,
-            name: locationName.isEmpty ? nil : locationName
+            longitude: lng
         )
         
         do {

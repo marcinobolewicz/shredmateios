@@ -183,10 +183,9 @@ public struct UpdateRiderRequest: Codable, Sendable {
 ### UpdateBaseLocationRequest
 
 ```swift
-public struct UpdateBaseLocationRequest: Codable, Sendable {
+public struct UpdateBaseLocationRequest: Sendable {
     public let latitude: Double
     public let longitude: Double
-    public let name: String?
 }
 ```
 

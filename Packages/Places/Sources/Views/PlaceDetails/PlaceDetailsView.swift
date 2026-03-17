@@ -16,6 +16,7 @@ public struct PlaceDetailsViewData: Equatable, Hashable, Sendable {
     public let name: String
     public let description: String
     public let sportTags: [String]
+    public let placeTags: [String]
     public let sportIds: [UUID]
     public let sportSlugs: [String]
     public let ridersCount: Int
@@ -39,6 +40,7 @@ public struct PlaceDetailsViewData: Equatable, Hashable, Sendable {
         name: String,
         description: String,
         sportTags: [String],
+        placeTags: [String],
         sportIds: [UUID],
         sportSlugs: [String],
         ridersCount: Int,
@@ -49,6 +51,7 @@ public struct PlaceDetailsViewData: Equatable, Hashable, Sendable {
         self.name = name
         self.description = description
         self.sportTags = sportTags
+        self.placeTags = placeTags
         self.sportIds = sportIds
         self.sportSlugs = sportSlugs
         self.ridersCount = ridersCount
@@ -183,6 +186,7 @@ struct PlaceDetailsView: View {
                 Text(viewData.name)
                     .dsTextStyle(.title)
             sportFiltersSection
+            placeTagsSection
 
             if !viewData.description.isEmpty {
                 Text(viewData.description)
@@ -310,6 +314,10 @@ struct PlaceDetailsView: View {
                 Task { await viewModel.selectSport(sportSlug) }
             }
         }
+    }
+
+    private var placeTagsSection: some View {
+        PlaceTagsRow(tags: viewData.placeTags, horizontalContentPadding: theme.spacing.md)
     }
 
     @ViewBuilder

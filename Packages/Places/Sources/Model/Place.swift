@@ -29,12 +29,11 @@ public struct PlaceTag: Equatable, Sendable, Identifiable {
     public let id: UUID
     public let name: String
     public let slug: String
-    public let emoji: PlaceTagEmoji?
-    public let createdAt: Date
+    public let emoji: String?
 }
 
-/// Placeholder for the backend emoji object in TagEntity.
-public struct PlaceTagEmoji: Equatable, Sendable {}
+///// Placeholder for the backend emoji object in TagEntity.
+//public struct PlaceTagEmoji: Equatable, Sendable {}
 
 public struct GeoPoint: Equatable, Sendable {
     public let lat: Double
