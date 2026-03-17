@@ -33,6 +33,7 @@ struct GuestTabView: View {
             
             PlacesRootView(
                 placesService: dependencies.placesService,
+                sportsService: dependencies.sportsService
             )
             .tabItem {
                 Label(AppStrings.guestTabExplore.localized, systemImage: "map")

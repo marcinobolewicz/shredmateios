@@ -3,7 +3,7 @@
 
 // Production Configuration
 DISPLAY_NAME = ShredMate
-PRODUCT_BUNDLE_IDENTIFIER = com.shredmate.app
-API_BASE_URL = https://api.shredmate.app
+PRODUCT_BUNDLE_IDENTIFIER = pl.shredmate.app
+API_BASE_URL = https://api.shredmate.pl
 ENVIRONMENT = PROD
 SWIFT_ACTIVE_COMPILATION_CONDITIONS = $(inherited) PROD

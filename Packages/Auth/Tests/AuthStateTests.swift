@@ -373,7 +373,7 @@ actor MockRiderService: RiderServiceProtocol {
         if shouldFail {
             throw AuthError.serverError(statusCode: 500)
         }
-        let updated = RiderBaseLocation(latitude: location.latitude, longitude: location.longitude, name: location.name)
+        let updated = RiderBaseLocation(latitude: location.latitude, longitude: location.longitude)
         mockBaseLocation = updated
         return updated
     }

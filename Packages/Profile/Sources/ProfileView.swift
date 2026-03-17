@@ -8,24 +8,28 @@
 import SwiftUI
 import Networking
 import Common
+import PhotosUI
+import UIKit
+import MapKit
 
 public struct ProfileView: View {
-    
+
     @State private var viewModel: ProfileViewModel
     @State private var showDeleteConfirmation = false
-    @Environment(\.dismiss) private var dismiss
-    
+    @State private var showLocationPicker = false
+    @State private var selectedAvatarItem: PhotosPickerItem?
+    private let avatarImageProcessor = AvatarImageProcessor()
+
     public init(viewModel: ProfileViewModel) {
         self._viewModel = State(initialValue: viewModel)
     }
-    
+
     public var body: some View {
         Form {
             if viewModel.isLoading && viewModel.rider == nil {
                 loadingSection
             } else {
                 profileSection
-                avatarSection
                 locationSection
                 sportsSection
                 dangerZoneSection
@@ -52,6 +56,22 @@ public struct ProfileView: View {
         } message: {
             Text(viewModel.successMessage ?? "")
         }
+        .sheet(isPresented: $showLocationPicker) {
+            let initialCoord: CLLocationCoordinate2D? = {
+                guard let lat = Double(viewModel.latitudeText),
+                      let lng = Double(viewModel.longitudeText) else { return nil }
+                return CLLocationCoordinate2D(latitude: lat, longitude: lng)
+            }()
+            MapLocationPickerView(
+                initialCoordinate: initialCoord,
+                initialLocationName: viewModel.locationName
+            ) { coord, name in
+                viewModel.latitudeText = String(format: "%.6f", coord.latitude)
+                viewModel.longitudeText = String(format: "%.6f", coord.longitude)
+                viewModel.locationName = name
+                Task { await viewModel.saveBaseLocation() }
+            }
+        }
         .confirmationDialog(
             ProfileStrings.deleteAccountDialogTitle.localized,
             isPresented: $showDeleteConfirmation,
@@ -65,9 +85,9 @@ public struct ProfileView: View {
             Text(ProfileStrings.deleteAccountDialogMessage.localized)
         }
     }
-    
+
     // MARK: - Sections
-    
+
     private var loadingSection: some View {
         Section {
             HStack {
@@ -78,27 +98,47 @@ public struct ProfileView: View {
             .padding(.vertical, 40)
         }
     }
-    
+
     private var profileSection: some View {
         Section(ProfileStrings.sectionProfileInformation.localized) {
-            TextField(ProfileStrings.displayNamePlaceholder.localized, text: $viewModel.displayName)
-                .textContentType(.name)
-            
-            Picker(ProfileStrings.typePickerTitle.localized, selection: $viewModel.selectedType) {
-                ForEach(RiderType.allCases, id: \.self) { type in
-                    Text(type.displayName).tag(type)
+            HStack(alignment: .top, spacing: 16) {
+                PhotosPicker(
+                    selection: $selectedAvatarItem,
+                    matching: .images
+                ) {
+                    profileAvatar
+                        .overlay(alignment: .bottomTrailing) {
+                            Text(ProfileStrings.changeAvatarBadge.localized)
+                                .font(.caption2.weight(.semibold))
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 4)
+                                .background(.ultraThinMaterial)
+                                .clipShape(Capsule())
+                        }
+                }
+                .buttonStyle(.plain)
+
+                VStack(alignment: .leading, spacing: 8) {
+                    TextField(ProfileStrings.displayNamePlaceholder.localized, text: $viewModel.displayName)
+                        .textContentType(.name)
+                        .font(.headline)
+
+                    TextEditor(text: $viewModel.description)
+                        .frame(minHeight: 90)
+                        .overlay(alignment: .topLeading) {
+                            if viewModel.description.isEmpty {
+                                Text(ProfileStrings.descriptionPlaceholder.localized)
+                                    .foregroundStyle(.tertiary)
+                                    .padding(.top, 8)
+                                    .padding(.leading, 5)
+                                    .allowsHitTesting(false)
+                            }
+                        }
                 }
             }
-            
-            VStack(alignment: .leading, spacing: 4) {
-                Text(ProfileStrings.descriptionLabel.localized)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                
-                TextEditor(text: $viewModel.description)
-                    .frame(minHeight: 100)
-            }
-            
+
+            Toggle(ProfileStrings.publicProfileToggle.localized, isOn: $viewModel.isPublic)
+
             Button {
                 Task { await viewModel.saveProfile() }
             } label: {
@@ -113,61 +153,81 @@ public struct ProfileView: View {
             }
             .disabled(viewModel.isSaving)
         }
-    }
-    
-    private var avatarSection: some View {
-        Section(ProfileStrings.sectionAvatar.localized) {
-            if let avatarUrl = viewModel.rider?.avatarUrl,
-               let url = URL(string: avatarUrl) {
-                HStack {
-                    Spacer()
-                    AsyncImage(url: url) { image in
-                        image
-                            .resizable()
-                            .scaledToFill()
-                    } placeholder: {
-                        ProgressView()
-                    }
-                    .frame(width: 100, height: 100)
-                    .clipShape(Circle())
-                    Spacer()
-                }
+        .onChange(of: selectedAvatarItem) { _, newItem in
+            guard let newItem else { return }
+            Task {
+                guard let data = try? await newItem.loadTransferable(type: Data.self) else { return }
+                viewModel.avatarImage = avatarImageProcessor.process(data) ?? data
             }
-            
-                        Text(ProfileStrings.avatarUploadComingSoon.localized)
-                .font(.caption)
-                .foregroundStyle(.secondary)
         }
     }
-    
-    private var locationSection: some View {
-                    Section(ProfileStrings.sectionBaseLocation.localized) {
-                        TextField(ProfileStrings.locationNamePlaceholder.localized, text: $viewModel.locationName)
-            
-            HStack {
-                            TextField(ProfileStrings.latitudePlaceholder.localized, text: $viewModel.latitudeText)
-                    .keyboardType(.decimalPad)
-                
-                            TextField(ProfileStrings.longitudePlaceholder.localized, text: $viewModel.longitudeText)
-                    .keyboardType(.decimalPad)
+
+    @ViewBuilder
+    private var profileAvatar: some View {
+        if let avatarData = viewModel.avatarImage,
+           let image = UIImage(data: avatarData) {
+            Image(uiImage: image)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 76, height: 76)
+                .clipShape(Circle())
+        } else if let avatarUrl = viewModel.rider?.avatarUrl,
+           let url = URL(string: avatarUrl) {
+            AsyncImage(url: url) { image in
+                image
+                    .resizable()
+                    .scaledToFill()
+            } placeholder: {
+                ProgressView()
             }
-            
+            .frame(width: 76, height: 76)
+            .clipShape(Circle())
+        } else {
+            Image(systemName: "person.crop.circle.fill")
+                .resizable()
+                .scaledToFill()
+                .foregroundStyle(.secondary)
+                .frame(width: 76, height: 76)
+        }
+    }
+
+    private var locationSection: some View {
+        Section(ProfileStrings.sectionBaseLocation.localized) {
             Button {
-                Task { await viewModel.saveBaseLocation() }
+                showLocationPicker = true
             } label: {
                 HStack {
+                    VStack(alignment: .leading, spacing: 4) {
+                        if !viewModel.locationName.isEmpty {
+                            Text(viewModel.locationName)
+                                .foregroundStyle(.primary)
+                            if !viewModel.latitudeText.isEmpty {
+                                Text("\(viewModel.latitudeText), \(viewModel.longitudeText)")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                        } else if !viewModel.latitudeText.isEmpty {
+                            Text("\(viewModel.latitudeText), \(viewModel.longitudeText)")
+                                .foregroundStyle(.primary)
+                        } else {
+                            Text(ProfileStrings.noLocationSet.localized)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    Spacer()
                     if viewModel.isSaving {
                         ProgressView()
                             .controlSize(.small)
+                    } else {
+                        Image(systemName: "map")
+                            .foregroundStyle(.secondary)
                     }
-                    Text(ProfileStrings.saveLocationButton.localized)
                 }
-                .frame(maxWidth: .infinity)
             }
-            .disabled(viewModel.isSaving)
+            .buttonStyle(.plain)
         }
     }
-    
+
     private var sportsSection: some View {
         Section(ProfileStrings.sectionSports.localized) {
             if viewModel.allSports.isEmpty {
@@ -177,12 +237,12 @@ public struct ProfileView: View {
                 ForEach(viewModel.allSports) { sport in
                     SportRow(
                         sport: sport,
-                        riderSport: viewModel.riderSport(for: sport.id),
-                        isLoading: viewModel.isSportLoading(sport.id),
+                        riderSport: viewModel.riderSport(for: sport.id.uuidString),
+                        isLoading: viewModel.isSportLoading(sport.id.uuidString),
                         onUpsert: { level, isMentor in
                             Task {
                                 await viewModel.upsertSport(
-                                    sportId: sport.id,
+                                    sportId: sport.id.uuidString,
                                     level: level,
                                     isMentor: isMentor
                                 )
@@ -190,7 +250,7 @@ public struct ProfileView: View {
                         },
                         onRemove: {
                             Task {
-                                await viewModel.removeSport(sportId: sport.id)
+                                await viewModel.removeSport(sportId: sport.id.uuidString)
                             }
                         }
                     )
@@ -198,7 +258,7 @@ public struct ProfileView: View {
             }
         }
     }
-    
+
     private var dangerZoneSection: some View {
         Section(ProfileStrings.sectionDangerZone.localized) {
             Button(role: .destructive) {
@@ -222,11 +282,11 @@ private struct SportRow: View {
     let isLoading: Bool
     let onUpsert: (SkillLevel, Bool) -> Void
     let onRemove: () -> Void
-    
+
     @State private var selectedLevel: SkillLevel = .beginner
     @State private var isMentor: Bool = false
     @State private var isExpanded: Bool = false
-    
+
     var body: some View {
         DisclosureGroup(isExpanded: $isExpanded) {
             VStack(alignment: .leading, spacing: 12) {
@@ -236,16 +296,16 @@ private struct SportRow: View {
                     }
                 }
                 .pickerStyle(.segmented)
-                
+
                 Toggle(ProfileStrings.availableAsMentorToggle.localized, isOn: $isMentor)
-                
+
                 HStack {
                     Button(ProfileStrings.saveButton.localized) {
                         onUpsert(selectedLevel, isMentor)
                     }
                     .buttonStyle(.borderedProminent)
                     .disabled(isLoading)
-                    
+
                     if riderSport != nil {
                         Button(ProfileStrings.removeButton.localized, role: .destructive) {
                             onRemove()
@@ -253,7 +313,7 @@ private struct SportRow: View {
                         .buttonStyle(.bordered)
                         .disabled(isLoading)
                     }
-                    
+
                     if isLoading {
                         ProgressView()
                             .controlSize(.small)
@@ -265,9 +325,9 @@ private struct SportRow: View {
             HStack {
                 Text(sport.name)
                     .fontWeight(.medium)
-                
+
                 Spacer()
-                
+
                 if let rs = riderSport {
                     Text(rs.level.displayName)
                         .font(.caption)
@@ -276,7 +336,7 @@ private struct SportRow: View {
                         .background(.blue.opacity(0.1))
                         .foregroundStyle(.blue)
                         .clipShape(Capsule())
-                    
+
                     if rs.isMentor {
                         Image(systemName: "star.fill")
                             .foregroundStyle(.yellow)
@@ -293,4 +353,3 @@ private struct SportRow: View {
         }
     }
 }
-

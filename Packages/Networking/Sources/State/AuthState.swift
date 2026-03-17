@@ -23,17 +23,20 @@ public final class AuthState {
     private let authService: any AuthServiceProtocol
     private let riderService: any RiderServiceProtocol
     private let tokenStorage: TokenStorageProtocol
+    private let pushDeviceService: (any PushDeviceServiceProtocol)?
     
     // MARK: - Init
     
     public init(
         authService: any AuthServiceProtocol,
         riderService: any RiderServiceProtocol,
-        tokenStorage: TokenStorageProtocol
+        tokenStorage: TokenStorageProtocol,
+        pushDeviceService: (any PushDeviceServiceProtocol)? = nil
     ) {
         self.authService = authService
         self.riderService = riderService
         self.tokenStorage = tokenStorage
+        self.pushDeviceService = pushDeviceService
     }
     
     // MARK: - Session Initialization
@@ -84,6 +87,7 @@ public final class AuthState {
             
             // Also fetch rider profile
             await fetchRiderProfile()
+            await pushDeviceService?.registerCurrentTokenIfPossible()
         } catch {
             logger.error("Session validation failed: \(error.localizedDescription)")
             // Session invalid - clear state
@@ -101,6 +105,7 @@ public final class AuthState {
             let response = try await authService.login(email: email, password: password)
             user = response.user
             await fetchRiderProfile()
+            await pushDeviceService?.registerCurrentTokenIfPossible()
         } catch let authError as AuthError {
             error = authError
         } catch {
@@ -122,6 +127,7 @@ public final class AuthState {
             )
             user = response.user
             await fetchRiderProfile()
+            await pushDeviceService?.registerCurrentTokenIfPossible()
         } catch let authError as AuthError {
             error = authError
         } catch {
@@ -133,6 +139,8 @@ public final class AuthState {
     
     public func logout() async {
         isLoading = true
+
+        await pushDeviceService?.unregisterCurrentDeviceIfNeeded()
         
         try? await authService.logout()
         
@@ -158,6 +166,7 @@ public final class AuthState {
     }
     
     public func deleteAccount() async throws {
+        await pushDeviceService?.unregisterCurrentDeviceIfNeeded()
         try await riderService.deleteMyAccount()
         await handleSessionInvalidation()
     }

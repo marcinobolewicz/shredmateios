@@ -54,16 +54,22 @@ public struct Rider: Codable, Sendable, Equatable, Identifiable {
 public struct UpdateRiderRequest: Codable, Sendable {
     public let type: RiderType?
     public let displayName: String?
+    public let avatarUrl: String?
     public let description: String?
+    public let isPublic: Bool?
     
     public init(
         type: RiderType? = nil,
         displayName: String? = nil,
-        description: String? = nil
+        avatarUrl: String? = nil,
+        description: String? = nil,
+        isPublic: Bool? = nil
     ) {
         self.type = type
         self.displayName = displayName
+        self.avatarUrl = avatarUrl
         self.description = description
+        self.isPublic = isPublic
     }
 }
 
@@ -73,40 +79,90 @@ public struct UpdateRiderRequest: Codable, Sendable {
 public struct RiderBaseLocation: Codable, Sendable, Equatable {
     public let latitude: Double
     public let longitude: Double
-    public let name: String?
-    
-    public init(latitude: Double, longitude: Double, name: String? = nil) {
+    public let updatedAt: Date?
+
+    public init(latitude: Double, longitude: Double, updatedAt: Date? = nil) {
         self.latitude = latitude
         self.longitude = longitude
-        self.name = name
+        self.updatedAt = updatedAt
+    }
+
+    // Response shape: { "baseLocation": { "lat": ..., "lng": ... }, "baseLocationUpdatedAt": "..." }
+    public init(from decoder: Decoder) throws {
+        enum TopKeys: String, CodingKey { case baseLocation, baseLocationUpdatedAt }
+        enum LocKeys: String, CodingKey { case lat, lng }
+
+        let top = try decoder.container(keyedBy: TopKeys.self)
+        let loc = try top.nestedContainer(keyedBy: LocKeys.self, forKey: .baseLocation)
+        self.latitude = try loc.decode(Double.self, forKey: .lat)
+        self.longitude = try loc.decode(Double.self, forKey: .lng)
+        self.updatedAt = try top.decodeIfPresent(Date.self, forKey: .baseLocationUpdatedAt)
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        enum TopKeys: String, CodingKey { case baseLocation, baseLocationUpdatedAt }
+        enum LocKeys: String, CodingKey { case lat, lng }
+
+        var top = encoder.container(keyedBy: TopKeys.self)
+        var loc = top.nestedContainer(keyedBy: LocKeys.self, forKey: .baseLocation)
+        try loc.encode(latitude, forKey: .lat)
+        try loc.encode(longitude, forKey: .lng)
+        try top.encodeIfPresent(updatedAt, forKey: .baseLocationUpdatedAt)
     }
 }
 
 /// Request for updating base location
-public struct UpdateBaseLocationRequest: Codable, Sendable {
+public struct UpdateBaseLocationRequest: Sendable {
     public let latitude: Double
     public let longitude: Double
-    public let name: String?
-    
-    public init(latitude: Double, longitude: Double, name: String? = nil) {
+
+    public init(latitude: Double, longitude: Double) {
         self.latitude = latitude
         self.longitude = longitude
-        self.name = name
     }
+}
+
+struct UpdateBaseLocationRequestDTO: Encodable, Sendable {
+    let baseLocation: BaseLocationDTO
+
+    init(request: UpdateBaseLocationRequest) {
+        self.baseLocation = BaseLocationDTO(
+            lat: request.latitude,
+            lng: request.longitude
+        )
+    }
+}
+
+struct BaseLocationDTO: Encodable, Sendable {
+    let lat: Double
+    let lng: Double
 }
 
 // MARK: - Sports
 
 /// Sport definition
 public struct Sport: Codable, Sendable, Equatable, Identifiable {
-    public let id: String
+    public let id: UUID
     public let name: String
-    public let icon: String?
+    public let slug: String
+    public let createdByUserId: String?
+    public let createdAt: Date?
+    public let updatedAt: Date?
     
-    public init(id: String, name: String, icon: String? = nil) {
+    public init(
+        id: UUID,
+        name: String,
+        slug: String,
+        createdByUserId: String? = nil,
+        createdAt: Date? = nil,
+        updatedAt: Date? = nil
+    ) {
         self.id = id
         self.name = name
-        self.icon = icon
+        self.slug = slug
+        self.createdByUserId = createdByUserId
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
     }
 }
 

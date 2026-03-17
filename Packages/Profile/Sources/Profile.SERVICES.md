@@ -19,9 +19,11 @@ The Profile feature allows authenticated users to view and edit their rider prof
 │                    ProfileViewModel                          │
 │                          │                                   │
 ├─────────────────────────────────────────────────────────────┤
-│                    RiderServiceProtocol                      │
+│                  ProfileRepositoryProtocol                   │
 │                          │                                   │
-│                      RiderService                            │
+│                     ProfileRepository                        │
+│                    ╱                  ╲                      │
+│          RiderServiceProtocol      SportsServiceProtocol     │
 │                          │                                   │
 │                    AuthHTTPClient                            │
 │                          │                                   │
@@ -33,7 +35,7 @@ The Profile feature allows authenticated users to view and edit their rider prof
 
 ### RiderService
 
-**Location**: `Packages/Auth/Sources/Services/RiderService.swift`
+**Location**: `Packages/Networking/Sources/Services/RiderService.swift`
 
 Actor-based service for all rider profile operations. Conforms to `RiderServiceProtocol` for testability.
 
@@ -57,10 +59,26 @@ Actor-based service for all rider profile operations. Conforms to `RiderServiceP
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| `fetchAllSports()` | `GET /sports` | Get list of all available sports |
 | `fetchMyRiderSports()` | `GET /riders/me/sports` | Get user's sports with levels |
 | `upsertMyRiderSport(sportId:request:)` | `POST /riders/me/sports/:sportId` | Add or update a sport |
 | `deleteMyRiderSport(sportId:)` | `DELETE /riders/me/sports/:sportId` | Remove a sport |
+
+### SportsService
+
+**Location**: `Packages/Networking/Sources/Services/SportsService.swift`
+
+Actor-based service for sports dictionary.
+
+**Features**:
+- In-memory caching for `fetchSports()`
+- Explicit cache refresh with `refreshSports()`
+- Shared reusable source for Places/Profile
+
+### ProfileRepository
+
+**Location**: `Packages/Profile/Sources/ProfileRepository.swift`
+
+Repository used by `ProfileViewModel` to aggregate profile-related calls and keep the view model focused on UI state and orchestration.
 
 ### AuthHTTPClient
 
@@ -165,10 +183,9 @@ public struct UpdateRiderRequest: Codable, Sendable {
 ### UpdateBaseLocationRequest
 
 ```swift
-public struct UpdateBaseLocationRequest: Codable, Sendable {
+public struct UpdateBaseLocationRequest: Sendable {
     public let latitude: Double
     public let longitude: Double
-    public let name: String?
 }
 ```
 
@@ -194,7 +211,7 @@ public struct UpsertRiderSportRequest: Codable, Sendable {
 
 1. User navigates to ProfileView
 2. `ProfileViewModel.loadProfile()` is called
-3. Parallel fetch of rider profile, base location, and sports
+3. Repository performs parallel fetch of rider profile, base location, sports (from cached `SportsService`) and rider sports
 4. Fields populated from fetched data
 
 ### Profile Update

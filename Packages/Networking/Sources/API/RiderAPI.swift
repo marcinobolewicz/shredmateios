@@ -24,7 +24,12 @@ public enum RiderAPI {
     }
     
     public static func updateMe(_ request: UpdateRiderRequest) -> Endpoint<Rider> {
-        .patch("/riders/me", body: request, auth: .bearerToken)
+        Endpoint(
+            method: .patch,
+            path: "/riders/me",
+            auth: .bearerToken,
+            body: .json(request, keys: .camelCase)
+        )
     }
     
     public static func uploadAvatar(imageData: Data, fileName: String = "avatar.jpg", mimeType: String = "image/jpeg") -> Endpoint<AvatarUploadResponse> {
@@ -51,7 +56,12 @@ public enum RiderAPI {
     }
     
     public static func updateBaseLocation(_ request: UpdateBaseLocationRequest) -> Endpoint<RiderBaseLocation> {
-        .put("/riders/me/base-location", body: request, auth: .bearerToken)
+        Endpoint(
+            method: .put,
+            path: "/riders/me/base-location",
+            auth: .bearerToken,
+            body: .json(UpdateBaseLocationRequestDTO(request: request), keys: .camelCase)
+        )
     }
     
     // MARK: - Sports
@@ -67,4 +77,5 @@ public enum RiderAPI {
     public static func deleteSport(sportId: String) -> Endpoint<EmptyResponse> {
         .delete("/riders/me/sports/\(sportId)", auth: .bearerToken)
     }
+
 }

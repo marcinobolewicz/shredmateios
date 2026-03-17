@@ -8,5 +8,6 @@
 import Foundation
 
 public enum PlacesRoute: Hashable {
-    case placeDetails(UUID)
+    case placeDetails(PlaceDetailsViewData)
+    case riderCard(RiderCardViewData)
 }

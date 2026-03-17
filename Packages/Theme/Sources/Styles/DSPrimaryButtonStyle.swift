@@ -21,6 +21,7 @@ public struct DSPrimaryButtonStyle: ButtonStyle {
         configuration.label
             .font(.body.weight(.semibold))
             .foregroundStyle(theme.colors.primaryForeground)
+            .padding(.horizontal, Constants.Spacing.xs)
             .frame(maxWidth: .infinity, minHeight: Constants.Size.buttonMinHeight)
             .background(
                 Capsule()

@@ -9,13 +9,22 @@
 /* Begin PBXBuildFile section */
 		App /* App in Frameworks */ = {isa = PBXBuildFile; productRef = AppPackage /* App */; };
 		AssetsFile /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = Assets /* Assets.xcassets */; };
+		DevApp /* App in Frameworks */ = {isa = PBXBuildFile; productRef = DevAppPackage /* App */; };
+		DevAssetsFileBuild /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = Assets /* Assets.xcassets */; };
+		DevGSIFileBuild /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = EEF9D7E12F5B4876006390C4 /* GoogleService-Info.plist */; };
+		DevShredMateAppFileBuild /* ShredMateApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = ShredMateAppSwift /* ShredMateApp.swift */; };
+		EEF9D7E02F5B39D6006390C4 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = EEF9D7DF2F5B39D6006390C4 /* GoogleService-Info.plist */; };
 		ShredMateAppFile /* ShredMateApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = ShredMateAppSwift /* ShredMateApp.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		Assets /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		DevAppRef /* ShredMate Dev.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ShredMate Dev.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		DevConfig /* Dev.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Dev.xcconfig; sourceTree = "<group>"; };
+		DevEntitlementsRef /* ShredMate Dev.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "ShredMate Dev.entitlements"; sourceTree = "<group>"; };
 		EE03339B2F4DB97800ECE70E /* ShredMate.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ShredMate.entitlements; sourceTree = "<group>"; };
+		EEF9D7DF2F5B39D6006390C4 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		EEF9D7E12F5B4876006390C4 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		InfoPlist /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		Package /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		ProdConfig /* Prod.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Prod.xcconfig; sourceTree = "<group>"; };
@@ -24,6 +33,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		DevFrameworksPhase /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DevApp /* App in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		ShredMateFrameworks /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -44,6 +61,22 @@
 			path = Configurations;
 			sourceTree = "<group>";
 		};
+		EEF9D7E32F5B601D006390C4 /* GoogleServiceDev */ = {
+			isa = PBXGroup;
+			children = (
+				EEF9D7E12F5B4876006390C4 /* GoogleService-Info.plist */,
+			);
+			path = GoogleServiceDev;
+			sourceTree = "<group>";
+		};
+		EEF9D7E42F5B6030006390C4 /* GoogleService */ = {
+			isa = PBXGroup;
+			children = (
+				EEF9D7DF2F5B39D6006390C4 /* GoogleService-Info.plist */,
+			);
+			path = GoogleService;
+			sourceTree = "<group>";
+		};
 		MainGroup = {
 			isa = PBXGroup;
 			children = (
@@ -58,6 +91,7 @@
 			isa = PBXGroup;
 			children = (
 				ShredMateApp /* ShredMate.app */,
+				DevAppRef /* ShredMate Dev.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -65,7 +99,10 @@
 		ShredMate /* ShredMate */ = {
 			isa = PBXGroup;
 			children = (
+				EEF9D7E42F5B6030006390C4 /* GoogleService */,
+				EEF9D7E32F5B601D006390C4 /* GoogleServiceDev */,
 				EE03339B2F4DB97800ECE70E /* ShredMate.entitlements */,
+				DevEntitlementsRef /* ShredMate Dev.entitlements */,
 				ShredMateAppSwift /* ShredMateApp.swift */,
 				Assets /* Assets.xcassets */,
 				InfoPlist /* Info.plist */,
@@ -76,6 +113,28 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		DevTarget /* ShredMate Dev */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DevConfigList /* Build configuration list for PBXNativeTarget "ShredMate Dev" */;
+			buildPhases = (
+				DevSourcesPhase /* Sources */,
+				DevFrameworksPhase /* Frameworks */,
+				DevResourcesPhase /* Resources */,
+				DevCrashlyticsPhase /* Crashlytics */,
+				DevSwiftLintPhase /* SwiftLint */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "ShredMate Dev";
+			packageProductDependencies = (
+				DevAppPackage /* App */,
+			);
+			productName = "ShredMate Dev";
+			productReference = DevAppRef /* ShredMate Dev.app */;
+			productType = "com.apple.product-type.application";
+		};
 		ShredMateTarget /* ShredMate */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = ShredMateConfigList /* Build configuration list for PBXNativeTarget "ShredMate" */;
@@ -83,6 +142,7 @@
 				ShredMateSourcesBuildPhase /* Sources */,
 				ShredMateFrameworks /* Frameworks */,
 				ShredMateResourcesBuildPhase /* Resources */,
+				CrashlyticsPhase /* Crashlytics */,
 				SwiftLintPhase /* SwiftLint */,
 			);
 			buildRules = (
@@ -107,6 +167,9 @@
 				LastSwiftUpdateCheck = 1600;
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
+					DevTarget = {
+						CreatedOnToolsVersion = 16.0;
+					};
 					ShredMateTarget = {
 						CreatedOnToolsVersion = 16.0;
 					};
@@ -130,22 +193,98 @@
 			projectRoot = "";
 			targets = (
 				ShredMateTarget /* ShredMate */,
+				DevTarget /* ShredMate Dev */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		DevResourcesPhase /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DevAssetsFileBuild /* Assets.xcassets in Resources */,
+				DevGSIFileBuild /* GoogleService-Info.plist in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		ShredMateResourcesBuildPhase /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				AssetsFile /* Assets.xcassets in Resources */,
+				EEF9D7E02F5B39D6006390C4 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		CrashlyticsPhase /* Crashlytics */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}",
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${PRODUCT_NAME}",
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Info.plist",
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/GoogleService-Info.plist",
+				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
+			);
+			name = Crashlytics;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run\"\n";
+		};
+		DevCrashlyticsPhase /* Crashlytics */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}",
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${PRODUCT_NAME}",
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Info.plist",
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/GoogleService-Info.plist",
+				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
+			);
+			name = Crashlytics;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run\" -gsp \"${PROJECT_DIR}/ShredMate/GoogleServiceDev/GoogleService-Info.plist\"\n";
+		};
+		DevSwiftLintPhase /* SwiftLint */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = SwiftLint;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which swiftlint >/dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+		};
 		SwiftLintPhase /* SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
@@ -168,6 +307,14 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		DevSourcesPhase /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DevShredMateAppFileBuild /* ShredMateApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		ShredMateSourcesBuildPhase /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -243,6 +390,87 @@
 			};
 			name = Debug;
 		};
+		DevDebugConfig /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = DevConfig /* Dev.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "ShredMate/ShredMate Dev.entitlements";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 2VL6ZJ5JTY;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GENERATE_INFOPLIST_FILE = NO;
+				GOOGLE_APP_ID = "1:620509939173:ios:297fae121033a782f11b0c";
+				INFOPLIST_FILE = ShredMate/Info.plist;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = pl.shredmate.app.dev;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "ShredMate Dev Development 2026";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		DevReleaseConfig /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = DevConfig /* Dev.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "ShredMate/ShredMate Dev.entitlements";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 2VL6ZJ5JTY;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GENERATE_INFOPLIST_FILE = NO;
+				GOOGLE_APP_ID = "1:620509939173:ios:297fae121033a782f11b0c";
+				INFOPLIST_FILE = ShredMate/Info.plist;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = pl.shredmate.app.dev;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "ShredMate Dev App Store 2026";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		ReleaseConfig /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -302,16 +530,22 @@
 		};
 		ShredMateDebugConfig /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = DevConfig /* Dev.xcconfig */;
+			baseConfigurationReference = ProdConfig /* Prod.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = ShredMate/ShredMate.entitlements;
-				CODE_SIGN_STYLE = Automatic;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 2VL6ZJ5JTY;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = NO;
+				GOOGLE_APP_ID = "1:620509939173:ios:be6128edb90a2995f11b0c";
 				INFOPLIST_FILE = ShredMate/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -323,8 +557,10 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = pl.shredmate.app.dev;
+				PRODUCT_BUNDLE_IDENTIFIER = pl.shredmate.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "ShredMate Development 2026";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -340,11 +576,16 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = ShredMate/ShredMate.entitlements;
-				CODE_SIGN_STYLE = Automatic;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 2VL6ZJ5JTY;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = NO;
+				GOOGLE_APP_ID = "1:620509939173:ios:be6128edb90a2995f11b0c";
 				INFOPLIST_FILE = ShredMate/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -358,6 +599,8 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = pl.shredmate.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "ShredMate Distribution 2026";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -369,6 +612,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		DevConfigList /* Build configuration list for PBXNativeTarget "ShredMate Dev" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DevDebugConfig /* Debug */,
+				DevReleaseConfig /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		ProjectConfigList /* Build configuration list for PBXProject "ShredMate" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -398,6 +650,11 @@
 
 /* Begin XCSwiftPackageProductDependency section */
 		AppPackage /* App */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = LocalPackage /* XCLocalSwiftPackageReference "." */;
+			productName = App;
+		};
+		DevAppPackage /* App */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = LocalPackage /* XCLocalSwiftPackageReference "." */;
 			productName = App;

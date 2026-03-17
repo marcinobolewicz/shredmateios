@@ -27,7 +27,7 @@ public final class ProfileViewModel {
     
     public var displayName: String = ""
     public var description: String = ""
-    public var selectedType: RiderType = .rider
+    public var isPublic: Bool = true
     public var avatarImage: Data?
     
     // Base location fields
@@ -37,13 +37,21 @@ public final class ProfileViewModel {
     
     // MARK: - Dependencies
     
-    private let riderService: any RiderServiceProtocol
+    private let repository: any ProfileRepositoryProtocol
+    private let presenter: ProfileFormPresenter
     private let authState: AuthState
     
     // MARK: - Init
     
-    public init(riderService: any RiderServiceProtocol, authState: AuthState) {
-        self.riderService = riderService
+    public init(riderService: any RiderServiceProtocol, sportsService: any SportsServiceProtocol, authState: AuthState) {
+        self.repository = ProfileRepository(riderService: riderService, sportsService: sportsService)
+        self.presenter = ProfileFormPresenter()
+        self.authState = authState
+    }
+
+    init(repository: any ProfileRepositoryProtocol, presenter: ProfileFormPresenter = .init(), authState: AuthState) {
+        self.repository = repository
+        self.presenter = presenter
         self.authState = authState
     }
     
@@ -56,73 +64,67 @@ public final class ProfileViewModel {
         
         defer { isLoading = false }
         
-        // Load rider profile
         do {
-            let fetchedRider = try await riderService.fetchMyRider()
-            rider = fetchedRider
-            populateFieldsFromRider(fetchedRider)
+            let snapshot = try await repository.fetchProfileSnapshot()
+            rider = snapshot.rider
+            baseLocation = snapshot.baseLocation
+            allSports = snapshot.sports
+            riderSports = snapshot.riderSports
+
+            let profileForm = presenter.mapProfileForm(from: snapshot.rider)
+            displayName = profileForm.displayName
+            description = profileForm.description
+            isPublic = profileForm.isPublic
+
+            let locationForm = presenter.mapLocationForm(from: snapshot.baseLocation)
+            latitudeText = locationForm.latitudeText
+            longitudeText = locationForm.longitudeText
         } catch {
             self.error = ProfileStrings.failedLoadProfile(error.localizedDescription)
-            return
-        }
-        
-        // Load base location (optional - may not exist)
-        do {
-            baseLocation = try await riderService.fetchMyBaseLocation()
-            if let location = baseLocation {
-                populateLocationFields(location)
-            }
-        } catch {
-            // Non-critical - user may not have set a location
-            baseLocation = nil
-        }
-        
-        // Load sports
-        await loadSports()
-    }
-    
-    /// Load available sports and user's sports
-    public func loadSports() async {
-        do {
-            async let fetchedAllSports = riderService.fetchAllSports()
-            async let fetchedRiderSports = riderService.fetchMyRiderSports()
-            
-            allSports = try await fetchedAllSports
-            riderSports = try await fetchedRiderSports
-        } catch {
-            // Non-critical for sports
         }
     }
-    
+
     // MARK: - Update Profile
-    
+
     /// Save profile changes (displayName, description, type)
     public func saveProfile() async {
         guard validateProfileFields() else { return }
-        
+
         isSaving = true
         error = nil
         successMessage = nil
-        
+
         defer { isSaving = false }
-        
+
         let trimmedDescription = description.trimmingCharacters(in: .whitespacesAndNewlines)
         let request = UpdateRiderRequest(
-            type: selectedType,
+            type: nil,
             displayName: displayName.trimmingCharacters(in: .whitespacesAndNewlines),
-            description: trimmedDescription.isEmpty ? nil : trimmedDescription
+            avatarUrl: nil,
+            description: trimmedDescription.isEmpty ? nil : trimmedDescription,
+            isPublic: isPublic
         )
-        
+
         do {
-            let updatedRider = try await riderService.updateMyRider(request)
+            let updatedRider = try await repository.updateProfile(request)
             rider = updatedRider
-            successMessage = ProfileStrings.profileUpdatedSuccess.localized
-            
-            // Refresh authState rider
-            await authState.fetchRiderProfile()
         } catch {
             self.error = ProfileStrings.failedUpdateProfile(error.localizedDescription)
+            return
         }
+
+        if let imageData = avatarImage {
+            do {
+                let response = try await repository.uploadAvatar(imageData)
+                rider = presenter.riderAfterAvatarUpload(current: rider, avatarURL: response.avatarUrl)
+                avatarImage = nil
+            } catch {
+                self.error = ProfileStrings.failedUploadAvatar(error.localizedDescription)
+                return
+            }
+        }
+
+        successMessage = ProfileStrings.profileUpdatedSuccess.localized
     }
     
     /// Upload avatar image
@@ -138,21 +140,8 @@ public final class ProfileViewModel {
         defer { isUploadingAvatar = false }
         
         do {
-            let response = try await riderService.uploadAvatar(imageData)
-            
-            // Update local rider with new avatar URL
-            if let currentRider = rider {
-                self.rider = Rider(
-                    id: currentRider.id,
-                    userId: currentRider.userId,
-                    type: currentRider.type,
-                    displayName: currentRider.displayName,
-                    description: currentRider.description,
-                    avatarUrl: response.avatarUrl,
-                    createdAt: currentRider.createdAt,
-                    updatedAt: Date()
-                )
-            }
+            let response = try await repository.uploadAvatar(imageData)
+            rider = presenter.riderAfterAvatarUpload(current: rider, avatarURL: response.avatarUrl)
             
             successMessage = ProfileStrings.avatarUploadedSuccess.localized
             avatarImage = nil
@@ -182,12 +171,11 @@ public final class ProfileViewModel {
         
         let request = UpdateBaseLocationRequest(
             latitude: lat,
-            longitude: lng,
-            name: locationName.isEmpty ? nil : locationName
+            longitude: lng
         )
         
         do {
-            let updated = try await riderService.updateMyBaseLocation(request)
+            let updated = try await repository.updateBaseLocation(request)
             baseLocation = updated
             successMessage = ProfileStrings.locationSavedSuccess.localized
         } catch {
@@ -207,9 +195,8 @@ public final class ProfileViewModel {
         let request = UpsertRiderSportRequest(level: level, isMentor: isMentor)
         
         do {
-            let updatedSport = try await riderService.upsertMyRiderSport(sportId: sportId, request: request)
+            let updatedSport = try await repository.upsertSport(sportId: sportId, request: request)
             
-            // Update local list
             if let index = riderSports.firstIndex(where: { $0.sportId == sportId }) {
                 riderSports[index] = updatedSport
             } else {
@@ -228,7 +215,7 @@ public final class ProfileViewModel {
         defer { sportLoadingIds.remove(sportId) }
         
         do {
-            try await riderService.deleteMyRiderSport(sportId: sportId)
+            try await repository.removeSport(sportId: sportId)
             riderSports.removeAll { $0.sportId == sportId }
         } catch {
             self.error = ProfileStrings.failedRemoveSport(error.localizedDescription)
@@ -253,27 +240,15 @@ public final class ProfileViewModel {
         error = nil
         
         do {
-            try await riderService.deleteMyAccount()
+            try await repository.deleteAccount()
             await authState.handleSessionInvalidation()
         } catch {
             self.error = ProfileStrings.failedDeleteAccount(error.localizedDescription)
             isLoading = false
         }
     }
-    
+
     // MARK: - Helpers
-    
-    private func populateFieldsFromRider(_ rider: Rider) {
-        displayName = rider.displayName ?? ""
-        description = rider.description ?? ""
-        selectedType = rider.type ?? .rider
-    }
-    
-    private func populateLocationFields(_ location: RiderBaseLocation) {
-        locationName = location.name ?? ""
-        latitudeText = String(format: "%.6f", location.latitude)
-        longitudeText = String(format: "%.6f", location.longitude)
-    }
     
     private func validateProfileFields() -> Bool {
         let trimmed = displayName.trimmingCharacters(in: .whitespacesAndNewlines)

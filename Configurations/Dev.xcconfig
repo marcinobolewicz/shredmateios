@@ -3,7 +3,7 @@
 
 // Development Configuration
 DISPLAY_NAME = ShredMate Dev
-PRODUCT_BUNDLE_IDENTIFIER = com.shredmate.app.dev
-API_BASE_URL = https://api-dev.shredmate.app
+PRODUCT_BUNDLE_IDENTIFIER = pl.shredmate.app.dev
+API_BASE_URL = https://api.shredmate.pl
 ENVIRONMENT = DEV
 SWIFT_ACTIVE_COMPILATION_CONDITIONS = $(inherited) DEV

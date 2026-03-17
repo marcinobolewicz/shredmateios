@@ -2,11 +2,17 @@ import SwiftUI
 import Networking
 import Login
 import Conversations
+#if DEBUG
+import PulseUI
+#endif
 
 public struct RootView: View {
     private var dependencies: AppDependencies
     @Environment(AuthState.self) private var authState
     @State private var router = RootRouter()
+    #if DEBUG
+    @State private var showPulseConsole = false
+    #endif
 
     public init(
         dependencies: AppDependencies
@@ -36,19 +42,31 @@ public struct RootView: View {
 
             if authState.isLoading { LoadingOverlay() }
         }
+        .inAppNotificationOverlay(center: dependencies.notificationCenter)
+        #if DEBUG
+        .onShake { showPulseConsole = true }
+        .sheet(isPresented: $showPulseConsole) {
+            NavigationStack { ConsoleView() }
+        }
+        #endif
         .task {
+            async let _ = dependencies.sportsService.fetchSports()
             await authState.restoreSession()
             router.flow = authState.isLoggedIn ? .user : .guest
 
             if authState.isLoggedIn {
                 await connectChat()
+                await PushNotificationsBridge.requestAuthorizationAfterLogin()
             }
         }
         .onChange(of: authState.isLoggedIn) { _, isLoggedIn in
             router.flow = isLoggedIn ? .user : .guest
 
             if isLoggedIn {
-                Task { await connectChat() }
+                Task {
+                    await connectChat()
+                    await PushNotificationsBridge.requestAuthorizationAfterLogin()
+                }
             } else {
                 disconnectChat()
             }

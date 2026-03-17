@@ -7,6 +7,7 @@
 
 import Foundation
 import Networking
+import Common
 
 struct ConversationRowPresenter: Sendable {
 
@@ -14,13 +15,13 @@ struct ConversationRowPresenter: Sendable {
 
     func map(conversation: ChatConversation) -> ConversationRowViewData {
         let name = conversation.otherUser.name ?? conversation.otherUser.email ?? "Unknown"
-        let date = conversation.lastMessageAt.flatMap { Formatters.iso8601.date(from: $0) }
+        let date = conversation.lastMessageAt.flatMap { DateFormatting.shared.parseISO8601($0) }
 
         return ConversationRowViewData(
             id: conversation.id,
             participantName: name,
             lastMessage: conversation.lastMessage?.content ?? "",
-            dateText: date.map { Formatters.displayDate.string(from: $0) } ?? "",
+            dateText: date.map { DateFormatting.shared.formatDisplayDate($0) } ?? "",
             avatarInitials: initials(from: name),
             avatarURL: conversation.otherUser.avatarUrl.flatMap { URL(string: $0) },
             unreadCount: 0 // API does not provide unread count yet
@@ -34,7 +35,7 @@ struct ConversationRowPresenter: Sendable {
             id: conversation.id.uuidString,
             participantName: conversation.participant.displayName,
             lastMessage: conversation.lastMessageText ?? "",
-            dateText: conversation.lastMessageDate.map { Formatters.displayDate.string(from: $0) } ?? "",
+            dateText: conversation.lastMessageDate.map { DateFormatting.shared.formatDisplayDate($0) } ?? "",
             avatarInitials: initials(from: conversation.participant.displayName),
             avatarURL: conversation.participant.avatarURL,
             unreadCount: conversation.unreadCount
@@ -50,18 +51,4 @@ struct ConversationRowPresenter: Sendable {
     }
 }
 
-// MARK: - Formatters
 
-private enum Formatters {
-    nonisolated(unsafe) static let iso8601: ISO8601DateFormatter = {
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        return formatter
-    }()
-
-    nonisolated(unsafe) static let displayDate: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "d.MM.yyyy"
-        return formatter
-    }()
-}

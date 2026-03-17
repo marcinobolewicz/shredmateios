@@ -3,29 +3,24 @@ import Theme
 
 struct PlacesListView: View {
     @Environment(AppTheme.self) private var theme
+    @Environment(PlacesRouter.self) private var router
     @Bindable var viewModel: PlacesViewModel
 
     var body: some View {
         content
-            .navigationTitle(PlacesStrings.listNavigationTitle.localized)
-            .searchable(text: $viewModel.searchText)
-            .onChange(of: viewModel.searchText) { _, _ in
-                viewModel.load(force: true)
-            }
             .refreshable { viewModel.refresh() }
-            .errorAlert(state: viewModel.state) { viewModel.refresh() }
     }
 
     @ViewBuilder
     private var content: some View {
         switch viewModel.state {
         case .idle, .loading:
-            List {
+            VStack {
+                Spacer()
                 ProgressView()
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .listRowSeparator(.hidden)
+                Spacer()
             }
-            .listStyle(.plain)
+            .frame(maxWidth: .infinity)
 
         case .loaded:
             if viewModel.rows.isEmpty {
@@ -39,14 +34,30 @@ struct PlacesListView: View {
                     SpotRow(viewData: row)
                         .listRowInsets(
                             EdgeInsets(
-                                top: theme.spacing.xs,
+                                top: 0,
                                 leading: theme.spacing.md,
-                                bottom: theme.spacing.xs,
+                                bottom: 0,
                                 trailing: theme.spacing.md
                             )
                         )
-                        .listRowSeparator(.hidden)
+                        .listRowSeparator(.visible)
+                        .listRowSeparatorTint(theme.colors.border.opacity(0.4))
                         .listRowBackground(Color.clear)
+                        .onTapGesture {
+                            let detailData = PlaceDetailsViewData(
+                                id: row.id,
+                                name: row.title,
+                                description: row.description,
+                                sportTags: row.sportTags,
+                                placeTags: row.placeTags,
+                                sportIds: row.sportIds,
+                                sportSlugs: row.sportSlugs,
+                                ridersCount: row.ridersCount,
+                                mentorsCount: row.mentorsCount,
+                                avatar: row.avatar
+                            )
+                            router.navigate(to: .placeDetails(detailData))
+                        }
                 }
                 .listStyle(.plain)
                 .scrollContentBackground(.hidden)
