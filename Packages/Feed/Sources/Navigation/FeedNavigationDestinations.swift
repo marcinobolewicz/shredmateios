@@ -3,6 +3,7 @@ import Networking
 
 struct FeedNavigationDestinations: ViewModifier {
     let feedService: any FeedServiceProtocol
+    let placesService: any PlacesServiceProtocol
     let router: FeedRouter
 
     func body(content: Content) -> some View {
@@ -16,13 +17,25 @@ struct FeedNavigationDestinations: ViewModifier {
     private func destination(for route: FeedRoute) -> some View {
         switch route {
         case .createPost:
-            CreatePostView(feedService: feedService, onSuccess: { router.pop() })
+            CreatePostView(
+                feedService: feedService,
+                placesService: placesService,
+                onSuccess: { router.pop() }
+            )
         }
     }
 }
 
 extension View {
-    func feedDestinations(feedService: any FeedServiceProtocol, router: FeedRouter) -> some View {
-        modifier(FeedNavigationDestinations(feedService: feedService, router: router))
+    func feedDestinations(
+        feedService: any FeedServiceProtocol,
+        placesService: any PlacesServiceProtocol,
+        router: FeedRouter
+    ) -> some View {
+        modifier(FeedNavigationDestinations(
+            feedService: feedService,
+            placesService: placesService,
+            router: router
+        ))
     }
 }

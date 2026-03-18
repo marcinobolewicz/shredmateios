@@ -45,6 +45,7 @@ public struct RootView: View {
         .inAppNotificationOverlay(center: dependencies.notificationCenter)
         #if DEBUG
         .onShake { showPulseConsole = true }
+        .onTapGesture(count: 3) { showPulseConsole = true }
         .sheet(isPresented: $showPulseConsole) {
             NavigationStack { ConsoleView() }
         }

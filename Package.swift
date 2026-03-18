@@ -121,7 +121,7 @@ let package = Package(
         // Feed Package
         .target(
             name: "Feed",
-            dependencies: ["Networking", "Common"],
+            dependencies: ["Networking", "Common", "Places"],
             path: "Packages/Feed/Sources",
             resources: [
                 .process("Resources")

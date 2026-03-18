@@ -4,10 +4,15 @@ import Networking
 public struct FeedView: View {
 
     let feedService: any FeedServiceProtocol
+    let placesService: any PlacesServiceProtocol
     @State private var router = FeedRouter()
 
-    public init(feedService: any FeedServiceProtocol) {
+    public init(
+        feedService: any FeedServiceProtocol,
+        placesService: any PlacesServiceProtocol
+    ) {
         self.feedService = feedService
+        self.placesService = placesService
     }
 
     public var body: some View {
@@ -26,7 +31,11 @@ public struct FeedView: View {
                     }
                 }
             }
-            .feedDestinations(feedService: feedService, router: router)
+            .feedDestinations(
+                feedService: feedService,
+                placesService: placesService,
+                router: router
+            )
         }
     }
 }

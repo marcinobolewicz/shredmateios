@@ -1,4 +1,5 @@
 /* Places */
+"places.picker_title" = "Select Place";
 "places.root_navigation_title" = "Spots";
 "places.list_navigation_title" = "Explore";
 "places.details_title" = "Place details";

@@ -21,9 +21,10 @@ public struct GuestWelcomeView: View {
     }
 
     public var body: some View {
-        VerticalPageView(items: GuestSlide.all) { slide in
+        PageView(items: GuestSlide.all) { slide in
             SlideView(slide: slide, onCTATap: onCTATap)
         }
+        .toolbarBackground(.hidden, for: .tabBar)
     }
 }
 

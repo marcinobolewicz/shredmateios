@@ -8,6 +8,7 @@
 import Foundation
 
 enum PlacesStrings: String {
+    case pickerTitle = "places.picker_title"
     case rootNavigationTitle = "places.root_navigation_title"
     case listNavigationTitle = "places.list_navigation_title"
     case detailsTitle = "places.details_title"

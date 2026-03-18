@@ -1,6 +1,7 @@
 import Foundation
 import Networking
 import Common
+import Places
 
 @MainActor
 @Observable
@@ -9,6 +10,7 @@ final class CreatePostViewModel {
     // MARK: - Form state
 
     var caption: String = ""
+    var selectedPlace: Place?
 
     // MARK: - Submit state
 
@@ -27,6 +29,7 @@ final class CreatePostViewModel {
     var canSubmit: Bool {
         !caption.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
             && !isOverLimit
+            && selectedPlace != nil
             && !isSubmitting
     }
 
@@ -45,7 +48,7 @@ final class CreatePostViewModel {
     // MARK: - Actions
 
     func submit() {
-        guard canSubmit else { return }
+        guard canSubmit, let place = selectedPlace else { return }
 
         isSubmitting = true
         error = nil
@@ -56,8 +59,9 @@ final class CreatePostViewModel {
 
             let request = CreateActivityRequest(
                 type: .checkIn,
-                placeId: "",   // place selection added in a future step
-                caption: caption.trimmingCharacters(in: .whitespacesAndNewlines)
+                placeId: place.id.uuidString,
+                caption: caption.trimmingCharacters(in: .whitespacesAndNewlines),
+                taggedRiderIds: []
             )
 
             do {

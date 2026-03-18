@@ -7,8 +7,6 @@ struct SlideView: View {
     let slide: GuestSlide
     var onCTATap: (() -> Void)?
 
-    @Environment(\.pageSafeAreaInsets) private var safeAreaInsets
-
     var body: some View {
         ZStack {
             // MARK: Background
@@ -45,8 +43,7 @@ struct SlideView: View {
                     .buttonStyle(.dsPrimary)
             }
             .padding(.horizontal, 24)
-            .padding(.top, safeAreaInsets.top)
-            .padding(.bottom, safeAreaInsets.bottom)
+            .safeAreaPadding()
         }
     }
 }
