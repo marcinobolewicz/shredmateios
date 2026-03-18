@@ -10,8 +10,6 @@
 "app.home_welcome_title" = "Welcome to ShredMate!";
 "app.home_sign_out" = "Sign Out";
 
-"app.feed_navigation_title" = "Feed";
-
 "app.guest_slide1_title"    = "Find an Instructor / Mentor";
 "app.guest_slide1_subtitle" = "Book a session with an experienced rider and develop your skills faster.";
 "app.guest_slide1_cta"      = "Find an Instructor";

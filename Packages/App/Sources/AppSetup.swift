@@ -12,6 +12,7 @@ public final class AppDependencies {
     public let riderService: any RiderServiceProtocol
     public let placesService: any PlacesServiceProtocol
     public let sportsService: any SportsServiceProtocol
+    public let feedService: any FeedServiceProtocol
     public let chatService: any ChatServiceProtocol
     public let chatRealtimeClient: ChatRealtimeProviding
     public let chatRepository: ChatRepository
@@ -25,6 +26,7 @@ public final class AppDependencies {
         riderService: any RiderServiceProtocol,
         placesService: any PlacesServiceProtocol,
         sportsService: any SportsServiceProtocol,
+        feedService: any FeedServiceProtocol,
         chatService: any ChatServiceProtocol,
         chatRealtimeClient: ChatRealtimeProviding,
         chatRepository: ChatRepository,
@@ -37,6 +39,7 @@ public final class AppDependencies {
         self.riderService = riderService
         self.placesService = placesService
         self.sportsService = sportsService
+        self.feedService = feedService
         self.chatService = chatService
         self.chatRealtimeClient = chatRealtimeClient
         self.chatRepository = chatRepository
@@ -81,6 +84,7 @@ public struct AppSetup {
             riderService: services.rider,
             placesService: services.places,
             sportsService: services.sports,
+            feedService: services.feed,
             chatService: chat.service,
             chatRealtimeClient: chat.realtimeClient,
             chatRepository: chat.repository,
@@ -150,13 +154,15 @@ public struct AppSetup {
         let rider: any RiderServiceProtocol
         let places: any PlacesServiceProtocol
         let sports: any SportsServiceProtocol
+        let feed: any FeedServiceProtocol
     }
 
     private static func configureServices(httpClient: AuthenticatingHTTPClient) -> Services {
         Services(
             rider: RiderService(client: httpClient),
             places: PlacesService(client: httpClient),
-            sports: SportsServiceService(client: httpClient)
+            sports: SportsServiceService(client: httpClient),
+            feed: FeedService(client: httpClient)
         )
     }
 

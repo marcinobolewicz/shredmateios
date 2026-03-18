@@ -17,6 +17,7 @@ let package = Package(
         .library(name: "Profile", targets: ["Profile"]),
         .library(name: "Places", targets: ["Places"]),
         .library(name: "Conversations", targets: ["Conversations"]),
+        .library(name: "Feed", targets: ["Feed"]),
         .library(name: "Theme", targets: ["Theme"])
     ],
     dependencies: [
@@ -117,11 +118,29 @@ let package = Package(
             path: "Packages/Login/Tests"
         ),
         
+        // Feed Package
+        .target(
+            name: "Feed",
+            dependencies: ["Networking", "Common"],
+            path: "Packages/Feed/Sources",
+            resources: [
+                .process("Resources")
+            ],
+            swiftSettings: [
+                .enableUpcomingFeature("StrictConcurrency")
+            ]
+        ),
+        .testTarget(
+            name: "FeedTests",
+            dependencies: ["Feed"],
+            path: "Packages/Feed/Tests"
+        ),
+
         // App Package
         .target(
             name: "App",
             dependencies: [
-                "Core", "Networking", "Auth", "Login", "Profile", "Places", "Conversations", "Theme",
+                "Core", "Networking", "Auth", "Login", "Profile", "Places", "Conversations", "Feed", "Theme",
                 .product(name: "FirebaseCrashlytics", package: "firebase-ios-sdk"),
                 .product(name: "FirebaseMessaging", package: "firebase-ios-sdk"),
                 .product(name: "Pulse", package: "Pulse"),

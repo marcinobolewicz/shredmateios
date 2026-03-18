@@ -16,8 +16,6 @@ enum AppStrings: String {
     case homeWelcomeTitle = "app.home_welcome_title"
     case homeSignOut = "app.home_sign_out"
 
-    case feedNavigationTitle = "app.feed_navigation_title"
-
     case guestSlide1Title    = "app.guest_slide1_title"
     case guestSlide1Subtitle = "app.guest_slide1_subtitle"
     case guestSlide1Cta      = "app.guest_slide1_cta"
