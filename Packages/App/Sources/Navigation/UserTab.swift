@@ -24,10 +24,7 @@ struct UserTabView: View {
     
     var body: some View {
         TabView(selection: $selectedTab) {
-            HomeView(
-                authState: dependencies.authState,
-                riderService: dependencies.riderService
-            )
+            FeedView()
             .tabItem { Label(AppStrings.userTabHome.localized, systemImage: "house") }
             .tag(UserTab.home)
 
