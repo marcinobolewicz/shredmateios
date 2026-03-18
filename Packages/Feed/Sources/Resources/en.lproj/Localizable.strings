@@ -5,3 +5,8 @@
 "feed.place_label"         = "Place";
 "feed.place_placeholder"   = "Select a place";
 "feed.ok"                  = "OK";
+"feed.empty_title"         = "No posts yet";
+"feed.empty_description"   = "Be the first to share a session!";
+"feed.failed_title"        = "Something went wrong";
+"feed.failed_description"  = "Could not load the feed.";
+"feed.refresh_button"      = "Try again";

@@ -11,4 +11,16 @@ public enum FeedAPI {
             body: .json(request, keys: .camelCase)
         )
     }
+
+    /// `GET /activities/feed?page=1&limit=20`
+    public static func feed(page: Int, limit: Int = 20) -> Endpoint<PaginatedResponse<ActivityPost>> {
+        Endpoint(
+            method: .get,
+            path: "/activities/feed",
+            query: [
+                URLQueryItem(name: "page", value: "\(page)"),
+                URLQueryItem(name: "limit", value: "\(limit)")
+            ], auth: .bearerToken
+        )
+    }
 }

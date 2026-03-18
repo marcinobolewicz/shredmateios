@@ -8,6 +8,11 @@ enum FeedStrings: String {
     case placeLabel          = "feed.place_label"
     case placePlaceholder    = "feed.place_placeholder"
     case ok                  = "feed.ok"
+    case emptyTitle          = "feed.empty_title"
+    case emptyDescription    = "feed.empty_description"
+    case failedTitle         = "feed.failed_title"
+    case failedDescription   = "feed.failed_description"
+    case refreshButton       = "feed.refresh_button"
 
     var localized: String {
         NSLocalizedString(rawValue, bundle: .module, comment: "")

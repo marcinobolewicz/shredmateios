@@ -5,3 +5,8 @@
 "feed.place_label"         = "Miejsce";
 "feed.place_placeholder"   = "Wybierz miejsce";
 "feed.ok"                  = "OK";
+"feed.empty_title"         = "Brak postów";
+"feed.empty_description"   = "Bądź pierwszy, który podzieli się sesją!";
+"feed.failed_title"        = "Coś poszło nie tak";
+"feed.failed_description"  = "Nie udało się załadować feeda.";
+"feed.refresh_button"      = "Spróbuj ponownie";
