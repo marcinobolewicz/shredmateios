@@ -23,6 +23,7 @@
 
 "places.riders_label" = "Riders";
 "places.mentors_label" = "Mentors";
+"places.map_label" = "Map";
 
 "places.spot_subtitle_placeholder" = "—";
 

@@ -32,6 +32,7 @@ enum PlacesStrings: String {
 
     case ridersLabel = "places.riders_label"
     case mentorsLabel = "places.mentors_label"
+    case mapLabel = "places.map_label"
 
     case detailsRatingLabel = "places.details_rating_label"
     case detailsRidersEmptyTitle = "places.details_riders_empty_title"

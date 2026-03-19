@@ -42,13 +42,13 @@ public struct PaginatedResponse<T: Decodable & Sendable>: Decodable, Sendable {
 
 // MARK: - Response
 
-public struct ActivityPostPlace: Decodable, Sendable, Identifiable {
+public struct ActivityPostPlace: Decodable, Sendable, Identifiable, Hashable {
     public let id: String
     public let name: String
     public let avatarUrl: String?
 }
 
-public struct ActivityPostRider: Decodable, Sendable, Identifiable {
+public struct ActivityPostRider: Decodable, Sendable, Identifiable, Hashable {
     public let id: String
     public let displayName: String
     public let avatarUrl: String?

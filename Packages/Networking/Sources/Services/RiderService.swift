@@ -11,6 +11,7 @@ import Foundation
 public protocol RiderServiceProtocol: Sendable {
     // All Riders
     func fetchAllRiders() async throws -> [Rider]
+    func fetchRider(id: String) async throws -> Rider
 
     // Profile
     func fetchMyRider() async throws -> Rider
@@ -47,6 +48,10 @@ public final class RiderService: RiderServiceProtocol, Sendable {
 
     public func fetchAllRiders() async throws -> [Rider] {
         try await client.send(RiderAPI.all())
+    }
+
+    public func fetchRider(id: String) async throws -> Rider {
+        try await client.send(RiderAPI.rider(id: id))
     }
 
     // MARK: - Profile

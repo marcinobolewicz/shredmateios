@@ -7,15 +7,18 @@ public struct FeedView: View {
 
     let feedService: any FeedServiceProtocol
     let placesService: any PlacesServiceProtocol
+    let riderService: any RiderServiceProtocol
     @State private var router = FeedRouter()
     @State private var viewModel: FeedViewModel
 
     public init(
         feedService: any FeedServiceProtocol,
-        placesService: any PlacesServiceProtocol
+        placesService: any PlacesServiceProtocol,
+        riderService: any RiderServiceProtocol
     ) {
         self.feedService = feedService
         self.placesService = placesService
+        self.riderService = riderService
         _viewModel = State(wrappedValue: FeedViewModel(feedService: feedService))
     }
 
@@ -25,9 +28,7 @@ public struct FeedView: View {
                 .navigationTitle(FeedStrings.navigationTitle.localized)
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
-                        Button {
-                            router.navigate(to: .createPost)
-                        } label: {
+                        Button { router.navigate(to: .createPost) } label: {
                             Image(systemName: "plus")
                         }
                     }
@@ -35,6 +36,7 @@ public struct FeedView: View {
                 .feedDestinations(
                     feedService: feedService,
                     placesService: placesService,
+                    riderService: riderService,
                     router: router
                 )
         }
@@ -47,26 +49,16 @@ public struct FeedView: View {
         switch viewModel.state {
         case .idle, .loading:
             loadingView
-
         case .loaded:
-            if viewModel.posts.isEmpty {
-                emptyView
-            } else {
-                postsList
-            }
-
+            viewModel.posts.isEmpty ? AnyView(emptyView) : AnyView(postsList)
         case .failed:
             errorView
         }
     }
 
     private var loadingView: some View {
-        VStack {
-            Spacer()
-            ProgressView()
-            Spacer()
-        }
-        .frame(maxWidth: .infinity)
+        VStack { Spacer(); ProgressView(); Spacer() }
+            .frame(maxWidth: .infinity)
     }
 
     private var emptyView: some View {
@@ -90,7 +82,7 @@ public struct FeedView: View {
     }
 
     private var postsList: some View {
-        _PostsList(viewModel: viewModel)
+        _PostsList(viewModel: viewModel, router: router)
     }
 }
 
@@ -99,31 +91,32 @@ public struct FeedView: View {
 private struct _PostsList: View {
     @Environment(AppTheme.self) private var theme
     @Bindable var viewModel: FeedViewModel
+    let router: FeedRouter
 
     var body: some View {
         List {
             ForEach(viewModel.posts) { post in
-                ActivityPostRow(post: post)
-                    .listRowInsets(EdgeInsets(
-                        top: 0,
-                        leading: theme.spacing.md,
-                        bottom: 0,
-                        trailing: theme.spacing.md
-                    ))
-                    .listRowSeparator(.visible)
-                    .listRowSeparatorTint(theme.colors.border.opacity(0.4))
-                    .listRowBackground(Color.clear)
-                    .onAppear { viewModel.loadNextPageIfNeeded(currentPost: post) }
+                ActivityPostRow(post: post) {
+                    router.navigate(to: .riderDetails(post.rider))
+                } onPlaceTap: {
+                    router.navigate(to: .placeDetails(post.place))
+                }
+                .listRowInsets(EdgeInsets(
+                    top: 0,
+                    leading: theme.spacing.md,
+                    bottom: 0,
+                    trailing: theme.spacing.md
+                ))
+                .listRowSeparator(.visible)
+                .listRowSeparatorTint(theme.colors.border.opacity(0.4))
+                .listRowBackground(Color.clear)
+                .onAppear { viewModel.loadNextPageIfNeeded(currentPost: post) }
             }
 
             if viewModel.isLoadingMore {
-                HStack {
-                    Spacer()
-                    ProgressView()
-                    Spacer()
-                }
-                .listRowSeparator(.hidden)
-                .listRowBackground(Color.clear)
+                HStack { Spacer(); ProgressView(); Spacer() }
+                    .listRowSeparator(.hidden)
+                    .listRowBackground(Color.clear)
             }
         }
         .listStyle(.plain)
@@ -138,29 +131,40 @@ private struct _PostsList: View {
 private struct ActivityPostRow: View {
     @Environment(AppTheme.self) private var theme
     let post: ActivityPost
+    let onRiderTap: () -> Void
+    let onPlaceTap: () -> Void
 
     var body: some View {
         HStack(alignment: .top, spacing: theme.spacing.sm) {
-            AvatarView(
-                url: URL(string: post.rider.avatarUrl ?? ""),
-                initials: post.rider.initials
-            )
+            Button(action: onRiderTap) {
+                AvatarView(
+                    url: URL(string: post.rider.avatarUrl ?? ""),
+                    initials: post.rider.initials
+                )
+            }
+            .buttonStyle(.plain)
 
             VStack(alignment: .leading, spacing: theme.spacing.xxs) {
                 HStack(spacing: theme.spacing.xxs) {
-                    Text(post.rider.displayName)
-                        .dsTextStyle(.heading)
-                        .lineLimit(1)
-                    Text("·")
-                        .dsTextStyle(.subheadline)
-                    Text(post.place.name)
-                        .dsTextStyle(.subheadline)
-                        .lineLimit(1)
+                    Button(action: onRiderTap) {
+                        Text(post.rider.displayName)
+                            .dsTextStyle(.heading)
+                            .lineLimit(1)
+                    }
+                    .buttonStyle(.plain)
+
+                    Text("·").dsTextStyle(.subheadline)
+
+                    Button(action: onPlaceTap) {
+                        Text(post.place.name)
+                            .dsTextStyle(.subheadline)
+                            .lineLimit(1)
+                    }
+                    .buttonStyle(.plain)
                 }
 
                 if let caption = post.caption, !caption.isEmpty {
-                    Text(caption)
-                        .dsTextStyle(.body)
+                    Text(caption).dsTextStyle(.body)
                 }
 
                 Text(post.createdAt.relativeFormatted)

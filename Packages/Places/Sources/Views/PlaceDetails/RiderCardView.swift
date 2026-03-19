@@ -10,6 +10,7 @@ public struct RiderCardViewData: Equatable, Hashable, Sendable, Identifiable {
     public let avatarInitials: String
     public let avatarURL: URL?
     public let description: String
+    public let hasHomeLocation: Bool
 
     public init(
         id: String,
@@ -18,7 +19,8 @@ public struct RiderCardViewData: Equatable, Hashable, Sendable, Identifiable {
         displayName: String,
         avatarInitials: String,
         avatarURL: URL?,
-        description: String
+        description: String,
+        hasHomeLocation: Bool = false
     ) {
         self.id = id
         self.riderId = riderId
@@ -27,17 +29,18 @@ public struct RiderCardViewData: Equatable, Hashable, Sendable, Identifiable {
         self.avatarInitials = avatarInitials
         self.avatarURL = avatarURL
         self.description = description
+        self.hasHomeLocation = hasHomeLocation
     }
 }
 
-struct RiderCardView: View {
+public struct RiderCardView: View {
     @Environment(AppTheme.self) private var theme
 
     let viewData: RiderCardViewData
     let onMessageTap: (_ userId: UUID, _ displayName: String) -> Void
     @State private var viewModel: RiderCardViewModel
 
-    init(
+    public init(
         viewData: RiderCardViewData,
         followRepository: FollowRepository,
         onMessageTap: @escaping (_ userId: UUID, _ displayName: String) -> Void = { _, _ in }
@@ -50,7 +53,7 @@ struct RiderCardView: View {
         ))
     }
 
-    var body: some View {
+    public var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: theme.spacing.md) {
                 header
@@ -81,6 +84,8 @@ struct RiderCardView: View {
         }
     }
 
+    private var avatarSize: CGFloat { viewData.hasHomeLocation ? 132 : 88 }
+
     @ViewBuilder
     private var avatar: some View {
         if let avatarURL = viewData.avatarURL {
@@ -89,7 +94,7 @@ struct RiderCardView: View {
             } placeholder: {
                 avatarFallback
             }
-            .frame(width: 88, height: 88)
+            .frame(width: avatarSize, height: avatarSize)
             .clipShape(Circle())
         } else {
             avatarFallback
@@ -100,10 +105,10 @@ struct RiderCardView: View {
         ZStack {
             Circle().fill(theme.colors.surfaceTertiary)
             Text(viewData.avatarInitials)
-                .font(.system(size: 30, weight: .bold))
+                .font(.system(size: avatarSize * 0.34, weight: .bold))
                 .foregroundStyle(theme.colors.textSecondary)
         }
-        .frame(width: 88, height: 88)
+        .frame(width: avatarSize, height: avatarSize)
     }
 
     @ViewBuilder
@@ -117,32 +122,24 @@ struct RiderCardView: View {
     }
 
     private var actionButtons: some View {
-        VStack(spacing: theme.spacing.sm) {
+        HStack(spacing: theme.spacing.sm) {
             followButton
             messageButton
+            Spacer()
         }
     }
 
     @ViewBuilder
     private var followButton: some View {
-        let label = Group {
+        Button(action: viewModel.toggleFollow) {
             if viewModel.isLoading {
-                ProgressView().frame(maxWidth: .infinity)
+                ProgressView().controlSize(.small)
             } else {
                 Text(viewModel.isFollowing ? PlacesStrings.unfollowButton.localized : PlacesStrings.followButton.localized)
-                    .frame(maxWidth: .infinity)
             }
         }
-
-        if viewModel.isFollowing {
-            Button(action: viewModel.toggleFollow) { label }
-                .buttonStyle(.dsSecondary)
-                .disabled(viewModel.isLoading)
-        } else {
-            Button(action: viewModel.toggleFollow) { label }
-                .buttonStyle(.dsPrimary)
-                .disabled(viewModel.isLoading)
-        }
+        .buttonStyle(.dsOutline)
+        .disabled(viewModel.isLoading)
     }
 
     private var messageButton: some View {

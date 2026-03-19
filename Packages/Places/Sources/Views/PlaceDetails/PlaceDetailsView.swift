@@ -23,6 +23,8 @@ public struct PlaceDetailsViewData: Equatable, Hashable, Sendable {
     public let ridersCount: Int
     public let mentorsCount: Int
     public let avatar: Avatar
+    public let latitude: Double?
+    public let longitude: Double?
 
     public struct SportFilter: Equatable, Hashable, Sendable, Identifiable {
         public let id: String
@@ -46,7 +48,9 @@ public struct PlaceDetailsViewData: Equatable, Hashable, Sendable {
         sportSlugs: [String],
         ridersCount: Int,
         mentorsCount: Int,
-        avatar: Avatar
+        avatar: Avatar,
+        latitude: Double? = nil,
+        longitude: Double? = nil
     ) {
         self.id = id
         self.name = name
@@ -58,6 +62,8 @@ public struct PlaceDetailsViewData: Equatable, Hashable, Sendable {
         self.ridersCount = ridersCount
         self.mentorsCount = mentorsCount
         self.avatar = avatar
+        self.latitude = latitude
+        self.longitude = longitude
     }
 
     public var sportFilters: [SportFilter] {
@@ -67,7 +73,7 @@ public struct PlaceDetailsViewData: Equatable, Hashable, Sendable {
 
 // MARK: - View
 
-struct PlaceDetailsView: View {
+public struct PlaceDetailsView: View {
     @Environment(AppTheme.self) private var theme
     @Environment(AuthState.self) private var authState
     let viewData: PlaceDetailsViewData
@@ -78,11 +84,12 @@ struct PlaceDetailsView: View {
     enum DetailTab: String, CaseIterable, Identifiable {
         case riders
         case mentors
+        case map
 
         var id: String { rawValue }
     }
 
-    init(viewData: PlaceDetailsViewData, placesService: PlacesServiceProtocol, authState: AuthState) {
+    public init(viewData: PlaceDetailsViewData, placesService: PlacesServiceProtocol, authState: AuthState) {
         self.viewData = viewData
         _viewModel = State(
             wrappedValue: PlaceDetailsViewModel(
@@ -95,7 +102,9 @@ struct PlaceDetailsView: View {
         )
     }
 
-    var body: some View {
+    private var hasLocation: Bool { viewData.latitude != nil && viewData.longitude != nil }
+
+    public var body: some View {
         ScrollView {
             VStack(spacing: 0) {
                 heroSection
@@ -157,18 +166,15 @@ struct PlaceDetailsView: View {
                     Button {
                         viewModel.showRolePicker = true
                     } label: {
-                        HStack {
+                        HStack(spacing: theme.spacing.xs) {
                             if viewModel.isJoining {
-                                ProgressView()
-                                    .controlSize(.small)
-                                    .tint(theme.colors.primaryForeground)
+                                ProgressView().controlSize(.small)
                             }
                             Image(systemName: "mappin.and.ellipse")
                             Text(PlacesStrings.checkInButton.localized)
                         }
-                        .frame(maxWidth: .infinity)
                     }
-                    .buttonStyle(.dsPrimary)
+                    .buttonStyle(.dsOutline)
                     .disabled(viewModel.isJoining)
                 }
             }
@@ -183,9 +189,6 @@ struct PlaceDetailsView: View {
         VStack(spacing: theme.spacing.sm) {
             heroAvatar
                 .padding(.top, theme.spacing.md)
-
-                Text(viewData.name)
-                    .dsTextStyle(.title)
             sportFiltersSection
             placeTagsSection
 
@@ -206,9 +209,13 @@ struct PlaceDetailsView: View {
 
     // MARK: - Tabs
 
+    private var availableTabs: [DetailTab] {
+        hasLocation ? DetailTab.allCases : [.riders, .mentors]
+    }
+
     private var tabSection: some View {
         HStack(spacing: 0) {
-            ForEach(DetailTab.allCases) { tab in
+            ForEach(availableTabs) { tab in
                 Button {
                     withAnimation(.snappy(duration: Constants.Animation.chipDuration)) {
                         selectedTab = tab
@@ -244,6 +251,8 @@ struct PlaceDetailsView: View {
             return "\(PlacesStrings.ridersLabel.localized) (\(viewModel.ridersCount))"
         case .mentors:
             return "\(PlacesStrings.mentorsLabel.localized) (\(viewModel.mentorsCount))"
+        case .map:
+            return PlacesStrings.mapLabel.localized
         }
     }
 
@@ -270,6 +279,10 @@ struct PlaceDetailsView: View {
                         emptySubtitle: PlacesStrings.detailsMentorsEmptyDescription.localized,
                         emptyIcon: "person.badge.shield.checkmark"
                     )
+                case .map:
+                    PlaceDetailsMapView(viewData: viewData, riderEntries: viewModel.riderEntries)
+                        .frame(height: 420)
+                        .clipShape(RoundedRectangle(cornerRadius: 0))
                 }
             }
         }

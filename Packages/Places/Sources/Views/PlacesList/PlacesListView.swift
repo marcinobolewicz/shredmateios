@@ -54,7 +54,9 @@ struct PlacesListView: View {
                                 sportSlugs: row.sportSlugs,
                                 ridersCount: row.ridersCount,
                                 mentorsCount: row.mentorsCount,
-                                avatar: row.avatar
+                                avatar: row.avatar,
+                                latitude: row.latitude,
+                                longitude: row.longitude
                             )
                             router.navigate(to: .placeDetails(detailData))
                         }

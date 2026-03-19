@@ -19,6 +19,12 @@ public struct PlaceRiderSummary: Decodable, Sendable, Equatable {
     public let userId: UUID
     public let displayName: String?
     public let avatarUrl: String?
+    public let baseLocation: PlaceRiderBaseLocation?
+}
+
+public struct PlaceRiderBaseLocation: Decodable, Sendable, Equatable {
+    public let lat: Double
+    public let lng: Double
 }
 
 public struct PlaceRiderSportSummary: Decodable, Sendable, Equatable {

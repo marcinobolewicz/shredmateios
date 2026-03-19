@@ -8,6 +8,7 @@ struct PlaceRiderRowViewData: Identifiable, Equatable, Hashable, Sendable {
     let avatarInitials: String
     let avatarURL: URL?
     let subtitle: String
+    let hasHomeLocation: Bool
 
     var riderCardData: RiderCardViewData {
         RiderCardViewData(
@@ -17,7 +18,8 @@ struct PlaceRiderRowViewData: Identifiable, Equatable, Hashable, Sendable {
             displayName: displayName,
             avatarInitials: avatarInitials,
             avatarURL: avatarURL,
-            description: subtitle
+            description: subtitle,
+            hasHomeLocation: hasHomeLocation
         )
     }
 }

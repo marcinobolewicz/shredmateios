@@ -18,6 +18,11 @@ public enum RiderAPI {
         .get("/riders", auth: .bearerToken)
     }
 
+    /// `GET /riders/:id`
+    public static func rider(id: String) -> Endpoint<Rider> {
+        .get("/riders/\(id)", auth: .bearerToken)
+    }
+
     // MARK: - Profile
     public static func me() -> Endpoint<Rider> {
         .get("/riders/me", auth: .bearerToken)
