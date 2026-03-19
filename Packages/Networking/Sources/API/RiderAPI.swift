@@ -78,4 +78,21 @@ public enum RiderAPI {
         .delete("/riders/me/sports/\(sportId)", auth: .bearerToken)
     }
 
+    // MARK: - Follow
+
+    /// `POST /riders/:riderId/follow`
+    public static func follow(riderId: String) -> Endpoint<EmptyResponse> {
+        .post("/riders/\(riderId)/follow", auth: .bearerToken)
+    }
+
+    /// `DELETE /riders/:riderId/follow`
+    public static func unfollow(riderId: String) -> Endpoint<EmptyResponse> {
+        .delete("/riders/\(riderId)/follow", auth: .bearerToken)
+    }
+
+    /// `GET /riders/:riderId/following`
+    public static func following(riderId: String) -> Endpoint<[FollowedRider]> {
+        .get("/riders/\(riderId)/following", auth: .bearerToken)
+    }
+
 }

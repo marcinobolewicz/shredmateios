@@ -1,5 +1,6 @@
 import SwiftUI
 import Theme
+import Networking
 
 public struct RiderCardViewData: Equatable, Hashable, Sendable, Identifiable {
     public let id: String
@@ -34,13 +35,19 @@ struct RiderCardView: View {
 
     let viewData: RiderCardViewData
     let onMessageTap: (_ userId: UUID, _ displayName: String) -> Void
+    @State private var viewModel: RiderCardViewModel
 
     init(
         viewData: RiderCardViewData,
+        followRepository: FollowRepository,
         onMessageTap: @escaping (_ userId: UUID, _ displayName: String) -> Void = { _, _ in }
     ) {
         self.viewData = viewData
         self.onMessageTap = onMessageTap
+        _viewModel = State(wrappedValue: RiderCardViewModel(
+            riderId: viewData.riderId.uuidString,
+            followRepository: followRepository
+        ))
     }
 
     var body: some View {
@@ -48,7 +55,7 @@ struct RiderCardView: View {
             VStack(alignment: .leading, spacing: theme.spacing.md) {
                 header
                 descriptionSection
-                messageButton
+                actionButtons
                 Spacer(minLength: 0)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -59,6 +66,7 @@ struct RiderCardView: View {
         .background(theme.colors.background)
         .navigationTitle(viewData.displayName)
         .navigationBarTitleDisplayMode(.inline)
+        .task { await viewModel.loadOnAppear() }
     }
 
     private var header: some View {
@@ -108,10 +116,39 @@ struct RiderCardView: View {
         }
     }
 
+    private var actionButtons: some View {
+        VStack(spacing: theme.spacing.sm) {
+            followButton
+            messageButton
+        }
+    }
+
+    @ViewBuilder
+    private var followButton: some View {
+        let label = Group {
+            if viewModel.isLoading {
+                ProgressView().frame(maxWidth: .infinity)
+            } else {
+                Text(viewModel.isFollowing ? PlacesStrings.unfollowButton.localized : PlacesStrings.followButton.localized)
+                    .frame(maxWidth: .infinity)
+            }
+        }
+
+        if viewModel.isFollowing {
+            Button(action: viewModel.toggleFollow) { label }
+                .buttonStyle(.dsSecondary)
+                .disabled(viewModel.isLoading)
+        } else {
+            Button(action: viewModel.toggleFollow) { label }
+                .buttonStyle(.dsPrimary)
+                .disabled(viewModel.isLoading)
+        }
+    }
+
     private var messageButton: some View {
-        Button("Napisz wiadomość") {
+        Button(PlacesStrings.messageButton.localized) {
             onMessageTap(viewData.userId, viewData.displayName)
         }
-            .buttonStyle(.dsPrimary)
+        .buttonStyle(.dsGhost)
     }
 }

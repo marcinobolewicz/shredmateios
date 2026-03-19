@@ -86,6 +86,7 @@ public struct PlacesView: View {
             PlacesListView(viewModel: viewModel)
         case .map:
             PlacesMapView(viewModel: viewModel)
+                .ignoresSafeArea(edges: .bottom)
         }
     }
 

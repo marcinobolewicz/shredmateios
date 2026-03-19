@@ -27,6 +27,11 @@ public protocol RiderServiceProtocol: Sendable {
     func fetchMyRiderSports() async throws -> [RiderSport]
     func upsertMyRiderSport(sportId: String, request: UpsertRiderSportRequest) async throws -> RiderSport
     func deleteMyRiderSport(sportId: String) async throws
+
+    // Follow
+    func follow(riderId: String) async throws
+    func unfollow(riderId: String) async throws
+    func fetchFollowing(riderId: String) async throws -> [FollowedRider]
 }
 
 /// Service handling rider profile operations
@@ -96,5 +101,19 @@ public final class RiderService: RiderServiceProtocol, Sendable {
     
     public func deleteMyRiderSport(sportId: String) async throws {
         _ = try await client.send(RiderAPI.deleteSport(sportId: sportId))
+    }
+
+    // MARK: - Follow
+
+    public func follow(riderId: String) async throws {
+        _ = try await client.send(RiderAPI.follow(riderId: riderId))
+    }
+
+    public func unfollow(riderId: String) async throws {
+        _ = try await client.send(RiderAPI.unfollow(riderId: riderId))
+    }
+
+    public func fetchFollowing(riderId: String) async throws -> [FollowedRider] {
+        try await client.send(RiderAPI.following(riderId: riderId))
     }
 }

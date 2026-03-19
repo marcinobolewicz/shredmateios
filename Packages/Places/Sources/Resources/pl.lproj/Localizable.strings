@@ -33,6 +33,11 @@
 "places.details_mentors_empty_description" = "Mentorzy dostępni w tym spocie pojawią się tutaj.";
 "places.map_details_button" = "Szczegóły";
 
+/* Profil ridera */
+"places.follow_button"   = "Obserwuj";
+"places.unfollow_button" = "Przestań obserwować";
+"places.message_button"  = "Wyślij wiadomość";
+
 /* Zameldowanie */
 "places.check_in_button" = "Zamelduj się";
 "places.check_out_button" = "Wymelduj się";

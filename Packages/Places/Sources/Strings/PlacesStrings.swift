@@ -42,6 +42,11 @@ enum PlacesStrings: String {
 
     case spotSubtitlePlaceholder = "places.spot_subtitle_placeholder"
 
+    // MARK: - Rider Card
+    case followButton = "places.follow_button"
+    case unfollowButton = "places.unfollow_button"
+    case messageButton = "places.message_button"
+
     // MARK: - Check-In
     case checkInButton = "places.check_in_button"
     case checkOutButton = "places.check_out_button"

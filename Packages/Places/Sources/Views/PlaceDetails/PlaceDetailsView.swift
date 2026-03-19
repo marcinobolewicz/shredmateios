@@ -8,6 +8,7 @@
 import SwiftUI
 import Theme
 import Networking
+import Common
 
 // MARK: - View Data
 
@@ -199,36 +200,8 @@ struct PlaceDetailsView: View {
         .padding(.bottom, theme.spacing.sm)
     }
 
-    @ViewBuilder
     private var heroAvatar: some View {
-        Group {
-            switch viewData.avatar {
-            case .initials(let text):
-                ZStack {
-                    Circle().fill(theme.colors.surfaceTertiary)
-                    Text(text)
-                        .font(.system(size: 28, weight: .bold))
-                        .foregroundStyle(theme.colors.textSecondary)
-                }
-            case .imageRemote(let url):
-                if let url {
-                    AsyncImage(url: url) { phase in
-                        switch phase {
-                        case .success(let image):
-                            image.resizable().scaledToFill()
-                        default:
-                            Circle().fill(theme.colors.surfaceTertiary)
-                        }
-                    }
-                    .clipShape(Circle())
-                } else {
-                    Circle().fill(theme.colors.surfaceTertiary)
-                }
-            case .image(let name):
-                Image(name).resizable().scaledToFill().clipShape(Circle())
-            }
-        }
-        .frame(width: 80, height: 80)
+        AvatarView(avatar: viewData.avatar, size: 80)
     }
 
     // MARK: - Tabs

@@ -10,6 +10,7 @@ public final class AppDependencies {
     public let authState: AuthState
     public let pushDeviceService: any PushDeviceServiceProtocol
     public let riderService: any RiderServiceProtocol
+    public let followRepository: FollowRepository
     public let placesService: any PlacesServiceProtocol
     public let sportsService: any SportsServiceProtocol
     public let feedService: any FeedServiceProtocol
@@ -24,6 +25,7 @@ public final class AppDependencies {
         authState: AuthState,
         pushDeviceService: any PushDeviceServiceProtocol,
         riderService: any RiderServiceProtocol,
+        followRepository: FollowRepository,
         placesService: any PlacesServiceProtocol,
         sportsService: any SportsServiceProtocol,
         feedService: any FeedServiceProtocol,
@@ -37,6 +39,7 @@ public final class AppDependencies {
         self.authState = authState
         self.pushDeviceService = pushDeviceService
         self.riderService = riderService
+        self.followRepository = followRepository
         self.placesService = placesService
         self.sportsService = sportsService
         self.feedService = feedService
@@ -78,10 +81,16 @@ public struct AppSetup {
             chat: chat
         )
 
+        let followRepository = FollowRepository(
+            riderService: services.rider,
+            authState: auth.authState
+        )
+
         return AppDependencies(
             authState: auth.authState,
             pushDeviceService: auth.pushDeviceService,
             riderService: services.rider,
+            followRepository: followRepository,
             placesService: services.places,
             sportsService: services.sports,
             feedService: services.feed,

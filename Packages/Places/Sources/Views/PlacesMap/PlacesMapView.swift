@@ -49,46 +49,43 @@ struct PlacesMapView: View {
                     selectedPinId = (selectedPinId == pin.id) ? nil : pin.id
                 }
             } label: {
-                Image(systemName: "mappin.circle.fill")
-                    .font(.system(size: 30))
+                Image(systemName: "mappin.and.ellipse.circle.fill")
+                    .font(.system(size: 32))
                     .foregroundStyle(theme.colors.primary)
+                    .background(
+                        Circle()
+                            .fill(.white)
+                            .padding(4)
+                    )
             }
             .buttonStyle(.plain)
         }
     }
 
     private func pinCallout(_ pin: PlaceMapPinViewData) -> some View {
-        VStack(alignment: .leading, spacing: theme.spacing.xxs) {
-            Text(pin.title)
-                .dsTextStyle(.heading)
-                .lineLimit(1)
+        Button {
+            router.navigate(to: .placeDetails(pin.placeDetailsData))
+        } label: {
+            VStack(alignment: .leading, spacing: theme.spacing.xxs) {
+                Text(pin.title)
+                    .dsTextStyle(.heading)
+                    .lineLimit(1)
 
-            Text(pin.description)
-                .dsTextStyle(.caption)
-                .foregroundStyle(theme.colors.textSecondary)
-                .lineLimit(2)
-
-            Button(PlacesStrings.mapDetailsButton.localized) {
-                router.navigate(to: .placeDetails(pin.placeDetailsData))
+                Text(pin.description)
+                    .dsTextStyle(.caption)
+                    .lineLimit(2)
             }
-            .font(.caption.weight(.semibold))
-            .foregroundStyle(theme.colors.primary)
-            .buttonStyle(.plain)
+            .frame(width: 180, alignment: .leading)
+            .padding(.horizontal, theme.spacing.sm)
+            .padding(.vertical, theme.spacing.xs)
+            .background(theme.colors.surface)
+            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .stroke(theme.colors.border.opacity(0.35), lineWidth: 1)
+            )
         }
-        .frame(width: 180, alignment: .leading)
-        .padding(.horizontal, theme.spacing.sm)
-        .padding(.vertical, theme.spacing.xs)
-        .background(theme.colors.surface)
-        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(theme.colors.border.opacity(0.35), lineWidth: 1)
-        )
-        .onTapGesture {
-            withAnimation(.snappy(duration: 0.2)) {
-                selectedPinId = nil
-            }
-        }
+        .buttonStyle(.plain)
     }
 
     private func syncRegion() {

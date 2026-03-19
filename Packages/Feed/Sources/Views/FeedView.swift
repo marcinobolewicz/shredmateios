@@ -1,6 +1,7 @@
 import SwiftUI
 import Networking
 import Common
+import Theme
 
 public struct FeedView: View {
 
@@ -45,42 +46,72 @@ public struct FeedView: View {
     private var content: some View {
         switch viewModel.state {
         case .idle, .loading:
-            VStack {
-                Spacer()
-                ProgressView()
-                Spacer()
-            }
-            .frame(maxWidth: .infinity)
+            loadingView
 
         case .loaded:
             if viewModel.posts.isEmpty {
-                ContentUnavailableView(
-                    FeedStrings.emptyTitle.localized,
-                    systemImage: "newspaper",
-                    description: Text(FeedStrings.emptyDescription.localized)
-                )
-                .refreshable { viewModel.refresh() }
+                emptyView
             } else {
                 postsList
             }
 
         case .failed:
-            ContentUnavailableView {
-                Label(FeedStrings.failedTitle.localized, systemImage: "exclamationmark.triangle")
-            } description: {
-                Text(FeedStrings.failedDescription.localized)
-            } actions: {
-                Button(FeedStrings.refreshButton.localized, action: viewModel.refresh)
-                    .buttonStyle(.borderedProminent)
-            }
+            errorView
+        }
+    }
+
+    private var loadingView: some View {
+        VStack {
+            Spacer()
+            ProgressView()
+            Spacer()
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    private var emptyView: some View {
+        ContentUnavailableView(
+            FeedStrings.emptyTitle.localized,
+            systemImage: "newspaper",
+            description: Text(FeedStrings.emptyDescription.localized)
+        )
+        .refreshable { viewModel.refresh() }
+    }
+
+    private var errorView: some View {
+        ContentUnavailableView {
+            Label(FeedStrings.failedTitle.localized, systemImage: "exclamationmark.triangle")
+        } description: {
+            Text(FeedStrings.failedDescription.localized)
+        } actions: {
+            Button(FeedStrings.refreshButton.localized, action: viewModel.refresh)
+                .buttonStyle(.dsPrimary)
         }
     }
 
     private var postsList: some View {
+        _PostsList(viewModel: viewModel)
+    }
+}
+
+// MARK: - Posts List
+
+private struct _PostsList: View {
+    @Environment(AppTheme.self) private var theme
+    @Bindable var viewModel: FeedViewModel
+
+    var body: some View {
         List {
             ForEach(viewModel.posts) { post in
                 ActivityPostRow(post: post)
+                    .listRowInsets(EdgeInsets(
+                        top: 0,
+                        leading: theme.spacing.md,
+                        bottom: 0,
+                        trailing: theme.spacing.md
+                    ))
                     .listRowSeparator(.visible)
+                    .listRowSeparatorTint(theme.colors.border.opacity(0.4))
                     .listRowBackground(Color.clear)
                     .onAppear { viewModel.loadNextPageIfNeeded(currentPost: post) }
             }
@@ -96,6 +127,8 @@ public struct FeedView: View {
             }
         }
         .listStyle(.plain)
+        .scrollContentBackground(.hidden)
+        .background(theme.colors.background)
         .refreshable { viewModel.refresh() }
     }
 }
@@ -103,39 +136,43 @@ public struct FeedView: View {
 // MARK: - Post Row
 
 private struct ActivityPostRow: View {
+    @Environment(AppTheme.self) private var theme
     let post: ActivityPost
 
     var body: some View {
-        HStack(alignment: .top, spacing: 12) {
-            RiderAvatar(url: URL(string: post.rider.avatarUrl ?? ""), initials: post.rider.initials)
+        HStack(alignment: .top, spacing: theme.spacing.sm) {
+            AvatarView(
+                url: URL(string: post.rider.avatarUrl ?? ""),
+                initials: post.rider.initials
+            )
 
-            VStack(alignment: .leading, spacing: 4) {
-                HStack(spacing: 4) {
+            VStack(alignment: .leading, spacing: theme.spacing.xxs) {
+                HStack(spacing: theme.spacing.xxs) {
                     Text(post.rider.displayName)
-                        .font(.subheadline.weight(.semibold))
-                    Text("·")
-                        .foregroundStyle(.secondary)
-                    Text(post.place.name)
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
+                        .dsTextStyle(.heading)
                         .lineLimit(1)
-                    Spacer(minLength: 0)
-                    Text(post.createdAt.relativeFormatted)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                    Text("·")
+                        .dsTextStyle(.subheadline)
+                    Text(post.place.name)
+                        .dsTextStyle(.subheadline)
+                        .lineLimit(1)
                 }
 
                 if let caption = post.caption, !caption.isEmpty {
                     Text(caption)
-                        .font(.body)
+                        .dsTextStyle(.body)
                 }
+
+                Text(post.createdAt.relativeFormatted)
+                    .dsTextStyle(.caption)
+                    .frame(maxWidth: .infinity, alignment: .trailing)
             }
         }
-        .padding(.vertical, 8)
+        .padding(.vertical, theme.spacing.sm)
     }
 }
 
-// MARK: - Date formatting
+// MARK: - Date Formatting
 
 private extension String {
     var relativeFormatted: String {
@@ -143,38 +180,5 @@ private extension String {
         let formatter = RelativeDateTimeFormatter()
         formatter.unitsStyle = .short
         return formatter.localizedString(for: date, relativeTo: .now)
-    }
-}
-
-private struct RiderAvatar: View {
-    let url: URL?
-    let initials: String
-
-    var body: some View {
-        Group {
-            if let url {
-                AsyncImage(url: url) { phase in
-                    switch phase {
-                    case .success(let image):
-                        image.resizable().scaledToFill()
-                    default:
-                        fallback
-                    }
-                }
-            } else {
-                fallback
-            }
-        }
-        .frame(width: 40, height: 40)
-        .clipShape(Circle())
-    }
-
-    private var fallback: some View {
-        ZStack {
-            Circle().fill(Color(.systemGray4))
-            Text(initials)
-                .font(.system(size: 14, weight: .semibold))
-                .foregroundStyle(.white)
-        }
     }
 }

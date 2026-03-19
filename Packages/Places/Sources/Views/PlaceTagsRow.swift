@@ -24,7 +24,7 @@ private struct TagPillModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .font(.caption.weight(.semibold))
-            .foregroundStyle(theme.colors.textSecondary)
+            .foregroundStyle(Color.black.opacity(0.65))
             .padding(.horizontal, theme.spacing.xs + 2)
             .padding(.vertical, theme.spacing.xxs + 2)
             .background(

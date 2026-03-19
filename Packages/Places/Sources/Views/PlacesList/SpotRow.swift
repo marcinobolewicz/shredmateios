@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Theme
+import Common
 
 // MARK: - SpotRow
 
@@ -48,39 +49,8 @@ struct SpotRow: View {
         .contentShape(Rectangle())
     }
 
-    @ViewBuilder
     private var avatar: some View {
-        Group {
-            switch viewData.avatar {
-            case .initials(let text):
-                ZStack {
-                    Circle().fill(theme.colors.surfaceTertiary)
-                    Text(text)
-                        .font(.system(size: 15, weight: .semibold))
-                        .foregroundStyle(theme.colors.textSecondary)
-                }
-            case .imageRemote(let url):
-                if let url {
-                    AsyncImage(url: url) { phase in
-                        switch phase {
-                        case .success(let image):
-                            image.resizable().scaledToFill()
-                        default:
-                            Circle().fill(theme.colors.surfaceTertiary)
-                        }
-                    }
-                    .clipShape(Circle())
-                } else {
-                    Circle().fill(theme.colors.surfaceTertiary)
-                }
-            case .image(let name):
-                Image(name)
-                    .resizable()
-                    .scaledToFill()
-                    .clipShape(Circle())
-            }
-        }
-        .frame(width: 44, height: 44)
+        AvatarView(avatar: viewData.avatar, size: 44)
     }
 }
 

@@ -57,6 +57,7 @@ let package = Package(
         // Common Package
         .target(
             name: "Common",
+            dependencies: ["Theme"],
             path: "Packages/Common/Sources",
             resources: [
                 .process("Resources")
@@ -121,7 +122,7 @@ let package = Package(
         // Feed Package
         .target(
             name: "Feed",
-            dependencies: ["Networking", "Common", "Places"],
+            dependencies: ["Networking", "Common", "Places", "Theme"],
             path: "Packages/Feed/Sources",
             resources: [
                 .process("Resources")

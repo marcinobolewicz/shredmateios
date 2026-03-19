@@ -71,6 +71,7 @@ struct ShredMateApp: App {
         WindowGroup {
             RootView(dependencies: dependencies)
                 .environment(dependencies.authState)
+                .environment(dependencies.followRepository)
                 .environment(theme)
         }
     }

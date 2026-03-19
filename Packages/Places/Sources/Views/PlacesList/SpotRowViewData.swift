@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Common
 
 struct SpotRowViewData: Identifiable, Equatable, Sendable {
     let id: UUID
@@ -20,10 +21,4 @@ struct SpotRowViewData: Identifiable, Equatable, Sendable {
     let ridersCount: Int
     let mentorsCount: Int
     let avatar: Avatar
-}
-
-public enum Avatar: Equatable, Hashable, Sendable {
-    case image(String)
-    case imageRemote(URL?)
-    case initials(String)
 }
