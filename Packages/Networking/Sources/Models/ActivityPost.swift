@@ -7,6 +7,12 @@ public enum ActivityType: String, Encodable, Sendable {
     case photo   = "PHOTO"
 }
 
+// MARK: - Photo Upload
+
+public struct ActivityPhotoUploadResponse: Decodable, Sendable {
+    public let photoUrl: String
+}
+
 // MARK: - Request
 
 public struct CreateActivityRequest: Encodable, Sendable {

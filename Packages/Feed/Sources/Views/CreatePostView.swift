@@ -1,11 +1,13 @@
 import SwiftUI
+import PhotosUI
 import Networking
 import Places
 
 struct CreatePostView: View {
 
     @State private var viewModel: CreatePostViewModel
-    @State private var isPickerPresented = false
+    @State private var isPlacePickerPresented = false
+    @State private var selectedPhotoItem: PhotosPickerItem?
 
     let placesService: any PlacesServiceProtocol
 
@@ -23,6 +25,7 @@ struct CreatePostView: View {
     var body: some View {
         Form {
             placeSection
+            photoSection
             captionSection
         }
         .navigationTitle(FeedStrings.createPostTitle.localized)
@@ -42,7 +45,7 @@ struct CreatePostView: View {
                 }
             }
         }
-        .sheet(isPresented: $isPickerPresented) {
+        .sheet(isPresented: $isPlacePickerPresented) {
             NavigationStack {
                 PlacePickerView(
                     placesService: placesService,
@@ -59,7 +62,14 @@ struct CreatePostView: View {
                 }
             )
         }
-        .interactiveDismissDisabled(viewModel.isSubmitting)
+        .onChange(of: selectedPhotoItem) { _, newItem in
+            guard let newItem else { return }
+            Task {
+                guard let data = try? await newItem.loadTransferable(type: Data.self) else { return }
+                viewModel.photoSelected(data)
+            }
+        }
+        .interactiveDismissDisabled(viewModel.isSubmitting || viewModel.isUploadingPhoto)
     }
 
     // MARK: - Sections
@@ -67,7 +77,7 @@ struct CreatePostView: View {
     private var placeSection: some View {
         Section {
             Button {
-                isPickerPresented = true
+                isPlacePickerPresented = true
             } label: {
                 HStack {
                     Text(FeedStrings.placeLabel.localized)
@@ -81,6 +91,64 @@ struct CreatePostView: View {
                 }
             }
         }
+    }
+
+    @ViewBuilder
+    private var photoSection: some View {
+        Section(FeedStrings.photoLabel.localized) {
+            if let photoData = viewModel.selectedPhotoData,
+               let uiImage = UIImage(data: photoData) {
+                photoPreview(uiImage)
+            } else {
+                PhotosPicker(
+                    selection: $selectedPhotoItem,
+                    matching: .images,
+                    photoLibrary: .shared()
+                ) {
+                    Label(FeedStrings.addPhoto.localized, systemImage: "photo")
+                }
+            }
+        }
+    }
+
+    private func photoPreview(_ image: UIImage) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Image(uiImage: image)
+                .resizable()
+                .scaledToFill()
+                .frame(maxWidth: .infinity)
+                .frame(height: 200)
+                .clipped()
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+
+            HStack {
+                if viewModel.isUploadingPhoto {
+                    ProgressView()
+                        .controlSize(.small)
+                    Text(FeedStrings.uploadingPhoto.localized)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                } else {
+                    PhotosPicker(
+                        selection: $selectedPhotoItem,
+                        matching: .images,
+                        photoLibrary: .shared()
+                    ) {
+                        Text(FeedStrings.changePhoto.localized)
+                            .font(.subheadline)
+                    }
+                }
+
+                Spacer()
+
+                Button(FeedStrings.removePhoto.localized, role: .destructive) {
+                    selectedPhotoItem = nil
+                    viewModel.removePhoto()
+                }
+                .font(.subheadline)
+            }
+        }
+        .padding(.vertical, 4)
     }
 
     private var captionSection: some View {

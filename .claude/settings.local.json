@@ -3,7 +3,8 @@
     "allow": [
       "Bash(swift build:*)",
       "Bash(grep -A 30 '\"\"Places\"\"' /Users/marcinobolewicz/Projects/github/shredmateios/Packages/Places/Package.swift)",
-      "Bash(grep -A 30 'name: \"\"Places\"\"' /Users/marcinobolewicz/Projects/github/shredmateios/Packages/Places/Package.swift)"
+      "Bash(grep -A 30 'name: \"\"Places\"\"' /Users/marcinobolewicz/Projects/github/shredmateios/Packages/Places/Package.swift)",
+      "Bash(grep:*)"
     ]
   }
 }

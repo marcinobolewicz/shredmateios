@@ -25,18 +25,24 @@ public struct ProfileView: View {
     }
 
     public var body: some View {
-        Form {
-            if viewModel.isLoading && viewModel.rider == nil {
-                loadingSection
-            } else {
-                profileSection
-                locationSection
-                sportsSection
-                dangerZoneSection
+        NavigationStack {
+            Form {
+                if viewModel.isLoading && viewModel.rider == nil {
+                    loadingSection
+                } else {
+                    profileSection
+                    locationSection
+                    sportsSection
+                    myPostsSection
+                    dangerZoneSection
+                }
+            }
+            .navigationTitle(ProfileStrings.navigationTitle.localized)
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationDestination(for: String.self) { riderId in
+                MyPostsView(riderId: riderId, feedService: viewModel.feedService)
             }
         }
-        .navigationTitle(ProfileStrings.navigationTitle.localized)
-        .navigationBarTitleDisplayMode(.inline)
         .task {
             await viewModel.loadProfile()
         }
@@ -87,6 +93,17 @@ public struct ProfileView: View {
     }
 
     // MARK: - Sections
+
+    @ViewBuilder
+    private var myPostsSection: some View {
+        if let riderId = viewModel.riderId {
+            Section(ProfileStrings.sectionMyPosts.localized) {
+                NavigationLink(value: riderId) {
+                    Label(ProfileStrings.myPostsNavigationTitle.localized, systemImage: "newspaper")
+                }
+            }
+        }
+    }
 
     private var loadingSection: some View {
         Section {

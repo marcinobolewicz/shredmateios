@@ -164,7 +164,7 @@ let package = Package(
         // Profile Package
         .target(
             name: "Profile",
-            dependencies: ["Core", "Networking", "Common"],
+            dependencies: ["Core", "Networking", "Common", "Theme"],
             path: "Packages/Profile/Sources",
             resources: [
                 .process("Resources")

@@ -36,22 +36,29 @@ public final class ProfileViewModel {
     public var longitudeText: String = ""
     
     // MARK: - Dependencies
-    
+
     private let repository: any ProfileRepositoryProtocol
     private let presenter: ProfileFormPresenter
     private let authState: AuthState
-    
+    let feedService: any FeedServiceProtocol
+
+    // MARK: - Computed
+
+    public var riderId: String? { rider?.id }
+
     // MARK: - Init
-    
-    public init(riderService: any RiderServiceProtocol, sportsService: any SportsServiceProtocol, authState: AuthState) {
+
+    public init(riderService: any RiderServiceProtocol, sportsService: any SportsServiceProtocol, feedService: any FeedServiceProtocol, authState: AuthState) {
         self.repository = ProfileRepository(riderService: riderService, sportsService: sportsService)
         self.presenter = ProfileFormPresenter()
+        self.feedService = feedService
         self.authState = authState
     }
 
-    init(repository: any ProfileRepositoryProtocol, presenter: ProfileFormPresenter = .init(), authState: AuthState) {
+    init(repository: any ProfileRepositoryProtocol, feedService: any FeedServiceProtocol, presenter: ProfileFormPresenter = .init(), authState: AuthState) {
         self.repository = repository
         self.presenter = presenter
+        self.feedService = feedService
         self.authState = authState
     }
     

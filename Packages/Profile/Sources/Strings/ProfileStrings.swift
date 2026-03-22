@@ -68,6 +68,13 @@ enum ProfileStrings: String {
     case latitudeRangeError = "profile.latitude_range_error"
     case longitudeRangeError = "profile.longitude_range_error"
 
+    // MARK: - My Posts
+    case sectionMyPosts = "profile.section_my_posts"
+    case myPostsNavigationTitle = "profile.my_posts_navigation_title"
+    case myPostsEmpty = "profile.my_posts_empty"
+    case myPostsEmptyDescription = "profile.my_posts_empty_description"
+    case myPostsFailed = "profile.my_posts_failed"
+
     // MARK: - Check-In
     case sectionCheckIn = "profile.section_check_in"
     case checkedInAsFormat = "profile.checked_in_as_format"

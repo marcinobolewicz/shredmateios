@@ -50,6 +50,13 @@
 "profile.latitude_range_error" = "Szerokość musi być między -90 a 90";
 "profile.longitude_range_error" = "Długość musi być między -180 a 180";
 
+/* Moje posty */
+"profile.section_my_posts" = "Moje posty";
+"profile.my_posts_navigation_title" = "Moje posty";
+"profile.my_posts_empty" = "Brak postów";
+"profile.my_posts_empty_description" = "Twoje zameldowania i posty pojawią się tutaj.";
+"profile.my_posts_failed" = "Nie udało się wczytać postów";
+
 /* Zameldowanie */
 "profile.section_check_in" = "Aktualne zameldowanie";
 "profile.checked_in_as_format" = "Zameldowany jako %@";
