@@ -26,6 +26,7 @@
 "profile.confirm_location_button" = "Potwierdź";
 "profile.section_sports" = "Sporty";
 "profile.loading_sports" = "Wczytywanie sportów...";
+"profile.logout_button" = "Wyloguj się";
 "profile.section_danger_zone" = "Strefa niebezpieczna";
 "profile.level_picker_title" = "Poziom";
 "profile.available_as_mentor_toggle" = "Dostępny jako mentor";

@@ -38,6 +38,7 @@ enum ProfileStrings: String {
     case sectionSports = "profile.section_sports"
     case loadingSports = "profile.loading_sports"
 
+    case logoutButton = "profile.logout_button"
     case sectionDangerZone = "profile.section_danger_zone"
 
     case levelPickerTitle = "profile.level_picker_title"
@@ -74,6 +75,8 @@ enum ProfileStrings: String {
     case myPostsEmpty = "profile.my_posts_empty"
     case myPostsEmptyDescription = "profile.my_posts_empty_description"
     case myPostsFailed = "profile.my_posts_failed"
+    case deletePost = "profile.delete_post"
+    case ok = "profile.ok"
 
     // MARK: - Check-In
     case sectionCheckIn = "profile.section_check_in"

@@ -12,10 +12,10 @@ public enum FeedAPI {
         )
     }
 
-    /// `POST /activities/photo/upload`
+    /// `POST /activities/photo`
     public static func uploadPhoto(imageData: Data, fileName: String = "photo.jpg") -> Endpoint<ActivityPhotoUploadResponse> {
         .uploadMultipart(
-            "/activities/photo/upload",
+            "/activities/photo",
             multipart: MultipartFormData(
                 fileData: imageData,
                 fileName: fileName,
@@ -35,6 +35,15 @@ public enum FeedAPI {
                 URLQueryItem(name: "page", value: "\(page)"),
                 URLQueryItem(name: "limit", value: "\(limit)")
             ], auth: .bearerToken
+        )
+    }
+
+    /// `DELETE /activities/:activityId`
+    public static func deleteActivity(activityId: String) -> Endpoint<EmptyResponse> {
+        Endpoint(
+            method: .delete,
+            path: "/activities/\(activityId)",
+            auth: .bearerToken
         )
     }
 

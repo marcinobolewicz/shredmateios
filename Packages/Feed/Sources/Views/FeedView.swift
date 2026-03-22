@@ -163,6 +163,28 @@ private struct ActivityPostRow: View {
                     .buttonStyle(.plain)
                 }
 
+                if let photoUrl = post.photoUrl, let url = URL(string: photoUrl) {
+                    Color.clear
+                        .frame(maxWidth: .infinity)
+                        .aspectRatio(1, contentMode: .fit)
+                        .overlay {
+                            AsyncImage(url: url) { phase in
+                                switch phase {
+                                case .success(let image):
+                                    image
+                                        .resizable()
+                                        .scaledToFill()
+                                case .failure:
+                                    theme.colors.surfaceSecondary
+                                default:
+                                    theme.colors.surfaceSecondary
+                                }
+                            }
+                        }
+                        .clipped()
+                        .clipShape(RoundedRectangle(cornerRadius: theme.radius.sm))
+                }
+
                 if let caption = post.caption, !caption.isEmpty {
                     Text(caption).dsTextStyle(.body)
                 }

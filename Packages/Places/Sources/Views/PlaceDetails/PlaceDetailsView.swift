@@ -107,15 +107,18 @@ public struct PlaceDetailsView: View {
     public var body: some View {
         ScrollView {
             VStack(spacing: 0) {
-                heroSection
+                heroPhoto
+                heroInfo
                 checkInSection
                 tabSection
                 contentSection
             }
         }
+        .ignoresSafeArea(edges: .top)
         .background(theme.colors.background)
         .navigationTitle(viewData.name)
         .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.hidden, for: .navigationBar)
         .task {
             await viewModel.loadRiders()
         }
@@ -185,10 +188,41 @@ public struct PlaceDetailsView: View {
 
     // MARK: - Hero
 
-    private var heroSection: some View {
+    @ViewBuilder
+    private var heroPhoto: some View {
+        switch viewData.avatar {
+        case .imageRemote(let url):
+            AsyncImage(url: url) { phase in
+                switch phase {
+                case .success(let image):
+                    image.resizable().scaledToFill()
+                case .failure, .empty:
+                    heroPhotoPlaceholder
+                @unknown default:
+                    heroPhotoPlaceholder
+                }
+            }
+            .aspectRatio(1, contentMode: .fit)
+            .frame(maxWidth: .infinity)
+            .clipped()
+        default:
+            heroPhotoPlaceholder
+                .aspectRatio(1, contentMode: .fit)
+                .frame(maxWidth: .infinity)
+        }
+    }
+
+    private var heroPhotoPlaceholder: some View {
+        ZStack {
+            theme.colors.surfaceTertiary
+            Image(systemName: "mountain.2")
+                .font(.system(size: 48))
+                .foregroundStyle(theme.colors.textTertiary)
+        }
+    }
+
+    private var heroInfo: some View {
         VStack(spacing: theme.spacing.sm) {
-            heroAvatar
-                .padding(.top, theme.spacing.md)
             sportFiltersSection
             placeTagsSection
 
@@ -200,11 +234,8 @@ public struct PlaceDetailsView: View {
             }
         }
         .frame(maxWidth: .infinity)
+        .padding(.top, theme.spacing.sm)
         .padding(.bottom, theme.spacing.sm)
-    }
-
-    private var heroAvatar: some View {
-        AvatarView(avatar: viewData.avatar, size: 80)
     }
 
     // MARK: - Tabs

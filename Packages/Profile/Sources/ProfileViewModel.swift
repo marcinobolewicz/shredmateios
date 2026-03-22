@@ -241,6 +241,11 @@ public final class ProfileViewModel {
     
     // MARK: - Delete Account
     
+    /// Log out current session
+    public func logout() async {
+        await authState.logout()
+    }
+
     /// Delete user account
     public func deleteAccount() async {
         isLoading = true

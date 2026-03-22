@@ -10,15 +10,12 @@ struct SlideView: View {
     var body: some View {
         ZStack {
             // MARK: Background
-            AsyncImage(url: slide.imageURL) { phase in
-                switch phase {
-                case .success(let image): image.resizable().scaledToFill()
-                case .failure:            Color(.systemGray5)
-                default:                  Color(.systemGray6)
-                }
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .clipped()
+            Image(slide.imageName)
+                .resizable()
+                .scaledToFill()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .clipped()
+                .ignoresSafeArea()
 
             // MARK: Scrim
             LinearGradient(
@@ -26,6 +23,7 @@ struct SlideView: View {
                 startPoint: .top,
                 endPoint: .bottom
             )
+            .ignoresSafeArea()
 
             // MARK: Content
             VStack(spacing: 16) {
@@ -45,5 +43,6 @@ struct SlideView: View {
             .padding(.horizontal, 24)
             .safeAreaPadding()
         }
+        .ignoresSafeArea()
     }
 }

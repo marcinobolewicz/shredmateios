@@ -36,7 +36,6 @@ final class CreatePostViewModel {
             && !isOverLimit
             && selectedPlace != nil
             && !isSubmitting
-            && !isUploadingPhoto
     }
 
     // MARK: - Dependencies
@@ -56,7 +55,6 @@ final class CreatePostViewModel {
     func photoSelected(_ data: Data) {
         selectedPhotoData = data
         uploadedPhotoUrl = nil
-        Task { await uploadPhoto(data) }
     }
 
     func removePhoto() {
@@ -105,15 +103,20 @@ final class CreatePostViewModel {
             guard let self else { return }
             defer { self.isSubmitting = false }
 
-            let request = CreateActivityRequest(
-                type: .checkIn,
-                placeId: place.id.uuidString,
-                photoUrl: uploadedPhotoUrl,
-                caption: caption.trimmingCharacters(in: .whitespacesAndNewlines),
-                taggedRiderIds: []
-            )
-
             do {
+                if let photoData = selectedPhotoData, uploadedPhotoUrl == nil {
+                    await uploadPhoto(photoData)
+                    if self.error != nil { return }
+                }
+
+                let request = CreateActivityRequest(
+                    type: .checkIn,
+                    placeId: place.id.uuidString,
+                    photoUrl: uploadedPhotoUrl,
+                    caption: caption.trimmingCharacters(in: .whitespacesAndNewlines),
+                    taggedRiderIds: []
+                )
+
                 _ = try await feedService.createActivity(request)
                 onSuccess()
             } catch {

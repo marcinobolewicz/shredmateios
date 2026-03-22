@@ -26,6 +26,7 @@
 "profile.confirm_location_button" = "Confirm";
 "profile.section_sports" = "Sports";
 "profile.loading_sports" = "Loading sports...";
+"profile.logout_button" = "Log Out";
 "profile.section_danger_zone" = "Danger Zone";
 "profile.level_picker_title" = "Level";
 "profile.available_as_mentor_toggle" = "Available as Mentor";

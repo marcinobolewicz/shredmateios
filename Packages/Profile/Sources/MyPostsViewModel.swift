@@ -10,6 +10,7 @@ final class MyPostsViewModel {
     private(set) var state: LoadState = .idle
     private(set) var isLoadingMore = false
     private(set) var total = 0
+    var deleteError: AppError?
 
     private var currentPage = 0
     private var hasMore: Bool { posts.count < total }
@@ -34,6 +35,22 @@ final class MyPostsViewModel {
     func loadNextPageIfNeeded(currentPost: ActivityPost) {
         guard !isLoadingMore, hasMore, posts.last?.id == currentPost.id else { return }
         Task { await load(reset: false) }
+    }
+
+    func deletePost(id: String) {
+        guard let index = posts.firstIndex(where: { $0.id == id }) else { return }
+        let removed = posts.remove(at: index)
+        total = max(0, total - 1)
+
+        Task {
+            do {
+                try await feedService.deleteActivity(activityId: id)
+            } catch {
+                posts.insert(removed, at: min(index, posts.endIndex))
+                total += 1
+                deleteError = .from(error)
+            }
+        }
     }
 
     private func load(reset: Bool) async {

@@ -17,6 +17,15 @@ struct MyPostsView: View {
             .navigationBarTitleDisplayMode(.inline)
             .task { viewModel.loadOnAppear() }
             .refreshable { viewModel.refresh() }
+            .alert(item: $viewModel.deleteError) { err in
+                Alert(
+                    title: Text(err.title),
+                    message: Text(err.message),
+                    dismissButton: .default(Text(ProfileStrings.ok.localized)) {
+                        viewModel.deleteError = nil
+                    }
+                )
+            }
     }
 
     @ViewBuilder
@@ -59,6 +68,13 @@ struct MyPostsView: View {
                     .listRowSeparatorTint(theme.colors.border.opacity(0.4))
                     .listRowBackground(Color.clear)
                     .onAppear { viewModel.loadNextPageIfNeeded(currentPost: post) }
+                    .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                        Button(role: .destructive) {
+                            viewModel.deletePost(id: post.id)
+                        } label: {
+                            Label(ProfileStrings.deletePost.localized, systemImage: "trash")
+                        }
+                    }
             }
 
             if viewModel.isLoadingMore {

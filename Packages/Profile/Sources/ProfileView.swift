@@ -30,10 +30,11 @@ public struct ProfileView: View {
                 if viewModel.isLoading && viewModel.rider == nil {
                     loadingSection
                 } else {
+                    myPostsSection
                     profileSection
                     locationSection
                     sportsSection
-                    myPostsSection
+                    logoutSection
                     dangerZoneSection
                 }
             }
@@ -272,6 +273,20 @@ public struct ProfileView: View {
                         }
                     )
                 }
+            }
+        }
+    }
+
+    private var logoutSection: some View {
+        Section {
+            Button(role: .destructive) {
+                Task { await viewModel.logout() }
+            } label: {
+                HStack {
+                    Image(systemName: "rectangle.portrait.and.arrow.right")
+                    Text(ProfileStrings.logoutButton.localized)
+                }
+                .frame(maxWidth: .infinity)
             }
         }
     }

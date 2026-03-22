@@ -11,6 +11,10 @@ public enum ActivityType: String, Encodable, Sendable {
 
 public struct ActivityPhotoUploadResponse: Decodable, Sendable {
     public let photoUrl: String
+
+    enum CodingKeys: String, CodingKey {
+        case photoUrl = "url"
+    }
 }
 
 // MARK: - Request
