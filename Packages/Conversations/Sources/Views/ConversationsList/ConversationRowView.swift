@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Theme
+import Common
 
 struct ConversationRowView: View {
     @Environment(AppTheme.self) private var theme
@@ -45,30 +46,8 @@ struct ConversationRowView: View {
         .contentShape(Rectangle())
     }
 
-    @ViewBuilder
     private var avatar: some View {
-        if let url = viewData.avatarURL {
-            AsyncImage(url: url) { image in
-                image.resizable().scaledToFill()
-            } placeholder: {
-                initialsCircle
-            }
-            .frame(width: 48, height: 48)
-            .clipShape(Circle())
-        } else {
-            initialsCircle
-        }
-    }
-
-    private var initialsCircle: some View {
-        ZStack {
-            Circle()
-                .fill(theme.colors.surfaceTertiary)
-            Text(viewData.avatarInitials)
-                .font(.callout.weight(.semibold))
-                .foregroundStyle(theme.colors.textSecondary)
-        }
-        .frame(width: 48, height: 48)
+        AvatarView(url: viewData.avatarURL, initials: viewData.avatarInitials)
     }
 
     private var unreadBadge: some View {

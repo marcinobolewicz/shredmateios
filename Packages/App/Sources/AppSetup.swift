@@ -10,8 +10,10 @@ public final class AppDependencies {
     public let authState: AuthState
     public let pushDeviceService: any PushDeviceServiceProtocol
     public let riderService: any RiderServiceProtocol
+    public let followRepository: FollowRepository
     public let placesService: any PlacesServiceProtocol
     public let sportsService: any SportsServiceProtocol
+    public let feedService: any FeedServiceProtocol
     public let chatService: any ChatServiceProtocol
     public let chatRealtimeClient: ChatRealtimeProviding
     public let chatRepository: ChatRepository
@@ -23,8 +25,10 @@ public final class AppDependencies {
         authState: AuthState,
         pushDeviceService: any PushDeviceServiceProtocol,
         riderService: any RiderServiceProtocol,
+        followRepository: FollowRepository,
         placesService: any PlacesServiceProtocol,
         sportsService: any SportsServiceProtocol,
+        feedService: any FeedServiceProtocol,
         chatService: any ChatServiceProtocol,
         chatRealtimeClient: ChatRealtimeProviding,
         chatRepository: ChatRepository,
@@ -35,8 +39,10 @@ public final class AppDependencies {
         self.authState = authState
         self.pushDeviceService = pushDeviceService
         self.riderService = riderService
+        self.followRepository = followRepository
         self.placesService = placesService
         self.sportsService = sportsService
+        self.feedService = feedService
         self.chatService = chatService
         self.chatRealtimeClient = chatRealtimeClient
         self.chatRepository = chatRepository
@@ -75,12 +81,19 @@ public struct AppSetup {
             chat: chat
         )
 
+        let followRepository = FollowRepository(
+            riderService: services.rider,
+            authState: auth.authState
+        )
+
         return AppDependencies(
             authState: auth.authState,
             pushDeviceService: auth.pushDeviceService,
             riderService: services.rider,
+            followRepository: followRepository,
             placesService: services.places,
             sportsService: services.sports,
+            feedService: services.feed,
             chatService: chat.service,
             chatRealtimeClient: chat.realtimeClient,
             chatRepository: chat.repository,
@@ -150,13 +163,15 @@ public struct AppSetup {
         let rider: any RiderServiceProtocol
         let places: any PlacesServiceProtocol
         let sports: any SportsServiceProtocol
+        let feed: any FeedServiceProtocol
     }
 
     private static func configureServices(httpClient: AuthenticatingHTTPClient) -> Services {
         Services(
             rider: RiderService(client: httpClient),
             places: PlacesService(client: httpClient),
-            sports: SportsServiceService(client: httpClient)
+            sports: SportsServiceService(client: httpClient),
+            feed: FeedService(client: httpClient)
         )
     }
 

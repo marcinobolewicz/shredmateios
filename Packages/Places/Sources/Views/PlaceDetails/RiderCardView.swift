@@ -1,5 +1,6 @@
 import SwiftUI
 import Theme
+import Networking
 
 public struct RiderCardViewData: Equatable, Hashable, Sendable, Identifiable {
     public let id: String
@@ -9,6 +10,7 @@ public struct RiderCardViewData: Equatable, Hashable, Sendable, Identifiable {
     public let avatarInitials: String
     public let avatarURL: URL?
     public let description: String
+    public let hasHomeLocation: Bool
 
     public init(
         id: String,
@@ -17,7 +19,8 @@ public struct RiderCardViewData: Equatable, Hashable, Sendable, Identifiable {
         displayName: String,
         avatarInitials: String,
         avatarURL: URL?,
-        description: String
+        description: String,
+        hasHomeLocation: Bool = false
     ) {
         self.id = id
         self.riderId = riderId
@@ -26,29 +29,36 @@ public struct RiderCardViewData: Equatable, Hashable, Sendable, Identifiable {
         self.avatarInitials = avatarInitials
         self.avatarURL = avatarURL
         self.description = description
+        self.hasHomeLocation = hasHomeLocation
     }
 }
 
-struct RiderCardView: View {
+public struct RiderCardView: View {
     @Environment(AppTheme.self) private var theme
 
     let viewData: RiderCardViewData
     let onMessageTap: (_ userId: UUID, _ displayName: String) -> Void
+    @State private var viewModel: RiderCardViewModel
 
-    init(
+    public init(
         viewData: RiderCardViewData,
+        followRepository: FollowRepository,
         onMessageTap: @escaping (_ userId: UUID, _ displayName: String) -> Void = { _, _ in }
     ) {
         self.viewData = viewData
         self.onMessageTap = onMessageTap
+        _viewModel = State(wrappedValue: RiderCardViewModel(
+            riderId: viewData.riderId.uuidString,
+            followRepository: followRepository
+        ))
     }
 
-    var body: some View {
+    public var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: theme.spacing.md) {
                 header
                 descriptionSection
-                messageButton
+                actionButtons
                 Spacer(minLength: 0)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -59,6 +69,7 @@ struct RiderCardView: View {
         .background(theme.colors.background)
         .navigationTitle(viewData.displayName)
         .navigationBarTitleDisplayMode(.inline)
+        .task { await viewModel.loadOnAppear() }
     }
 
     private var header: some View {
@@ -73,6 +84,8 @@ struct RiderCardView: View {
         }
     }
 
+    private var avatarSize: CGFloat { viewData.hasHomeLocation ? 132 : 88 }
+
     @ViewBuilder
     private var avatar: some View {
         if let avatarURL = viewData.avatarURL {
@@ -81,7 +94,7 @@ struct RiderCardView: View {
             } placeholder: {
                 avatarFallback
             }
-            .frame(width: 88, height: 88)
+            .frame(width: avatarSize, height: avatarSize)
             .clipShape(Circle())
         } else {
             avatarFallback
@@ -92,10 +105,10 @@ struct RiderCardView: View {
         ZStack {
             Circle().fill(theme.colors.surfaceTertiary)
             Text(viewData.avatarInitials)
-                .font(.system(size: 30, weight: .bold))
+                .font(.system(size: avatarSize * 0.34, weight: .bold))
                 .foregroundStyle(theme.colors.textSecondary)
         }
-        .frame(width: 88, height: 88)
+        .frame(width: avatarSize, height: avatarSize)
     }
 
     @ViewBuilder
@@ -108,10 +121,31 @@ struct RiderCardView: View {
         }
     }
 
+    private var actionButtons: some View {
+        HStack(spacing: theme.spacing.sm) {
+            followButton
+            messageButton
+            Spacer()
+        }
+    }
+
+    @ViewBuilder
+    private var followButton: some View {
+        Button(action: viewModel.toggleFollow) {
+            if viewModel.isLoading {
+                ProgressView().controlSize(.small)
+            } else {
+                Text(viewModel.isFollowing ? PlacesStrings.unfollowButton.localized : PlacesStrings.followButton.localized)
+            }
+        }
+        .buttonStyle(.dsOutline)
+        .disabled(viewModel.isLoading)
+    }
+
     private var messageButton: some View {
-        Button("Napisz wiadomość") {
+        Button(PlacesStrings.messageButton.localized) {
             onMessageTap(viewData.userId, viewData.displayName)
         }
-            .buttonStyle(.dsPrimary)
+        .buttonStyle(.dsGhost)
     }
 }

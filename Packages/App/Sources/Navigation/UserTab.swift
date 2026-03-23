@@ -9,6 +9,7 @@ import SwiftUI
 import Profile
 import Places
 import Conversations
+import Feed
 import Core
 
 enum UserTab: Hashable {
@@ -24,10 +25,7 @@ struct UserTabView: View {
     
     var body: some View {
         TabView(selection: $selectedTab) {
-            HomeView(
-                authState: dependencies.authState,
-                riderService: dependencies.riderService
-            )
+            FeedView(feedService: dependencies.feedService, placesService: dependencies.placesService, riderService: dependencies.riderService)
             .tabItem { Label(AppStrings.userTabHome.localized, systemImage: "house") }
             .tag(UserTab.home)
 
@@ -50,6 +48,7 @@ struct UserTabView: View {
                 viewModel: ProfileViewModel(
                     riderService: dependencies.riderService,
                     sportsService: dependencies.sportsService,
+                    feedService: dependencies.feedService,
                     authState: dependencies.authState
                 )
             )

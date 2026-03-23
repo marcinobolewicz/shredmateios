@@ -13,6 +13,7 @@ public struct PlacesNavigationDestinations: ViewModifier {
     let placesService: PlacesServiceProtocol
     let onOpenChat: (_ userId: UUID, _ displayName: String) -> Void
     @Environment(AuthState.self) private var authState
+    @Environment(FollowRepository.self) private var followRepository
 
     public func body(content: Content) -> some View {
         content
@@ -33,6 +34,7 @@ public struct PlacesNavigationDestinations: ViewModifier {
         case .riderCard(let viewData):
             RiderCardView(
                 viewData: viewData,
+                followRepository: followRepository,
                 onMessageTap: onOpenChat
             )
         }

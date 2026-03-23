@@ -8,6 +8,7 @@
 import Foundation
 
 enum PlacesStrings: String {
+    case pickerTitle = "places.picker_title"
     case rootNavigationTitle = "places.root_navigation_title"
     case listNavigationTitle = "places.list_navigation_title"
     case detailsTitle = "places.details_title"
@@ -31,6 +32,7 @@ enum PlacesStrings: String {
 
     case ridersLabel = "places.riders_label"
     case mentorsLabel = "places.mentors_label"
+    case mapLabel = "places.map_label"
 
     case detailsRatingLabel = "places.details_rating_label"
     case detailsRidersEmptyTitle = "places.details_riders_empty_title"
@@ -40,6 +42,11 @@ enum PlacesStrings: String {
     case mapDetailsButton = "places.map_details_button"
 
     case spotSubtitlePlaceholder = "places.spot_subtitle_placeholder"
+
+    // MARK: - Rider Card
+    case followButton = "places.follow_button"
+    case unfollowButton = "places.unfollow_button"
+    case messageButton = "places.message_button"
 
     // MARK: - Check-In
     case checkInButton = "places.check_in_button"

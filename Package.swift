@@ -17,6 +17,7 @@ let package = Package(
         .library(name: "Profile", targets: ["Profile"]),
         .library(name: "Places", targets: ["Places"]),
         .library(name: "Conversations", targets: ["Conversations"]),
+        .library(name: "Feed", targets: ["Feed"]),
         .library(name: "Theme", targets: ["Theme"])
     ],
     dependencies: [
@@ -56,6 +57,7 @@ let package = Package(
         // Common Package
         .target(
             name: "Common",
+            dependencies: ["Theme"],
             path: "Packages/Common/Sources",
             resources: [
                 .process("Resources")
@@ -117,11 +119,29 @@ let package = Package(
             path: "Packages/Login/Tests"
         ),
         
+        // Feed Package
+        .target(
+            name: "Feed",
+            dependencies: ["Networking", "Common", "Places", "Theme"],
+            path: "Packages/Feed/Sources",
+            resources: [
+                .process("Resources")
+            ],
+            swiftSettings: [
+                .enableUpcomingFeature("StrictConcurrency")
+            ]
+        ),
+        .testTarget(
+            name: "FeedTests",
+            dependencies: ["Feed"],
+            path: "Packages/Feed/Tests"
+        ),
+
         // App Package
         .target(
             name: "App",
             dependencies: [
-                "Core", "Networking", "Auth", "Login", "Profile", "Places", "Conversations", "Theme",
+                "Core", "Networking", "Auth", "Login", "Profile", "Places", "Conversations", "Feed", "Theme",
                 .product(name: "FirebaseCrashlytics", package: "firebase-ios-sdk"),
                 .product(name: "FirebaseMessaging", package: "firebase-ios-sdk"),
                 .product(name: "Pulse", package: "Pulse"),
@@ -144,7 +164,7 @@ let package = Package(
         // Profile Package
         .target(
             name: "Profile",
-            dependencies: ["Core", "Networking", "Common"],
+            dependencies: ["Core", "Networking", "Common", "Theme"],
             path: "Packages/Profile/Sources",
             resources: [
                 .process("Resources")

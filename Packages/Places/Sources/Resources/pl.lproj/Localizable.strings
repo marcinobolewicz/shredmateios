@@ -1,4 +1,5 @@
 /* Places */
+"places.picker_title" = "Wybierz miejsce";
 "places.root_navigation_title" = "Spoty";
 "places.list_navigation_title" = "Odkrywaj";
 "places.details_title" = "Szczegóły miejsca";
@@ -22,6 +23,7 @@
 
 "places.riders_label" = "Riderzy";
 "places.mentors_label" = "Mentorzy";
+"places.map_label" = "Mapa";
 
 "places.spot_subtitle_placeholder" = "—";
 
@@ -31,6 +33,11 @@
 "places.details_mentors_empty_title" = "Brak mentorów";
 "places.details_mentors_empty_description" = "Mentorzy dostępni w tym spocie pojawią się tutaj.";
 "places.map_details_button" = "Szczegóły";
+
+/* Profil ridera */
+"places.follow_button"   = "Obserwuj";
+"places.unfollow_button" = "Przestań obserwować";
+"places.message_button"  = "Wyślij wiadomość";
 
 /* Zameldowanie */
 "places.check_in_button" = "Zamelduj się";

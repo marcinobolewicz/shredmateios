@@ -1,0 +1,17 @@
+"feed.navigation_title"    = "Feed";
+"feed.create_post_title"   = "New Post";
+"feed.caption_placeholder" = "What are you shredding today?";
+"feed.post_button"         = "Post";
+"feed.place_label"         = "Place";
+"feed.place_placeholder"   = "Select a place";
+"feed.photo_label"         = "Photo";
+"feed.add_photo"           = "Add Photo";
+"feed.change_photo"        = "Change Photo";
+"feed.remove_photo"        = "Remove";
+"feed.uploading_photo"     = "Uploading photo...";
+"feed.ok"                  = "OK";
+"feed.empty_title"         = "No posts yet";
+"feed.empty_description"   = "Be the first to share a session!";
+"feed.failed_title"        = "Something went wrong";
+"feed.failed_description"  = "Could not load the feed.";
+"feed.refresh_button"      = "Try again";

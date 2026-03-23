@@ -18,7 +18,8 @@ struct PlaceRiderRowPresenter: Sendable {
             displayName: name,
             avatarInitials: initials(from: name),
             avatarURL: entry.rider.avatarUrl.flatMap(URL.init(string:)),
-            subtitle: parts.joined(separator: " • ")
+            subtitle: parts.joined(separator: " • "),
+            hasHomeLocation: entry.rider.baseLocation != nil
         )
     }
 

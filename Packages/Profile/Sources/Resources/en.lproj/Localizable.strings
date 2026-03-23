@@ -26,6 +26,7 @@
 "profile.confirm_location_button" = "Confirm";
 "profile.section_sports" = "Sports";
 "profile.loading_sports" = "Loading sports...";
+"profile.logout_button" = "Log Out";
 "profile.section_danger_zone" = "Danger Zone";
 "profile.level_picker_title" = "Level";
 "profile.available_as_mentor_toggle" = "Available as Mentor";
@@ -49,6 +50,13 @@
 "profile.enter_valid_coordinates" = "Please enter valid coordinates";
 "profile.latitude_range_error" = "Latitude must be between -90 and 90";
 "profile.longitude_range_error" = "Longitude must be between -180 and 180";
+
+/* My Posts */
+"profile.section_my_posts" = "My Posts";
+"profile.my_posts_navigation_title" = "My Posts";
+"profile.my_posts_empty" = "No posts yet";
+"profile.my_posts_empty_description" = "Your check-ins and posts will appear here.";
+"profile.my_posts_failed" = "Could not load posts";
 
 /* Check-In */
 "profile.section_check_in" = "Current Check-In";

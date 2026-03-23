@@ -1,4 +1,5 @@
 /* Places */
+"places.picker_title" = "Select Place";
 "places.root_navigation_title" = "Spots";
 "places.list_navigation_title" = "Explore";
 "places.details_title" = "Place details";
@@ -22,6 +23,7 @@
 
 "places.riders_label" = "Riders";
 "places.mentors_label" = "Mentors";
+"places.map_label" = "Map";
 
 "places.spot_subtitle_placeholder" = "—";
 
@@ -31,6 +33,11 @@
 "places.details_mentors_empty_title" = "No mentors yet";
 "places.details_mentors_empty_description" = "Mentors available at this spot will appear here.";
 "places.map_details_button" = "Details";
+
+/* Rider Card */
+"places.follow_button"   = "Follow";
+"places.unfollow_button" = "Unfollow";
+"places.message_button"  = "Send message";
 
 /* Check-In */
 "places.check_in_button" = "Check In";

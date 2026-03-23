@@ -8,6 +8,7 @@
 import SwiftUI
 import Theme
 import Networking
+import Common
 
 // MARK: - View Data
 
@@ -22,6 +23,8 @@ public struct PlaceDetailsViewData: Equatable, Hashable, Sendable {
     public let ridersCount: Int
     public let mentorsCount: Int
     public let avatar: Avatar
+    public let latitude: Double?
+    public let longitude: Double?
 
     public struct SportFilter: Equatable, Hashable, Sendable, Identifiable {
         public let id: String
@@ -45,7 +48,9 @@ public struct PlaceDetailsViewData: Equatable, Hashable, Sendable {
         sportSlugs: [String],
         ridersCount: Int,
         mentorsCount: Int,
-        avatar: Avatar
+        avatar: Avatar,
+        latitude: Double? = nil,
+        longitude: Double? = nil
     ) {
         self.id = id
         self.name = name
@@ -57,6 +62,8 @@ public struct PlaceDetailsViewData: Equatable, Hashable, Sendable {
         self.ridersCount = ridersCount
         self.mentorsCount = mentorsCount
         self.avatar = avatar
+        self.latitude = latitude
+        self.longitude = longitude
     }
 
     public var sportFilters: [SportFilter] {
@@ -66,7 +73,7 @@ public struct PlaceDetailsViewData: Equatable, Hashable, Sendable {
 
 // MARK: - View
 
-struct PlaceDetailsView: View {
+public struct PlaceDetailsView: View {
     @Environment(AppTheme.self) private var theme
     @Environment(AuthState.self) private var authState
     let viewData: PlaceDetailsViewData
@@ -77,11 +84,12 @@ struct PlaceDetailsView: View {
     enum DetailTab: String, CaseIterable, Identifiable {
         case riders
         case mentors
+        case map
 
         var id: String { rawValue }
     }
 
-    init(viewData: PlaceDetailsViewData, placesService: PlacesServiceProtocol, authState: AuthState) {
+    public init(viewData: PlaceDetailsViewData, placesService: PlacesServiceProtocol, authState: AuthState) {
         self.viewData = viewData
         _viewModel = State(
             wrappedValue: PlaceDetailsViewModel(
@@ -94,18 +102,23 @@ struct PlaceDetailsView: View {
         )
     }
 
-    var body: some View {
+    private var hasLocation: Bool { viewData.latitude != nil && viewData.longitude != nil }
+
+    public var body: some View {
         ScrollView {
             VStack(spacing: 0) {
-                heroSection
+                heroPhoto
+                heroInfo
                 checkInSection
                 tabSection
                 contentSection
             }
         }
+        .ignoresSafeArea(edges: .top)
         .background(theme.colors.background)
         .navigationTitle(viewData.name)
         .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.hidden, for: .navigationBar)
         .task {
             await viewModel.loadRiders()
         }
@@ -156,18 +169,15 @@ struct PlaceDetailsView: View {
                     Button {
                         viewModel.showRolePicker = true
                     } label: {
-                        HStack {
+                        HStack(spacing: theme.spacing.xs) {
                             if viewModel.isJoining {
-                                ProgressView()
-                                    .controlSize(.small)
-                                    .tint(theme.colors.primaryForeground)
+                                ProgressView().controlSize(.small)
                             }
                             Image(systemName: "mappin.and.ellipse")
                             Text(PlacesStrings.checkInButton.localized)
                         }
-                        .frame(maxWidth: .infinity)
                     }
-                    .buttonStyle(.dsPrimary)
+                    .buttonStyle(.dsOutline)
                     .disabled(viewModel.isJoining)
                 }
             }
@@ -178,13 +188,41 @@ struct PlaceDetailsView: View {
 
     // MARK: - Hero
 
-    private var heroSection: some View {
-        VStack(spacing: theme.spacing.sm) {
-            heroAvatar
-                .padding(.top, theme.spacing.md)
+    @ViewBuilder
+    private var heroPhoto: some View {
+        switch viewData.avatar {
+        case .imageRemote(let url):
+            AsyncImage(url: url) { phase in
+                switch phase {
+                case .success(let image):
+                    image.resizable().scaledToFill()
+                case .failure, .empty:
+                    heroPhotoPlaceholder
+                @unknown default:
+                    heroPhotoPlaceholder
+                }
+            }
+            .aspectRatio(1, contentMode: .fit)
+            .frame(maxWidth: .infinity)
+            .clipped()
+        default:
+            heroPhotoPlaceholder
+                .aspectRatio(1, contentMode: .fit)
+                .frame(maxWidth: .infinity)
+        }
+    }
 
-                Text(viewData.name)
-                    .dsTextStyle(.title)
+    private var heroPhotoPlaceholder: some View {
+        ZStack {
+            theme.colors.surfaceTertiary
+            Image(systemName: "mountain.2")
+                .font(.system(size: 48))
+                .foregroundStyle(theme.colors.textTertiary)
+        }
+    }
+
+    private var heroInfo: some View {
+        VStack(spacing: theme.spacing.sm) {
             sportFiltersSection
             placeTagsSection
 
@@ -196,46 +234,19 @@ struct PlaceDetailsView: View {
             }
         }
         .frame(maxWidth: .infinity)
+        .padding(.top, theme.spacing.sm)
         .padding(.bottom, theme.spacing.sm)
-    }
-
-    @ViewBuilder
-    private var heroAvatar: some View {
-        Group {
-            switch viewData.avatar {
-            case .initials(let text):
-                ZStack {
-                    Circle().fill(theme.colors.surfaceTertiary)
-                    Text(text)
-                        .font(.system(size: 28, weight: .bold))
-                        .foregroundStyle(theme.colors.textSecondary)
-                }
-            case .imageRemote(let url):
-                if let url {
-                    AsyncImage(url: url) { phase in
-                        switch phase {
-                        case .success(let image):
-                            image.resizable().scaledToFill()
-                        default:
-                            Circle().fill(theme.colors.surfaceTertiary)
-                        }
-                    }
-                    .clipShape(Circle())
-                } else {
-                    Circle().fill(theme.colors.surfaceTertiary)
-                }
-            case .image(let name):
-                Image(name).resizable().scaledToFill().clipShape(Circle())
-            }
-        }
-        .frame(width: 80, height: 80)
     }
 
     // MARK: - Tabs
 
+    private var availableTabs: [DetailTab] {
+        hasLocation ? DetailTab.allCases : [.riders, .mentors]
+    }
+
     private var tabSection: some View {
         HStack(spacing: 0) {
-            ForEach(DetailTab.allCases) { tab in
+            ForEach(availableTabs) { tab in
                 Button {
                     withAnimation(.snappy(duration: Constants.Animation.chipDuration)) {
                         selectedTab = tab
@@ -271,6 +282,8 @@ struct PlaceDetailsView: View {
             return "\(PlacesStrings.ridersLabel.localized) (\(viewModel.ridersCount))"
         case .mentors:
             return "\(PlacesStrings.mentorsLabel.localized) (\(viewModel.mentorsCount))"
+        case .map:
+            return PlacesStrings.mapLabel.localized
         }
     }
 
@@ -297,6 +310,10 @@ struct PlaceDetailsView: View {
                         emptySubtitle: PlacesStrings.detailsMentorsEmptyDescription.localized,
                         emptyIcon: "person.badge.shield.checkmark"
                     )
+                case .map:
+                    PlaceDetailsMapView(viewData: viewData, riderEntries: viewModel.riderEntries)
+                        .frame(height: 420)
+                        .clipShape(RoundedRectangle(cornerRadius: 0))
                 }
             }
         }

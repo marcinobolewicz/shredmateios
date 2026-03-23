@@ -25,18 +25,25 @@ public struct ProfileView: View {
     }
 
     public var body: some View {
-        Form {
-            if viewModel.isLoading && viewModel.rider == nil {
-                loadingSection
-            } else {
-                profileSection
-                locationSection
-                sportsSection
-                dangerZoneSection
+        NavigationStack {
+            Form {
+                if viewModel.isLoading && viewModel.rider == nil {
+                    loadingSection
+                } else {
+                    myPostsSection
+                    profileSection
+                    locationSection
+                    sportsSection
+                    logoutSection
+                    dangerZoneSection
+                }
+            }
+            .navigationTitle(ProfileStrings.navigationTitle.localized)
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationDestination(for: String.self) { riderId in
+                MyPostsView(riderId: riderId, feedService: viewModel.feedService)
             }
         }
-        .navigationTitle(ProfileStrings.navigationTitle.localized)
-        .navigationBarTitleDisplayMode(.inline)
         .task {
             await viewModel.loadProfile()
         }
@@ -87,6 +94,17 @@ public struct ProfileView: View {
     }
 
     // MARK: - Sections
+
+    @ViewBuilder
+    private var myPostsSection: some View {
+        if let riderId = viewModel.riderId {
+            Section(ProfileStrings.sectionMyPosts.localized) {
+                NavigationLink(value: riderId) {
+                    Label(ProfileStrings.myPostsNavigationTitle.localized, systemImage: "newspaper")
+                }
+            }
+        }
+    }
 
     private var loadingSection: some View {
         Section {
@@ -255,6 +273,20 @@ public struct ProfileView: View {
                         }
                     )
                 }
+            }
+        }
+    }
+
+    private var logoutSection: some View {
+        Section {
+            Button(role: .destructive) {
+                Task { await viewModel.logout() }
+            } label: {
+                HStack {
+                    Image(systemName: "rectangle.portrait.and.arrow.right")
+                    Text(ProfileStrings.logoutButton.localized)
+                }
+                .frame(maxWidth: .infinity)
             }
         }
     }

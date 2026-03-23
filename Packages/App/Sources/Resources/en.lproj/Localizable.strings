@@ -9,3 +9,15 @@
 "app.home_navigation_title" = "Home";
 "app.home_welcome_title" = "Welcome to ShredMate!";
 "app.home_sign_out" = "Sign Out";
+
+"app.guest_slide1_title"    = "Find an Instructor / Mentor";
+"app.guest_slide1_subtitle" = "Book a session with an experienced rider and develop your skills faster.";
+"app.guest_slide1_cta"      = "Find an Instructor";
+
+"app.guest_slide2_title"    = "Find a Riding Buddy";
+"app.guest_slide2_subtitle" = "Connect with someone at your level and hit the slopes together.";
+"app.guest_slide2_cta"      = "Meet Riders";
+
+"app.guest_slide3_title"    = "Slope Companions & Sessions";
+"app.guest_slide3_subtitle" = "Create meetups, invite your crew and manage everything in one app.";
+"app.guest_slide3_cta"      = "See Sessions";

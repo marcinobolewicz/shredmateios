@@ -9,6 +9,7 @@ import PulseUI
 public struct RootView: View {
     private var dependencies: AppDependencies
     @Environment(AuthState.self) private var authState
+    @Environment(FollowRepository.self) private var followRepository
     @State private var router = RootRouter()
     #if DEBUG
     @State private var showPulseConsole = false
@@ -45,6 +46,7 @@ public struct RootView: View {
         .inAppNotificationOverlay(center: dependencies.notificationCenter)
         #if DEBUG
         .onShake { showPulseConsole = true }
+        .onTapGesture(count: 3) { showPulseConsole = true }
         .sheet(isPresented: $showPulseConsole) {
             NavigationStack { ConsoleView() }
         }
@@ -69,6 +71,7 @@ public struct RootView: View {
                 }
             } else {
                 disconnectChat()
+                followRepository.reset()
             }
         }
         .environment(router)

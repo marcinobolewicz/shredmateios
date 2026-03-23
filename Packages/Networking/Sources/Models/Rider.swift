@@ -221,3 +221,11 @@ public struct UpsertRiderSportRequest: Codable, Sendable {
 public struct AvatarUploadResponse: Codable, Sendable {
     public let avatarUrl: String
 }
+
+// MARK: - Follow
+
+public struct FollowedRider: Decodable, Sendable, Identifiable {
+    public let id: String
+    public let displayName: String?
+    public let avatarUrl: String?
+}
