@@ -6,3 +6,5 @@
 "common.ok_button" = "OK";
 "common.cancel_button" = "Cancel";
 "common.send_button" = "Send";
+"common.session_expired_title" = "Session Expired";
+"common.session_expired_message" = "Your session has expired. Please log in again.";

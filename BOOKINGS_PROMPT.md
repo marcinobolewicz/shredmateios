@@ -1,4 +1,3 @@
-@@ -0,0 +1,435 @@
 # Mentor Slots — Frontend Web Guide
 
 > Base URL: `https://api.shredmate.eu/api/v1`
@@ -71,6 +70,67 @@ const setEveryDay  = () => setForm(f => ({ ...f, weekdays: [0, 1, 2, 3, 4, 5, 6]
 
 ---
 
+### Presety zakresu dat
+
+Frontend oblicza `startDate` i `endDate` dla przycisków skrótu. Backend przyjmuje ISO date string (`"YYYY-MM-DD"`). Limit: max **31 dni od dzisiaj**.
+
+```ts
+function getMonday(d: Date) {
+  const day = d.getDay();                     // 0=Nd
+  const diff = day === 0 ? -6 : 1 - day;     // cofnij do poniedziałku
+  const m = new Date(d);
+  m.setDate(m.getDate() + diff);
+  m.setHours(0, 0, 0, 0);
+  return m;
+}
+
+function toDateStr(d: Date) {
+  return d.toISOString().slice(0, 10);        // "2026-03-31"
+}
+
+function addDays(d: Date, n: number) {
+  const r = new Date(d);
+  r.setDate(r.getDate() + n);
+  return r;
+}
+
+const today      = new Date();
+const thisMonday = getMonday(today);
+
+const PRESETS = {
+  nextWeek: {
+    label: 'Następny tydzień',
+    startDate: toDateStr(addDays(thisMonday, 7)),   // pn za tydzień
+    endDate:   toDateStr(addDays(thisMonday, 13)),  // nd za tydzień
+  },
+  weekAfterNext: {
+    label: 'Kolejny tydzień',
+    startDate: toDateStr(addDays(thisMonday, 14)),  // pn za 2 tygodnie
+    endDate:   toDateStr(addDays(thisMonday, 20)),  // nd za 2 tygodnie
+  },
+  twoWeeks: {
+    label: 'Następny i kolejny tydzień',
+    startDate: toDateStr(addDays(thisMonday, 7)),   // pn za tydzień
+    endDate:   toDateStr(addDays(thisMonday, 20)),  // nd za 2 tygodnie
+  },
+  wholeMonth: {
+    label: 'Cały miesiąc',
+    startDate: toDateStr(today),
+    endDate:   toDateStr(addDays(today, 30)),       // max 31 dni od dziś
+  },
+};
+```
+
+UI przycisków preset:
+```
+[ Następny tydzień ]  [ Kolejny tydzień ]
+[ Następny + kolejny ]  [ Cały miesiąc ]
+```
+
+Kliknięcie presetu ustawia `form.startDate` i `form.endDate`. Jeśli nie wybrano presetu — pola puste, backend domyślnie generuje 14 dni od dziś.
+
+---
+
 ### Request — generowanie slotów
 
 `POST /mentor-slots/generate`
@@ -84,13 +144,15 @@ async function generateSlots(form: typeof initialForm, token: string) {
       Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({
-      sportId:  form.sportId,
-      placeId:  form.placeId || undefined,   // pomiń jeśli puste
-      weekdays: form.weekdays,
-      timeFrom: form.timeFrom,               // "14:00"
-      timeTo:   form.timeTo,                 // "18:00"
-      duration: form.duration,               // 30 | 60
-      price:    form.price * 100,            // PLN → grosze
+      sportId:   form.sportId,
+      placeId:   form.placeId || undefined,    // pomiń jeśli puste
+      weekdays:  form.weekdays,
+      timeFrom:  form.timeFrom,                // "14:00"
+      timeTo:    form.timeTo,                  // "18:00"
+      duration:  form.duration,                // 30 | 60
+      price:     form.price * 100,             // PLN → grosze
+      startDate: form.startDate || undefined,  // "2026-03-31" lub pomiń
+      endDate:   form.endDate   || undefined,  // "2026-04-27" lub pomiń
     }),
   });
 

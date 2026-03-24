@@ -11,6 +11,9 @@ public enum CommonStrings: String {
     case cancelButton = "common.cancel_button"
     case sendButton = "common.send_button"
 
+    case sessionExpiredTitle = "common.session_expired_title"
+    case sessionExpiredMessage = "common.session_expired_message"
+
     public var localized: String {
         NSLocalizedString(rawValue, bundle: .module, comment: "")
     }
