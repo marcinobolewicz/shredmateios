@@ -22,6 +22,7 @@ public struct ProfileView: View {
     @State private var viewModel: ProfileViewModel
     @State private var showDeleteConfirmation = false
     @State private var showLocationPicker = false
+    @State private var showGenerateSlots = false
     @State private var showAvatarPicker = false
 
     public init(viewModel: ProfileViewModel) {
@@ -37,6 +38,7 @@ public struct ProfileView: View {
                     myPostsSection
                     myBookingsSection
                     mySlotsSection
+                    mentorProfileSection
                     profileSection
                     locationSection
                     sportsSection
@@ -93,6 +95,13 @@ public struct ProfileView: View {
                 Task { await viewModel.saveBaseLocation() }
             }
         }
+        .sheet(isPresented: $showGenerateSlots) {
+            GenerateSlotsView(
+                mentorSlotsService: viewModel.mentorSlotsService,
+                placesService: viewModel.placesService,
+                riderSports: viewModel.riderSports
+            )
+        }
         .confirmationDialog(
             ProfileStrings.deleteAccountDialogTitle.localized,
             isPresented: $showDeleteConfirmation,
@@ -132,6 +141,19 @@ public struct ProfileView: View {
         Section(ProfileStrings.sectionMySlots.localized) {
             NavigationLink(value: ProfileRoute.mySlots) {
                 Label(ProfileStrings.mySlotsTitle.localized, systemImage: "clock.badge")
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var mentorProfileSection: some View {
+        if viewModel.hasMentorSports {
+            Section(ProfileStrings.sectionMentorProfile.localized) {
+                Button {
+                    showGenerateSlots = true
+                } label: {
+                    Label(ProfileStrings.generateSlotsTitle.localized, systemImage: "calendar.badge.plus")
+                }
             }
         }
     }

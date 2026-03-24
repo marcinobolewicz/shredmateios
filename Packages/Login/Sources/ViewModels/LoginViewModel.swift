@@ -9,7 +9,7 @@ public final class LoginViewModel {
     
     // MARK: - State
     
-    public var email = "qwer@qwer.pl"
+    public var email = "zxcv@zxcv.pl"
     public var password = "wert2345WERT"
     public var isLoading = false
     public var errorMessage: String?

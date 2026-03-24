@@ -48,8 +48,57 @@ public enum MentorSlotsAPI {
     public static func deleteSlot(id: String) -> Endpoint<EmptyResponse> {
         .delete("/mentor-slots/\(id)", auth: .bearerToken)
     }
+
+    public static func generateSlots(request: GenerateSlotsRequest) -> Endpoint<GenerateSlotsResponse> {
+        .post("/mentor-slots/generate", body: request, auth: .bearerToken)
+    }
 }
 
 struct CompleteSessionBody: Encodable, Sendable {
     let recommend: Bool
+}
+
+public struct GenerateSlotsRequest: Encodable, Sendable {
+    public let sportId: String
+    public let placeId: String?
+    public let weekdays: [Int]
+    public let timeFrom: String
+    public let timeTo: String
+    public let duration: Int
+    public let price: Int
+    public let startDate: String
+    public let endDate: String
+
+    public init(
+        sportId: String,
+        placeId: String?,
+        weekdays: [Int],
+        timeFrom: String,
+        timeTo: String,
+        duration: Int,
+        price: Int,
+        startDate: String,
+        endDate: String
+    ) {
+        self.sportId = sportId
+        self.placeId = placeId
+        self.weekdays = weekdays
+        self.timeFrom = timeFrom
+        self.timeTo = timeTo
+        self.duration = duration
+        self.price = price
+        self.startDate = startDate
+        self.endDate = endDate
+    }
+}
+
+public struct GenerateSlotsResponse: Decodable, Sendable {
+    public let generated: Int
+    public let skipped: Int
+    public let skippedSlots: [SkippedSlot]
+
+    public struct SkippedSlot: Decodable, Sendable {
+        public let startTime: String
+        public let endTime: String
+    }
 }

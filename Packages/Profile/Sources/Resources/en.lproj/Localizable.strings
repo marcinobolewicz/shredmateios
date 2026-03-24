@@ -96,6 +96,33 @@
 "profile.slot_delete_confirm" = "Delete";
 "profile.slot_delete_button" = "Delete slot";
 
+/* Mentor Profile / Generate Slots */
+"profile.section_mentor_profile" = "Mentor Profile";
+"profile.generate_slots_title" = "Add Slots";
+"profile.generate_sport_label" = "Sport";
+"profile.generate_sport_placeholder" = "Choose sport...";
+"profile.generate_place_label" = "Spot (optional)";
+"profile.generate_place_placeholder" = "None / any";
+"profile.generate_date_range_label" = "Date Range";
+"profile.preset_this_week" = "This week";
+"profile.preset_next_week" = "Next week";
+"profile.preset_this_and_next" = "This & next";
+"profile.generate_weekdays_label" = "Days of Week";
+"profile.generate_workdays" = "Workdays";
+"profile.generate_all_days" = "Every day";
+"profile.generate_time_label" = "Hours";
+"profile.generate_duration_label" = "Duration";
+"profile.generate_price_label" = "Price per Session";
+"profile.generate_slots_button" = "Generate Slots";
+"profile.generate_result_title" = "Slots Generated";
+"profile.generate_all_skipped" = "All slots already exist in this range.";
+"profile.generate_partial_result_format" = "Generated %d slots. Skipped %d (conflict with existing).";
+"profile.generate_success_result_format" = "Generated %d slots.";
+"profile.generate_validation_sport" = "Choose a sport";
+"profile.generate_validation_weekdays" = "Select at least one day";
+"profile.generate_validation_time" = "End time must be after start time";
+"profile.generate_validation_price" = "Price must be greater than 0";
+
 /* Check-In */
 "profile.section_check_in" = "Current Check-In";
 "profile.checked_in_as_format" = "Checked in as %@";

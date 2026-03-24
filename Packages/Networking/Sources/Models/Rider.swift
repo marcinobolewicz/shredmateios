@@ -141,7 +141,7 @@ struct BaseLocationDTO: Encodable, Sendable {
 // MARK: - Sports
 
 /// Sport definition
-public struct Sport: Codable, Sendable, Equatable, Identifiable {
+public struct Sport: Codable, Sendable, Equatable, Identifiable, Hashable {
     public let id: UUID
     public let name: String
     public let slug: String

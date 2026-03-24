@@ -96,6 +96,33 @@
 "profile.slot_delete_confirm" = "Usuń";
 "profile.slot_delete_button" = "Usuń slot";
 
+/* Profil mentora / Generowanie slotów */
+"profile.section_mentor_profile" = "Profil mentora";
+"profile.generate_slots_title" = "Dodaj sloty";
+"profile.generate_sport_label" = "Sport";
+"profile.generate_sport_placeholder" = "Wybierz sport...";
+"profile.generate_place_label" = "Spot (opcjonalnie)";
+"profile.generate_place_placeholder" = "Brak / dowolny";
+"profile.generate_date_range_label" = "Zakres dat";
+"profile.preset_this_week" = "Ten tydzień";
+"profile.preset_next_week" = "Następny tydzień";
+"profile.preset_this_and_next" = "Ten i następny";
+"profile.generate_weekdays_label" = "Dni tygodnia";
+"profile.generate_workdays" = "Dni robocze";
+"profile.generate_all_days" = "Cały tydzień";
+"profile.generate_time_label" = "Godziny";
+"profile.generate_duration_label" = "Czas trwania";
+"profile.generate_price_label" = "Cena za sesję";
+"profile.generate_slots_button" = "Wygeneruj sloty";
+"profile.generate_result_title" = "Sloty wygenerowane";
+"profile.generate_all_skipped" = "Wszystkie sloty już istnieją w tym przedziale.";
+"profile.generate_partial_result_format" = "Wygenerowano %d slotów. Pominięto %d (konflikt z istniejącymi).";
+"profile.generate_success_result_format" = "Wygenerowano %d slotów.";
+"profile.generate_validation_sport" = "Wybierz sport";
+"profile.generate_validation_weekdays" = "Wybierz co najmniej jeden dzień";
+"profile.generate_validation_time" = "Godzina końca musi być po godzinie startu";
+"profile.generate_validation_price" = "Cena musi być większa niż 0";
+
 /* Zameldowanie */
 "profile.section_check_in" = "Aktualne zameldowanie";
 "profile.checked_in_as_format" = "Zameldowany jako %@";
