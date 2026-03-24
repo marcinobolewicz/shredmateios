@@ -37,6 +37,11 @@
 /* Mentor Slots */
 "places.mentor_slots_title" = "Available sessions";
 "places.mentor_slots_empty" = "No available sessions";
+"places.slot_delete_title" = "Delete slot?";
+"places.slot_delete_confirm" = "Delete";
+"places.slot_book_title" = "Book session?";
+"places.slot_book_confirm" = "Book";
+"places.slot_action_error_title" = "Error";
 
 /* Rider Card */
 "places.follow_button"   = "Follow";

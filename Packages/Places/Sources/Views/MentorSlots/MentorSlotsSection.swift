@@ -4,10 +4,10 @@ import Theme
 public struct MentorSlotsSection: View {
     @Environment(AppTheme.self) private var theme
 
-    let dayGroups: [MentorSlotDayGroup]
+    @Bindable var viewModel: MentorSlotsViewModel
 
-    public init(dayGroups: [MentorSlotDayGroup]) {
-        self.dayGroups = dayGroups
+    public init(viewModel: MentorSlotsViewModel) {
+        self.viewModel = viewModel
     }
 
     public var body: some View {
@@ -15,8 +15,49 @@ public struct MentorSlotsSection: View {
             Text(PlacesStrings.mentorSlotsTitle.localized)
                 .dsTextStyle(.heading)
 
-            ForEach(dayGroups) { group in
+            ForEach(viewModel.dayGroups) { group in
                 daySection(group)
+            }
+        }
+        .alert(
+            PlacesStrings.slotDeleteTitle.localized,
+            isPresented: $viewModel.showDeleteConfirmation,
+            presenting: viewModel.selectedSlot
+        ) { _ in
+            Button(PlacesStrings.cancelButton.localized, role: .cancel) {
+                viewModel.dismissAction()
+            }
+            Button(PlacesStrings.slotDeleteConfirm.localized, role: .destructive) {
+                Task { await viewModel.confirmDelete() }
+            }
+        } message: { slot in
+            Text("\(slot.dayHeader)\n\(slot.timeRange) · \(slot.duration)")
+        }
+        .alert(
+            PlacesStrings.slotBookTitle.localized,
+            isPresented: $viewModel.showBookConfirmation,
+            presenting: viewModel.selectedSlot
+        ) { _ in
+            Button(PlacesStrings.cancelButton.localized, role: .cancel) {
+                viewModel.dismissAction()
+            }
+            Button(PlacesStrings.slotBookConfirm.localized) {
+                Task { await viewModel.confirmBook() }
+            }
+        } message: { slot in
+            Text("\(slot.dayHeader)\n\(slot.timeRange) · \(slot.duration)\n\(slot.price)")
+        }
+        .alert(
+            PlacesStrings.slotActionErrorTitle.localized,
+            isPresented: .init(
+                get: { viewModel.actionError != nil },
+                set: { if !$0 { viewModel.actionError = nil } }
+            )
+        ) {
+            Button("OK") { viewModel.actionError = nil }
+        } message: {
+            if let error = viewModel.actionError {
+                Text(error)
             }
         }
     }
@@ -29,7 +70,9 @@ public struct MentorSlotsSection: View {
 
             FlowLayout(spacing: theme.spacing.sm) {
                 ForEach(group.slots) { slot in
-                    MentorSlotCard(viewData: slot)
+                    MentorSlotCard(viewData: slot) {
+                        viewModel.slotTapped(slot)
+                    }
                 }
             }
         }

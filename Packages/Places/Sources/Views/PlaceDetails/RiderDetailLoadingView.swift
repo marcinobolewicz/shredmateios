@@ -11,6 +11,7 @@ public struct RiderDetailLoadingView: View {
     let onMessageTap: (_ userId: UUID, _ displayName: String) -> Void
 
     @Environment(FollowRepository.self) private var followRepository
+    @Environment(AuthState.self) private var authState
     @State private var fullRider: Rider?
     @State private var state: LoadState = .idle
 
@@ -38,6 +39,7 @@ public struct RiderDetailLoadingView: View {
                     viewData: resolvedViewData,
                     followRepository: followRepository,
                     mentorSlotsService: mentorSlotsService,
+                    currentRiderId: currentRiderId,
                     onMessageTap: onMessageTap
                 )
 
@@ -47,11 +49,16 @@ public struct RiderDetailLoadingView: View {
                     viewData: partialViewData,
                     followRepository: followRepository,
                     mentorSlotsService: mentorSlotsService,
+                    currentRiderId: currentRiderId,
                     onMessageTap: onMessageTap
                 )
             }
         }
         .task { await load() }
+    }
+
+    private var currentRiderId: String? {
+        authState.rider?.id.uuidString.lowercased()
     }
 
     private var isMentor: Bool {

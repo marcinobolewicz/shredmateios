@@ -24,4 +24,12 @@ public enum MentorSlotsAPI {
         }
         return .get("/mentor-slots", query: query, auth: .bearerToken)
     }
+
+    public static func bookSlot(id: String) -> Endpoint<MentorSlot> {
+        .post("/mentor-slots/\(id)/book", auth: .bearerToken)
+    }
+
+    public static func deleteSlot(id: String) -> Endpoint<EmptyResponse> {
+        .delete("/mentor-slots/\(id)", auth: .bearerToken)
+    }
 }

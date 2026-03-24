@@ -7,6 +7,7 @@ public struct MentorSlotRowViewData: Identifiable, Equatable, Sendable {
     public let price: String
     public let sportName: String
     public let placeName: String?
+    public let dayHeader: String
 
     public init(
         id: String,
@@ -14,7 +15,8 @@ public struct MentorSlotRowViewData: Identifiable, Equatable, Sendable {
         duration: String,
         price: String,
         sportName: String,
-        placeName: String?
+        placeName: String?,
+        dayHeader: String
     ) {
         self.id = id
         self.timeRange = timeRange
@@ -22,6 +24,7 @@ public struct MentorSlotRowViewData: Identifiable, Equatable, Sendable {
         self.price = price
         self.sportName = sportName
         self.placeName = placeName
+        self.dayHeader = dayHeader
     }
 }
 

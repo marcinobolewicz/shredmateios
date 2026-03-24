@@ -37,6 +37,11 @@
 /* Sloty mentora */
 "places.mentor_slots_title" = "Dostępne terminy";
 "places.mentor_slots_empty" = "Brak dostępnych terminów";
+"places.slot_delete_title" = "Usunąć slot?";
+"places.slot_delete_confirm" = "Usuń";
+"places.slot_book_title" = "Zarezerwować sesję?";
+"places.slot_book_confirm" = "Zarezerwuj";
+"places.slot_action_error_title" = "Błąd";
 
 /* Profil ridera */
 "places.follow_button"   = "Obserwuj";

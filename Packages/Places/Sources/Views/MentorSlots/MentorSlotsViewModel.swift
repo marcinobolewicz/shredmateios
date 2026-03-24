@@ -3,18 +3,30 @@ import Networking
 
 @MainActor
 @Observable
-final class MentorSlotsViewModel {
+public final class MentorSlotsViewModel {
 
     private(set) var dayGroups: [MentorSlotDayGroup] = []
     private(set) var isLoading = false
     private(set) var hasSlots = false
+    
+    var actionError: String?
+    var selectedSlot: MentorSlotRowViewData?
+    var showDeleteConfirmation = false
+    var showBookConfirmation = false
+
+    let isOwner: Bool
 
     private let mentorRiderId: String
     private let service: MentorSlotsServiceProtocol
     private let presenter = MentorSlotPresenter()
 
-    init(mentorRiderId: String, service: MentorSlotsServiceProtocol) {
+    init(
+        mentorRiderId: String,
+        currentRiderId: String?,
+        service: MentorSlotsServiceProtocol
+    ) {
         self.mentorRiderId = mentorRiderId
+        self.isOwner = currentRiderId != nil && currentRiderId == mentorRiderId
         self.service = service
     }
 
@@ -40,5 +52,44 @@ final class MentorSlotsViewModel {
             dayGroups = []
             hasSlots = false
         }
+    }
+
+    func slotTapped(_ slot: MentorSlotRowViewData) {
+        selectedSlot = slot
+        if isOwner {
+            showDeleteConfirmation = true
+        } else {
+            showBookConfirmation = true
+        }
+    }
+
+    func confirmDelete() async {
+        guard let slot = selectedSlot else { return }
+        actionError = nil
+        do {
+            try await service.deleteSlot(id: slot.id)
+            await loadSlots()
+        } catch {
+            actionError = error.localizedDescription
+        }
+        selectedSlot = nil
+    }
+
+    func confirmBook() async {
+        guard let slot = selectedSlot else { return }
+        actionError = nil
+        do {
+            _ = try await service.bookSlot(id: slot.id)
+            await loadSlots()
+        } catch {
+            actionError = error.localizedDescription
+        }
+        selectedSlot = nil
+    }
+
+    func dismissAction() {
+        selectedSlot = nil
+        showDeleteConfirmation = false
+        showBookConfirmation = false
     }
 }

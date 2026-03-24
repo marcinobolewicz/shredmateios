@@ -51,6 +51,11 @@ enum PlacesStrings: String {
     // MARK: - Mentor Slots
     case mentorSlotsTitle = "places.mentor_slots_title"
     case mentorSlotsEmpty = "places.mentor_slots_empty"
+    case slotDeleteTitle = "places.slot_delete_title"
+    case slotDeleteConfirm = "places.slot_delete_confirm"
+    case slotBookTitle = "places.slot_book_title"
+    case slotBookConfirm = "places.slot_book_confirm"
+    case slotActionErrorTitle = "places.slot_action_error_title"
 
     // MARK: - Check-In
     case checkInButton = "places.check_in_button"

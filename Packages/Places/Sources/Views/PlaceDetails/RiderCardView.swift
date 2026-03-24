@@ -48,6 +48,7 @@ public struct RiderCardView: View {
         viewData: RiderCardViewData,
         followRepository: FollowRepository,
         mentorSlotsService: (any MentorSlotsServiceProtocol)? = nil,
+        currentRiderId: String? = nil,
         onMessageTap: @escaping (_ userId: UUID, _ displayName: String) -> Void = { _, _ in }
     ) {
         self.viewData = viewData
@@ -57,9 +58,10 @@ public struct RiderCardView: View {
             riderId: riderIdString,
             followRepository: followRepository
         ))
-        if viewData.isMentor, let service = mentorSlotsService {
+        if let service = mentorSlotsService {
             _slotsViewModel = State(wrappedValue: MentorSlotsViewModel(
                 mentorRiderId: riderIdString,
+                currentRiderId: currentRiderId,
                 service: service
             ))
         }
@@ -174,7 +176,7 @@ public struct RiderCardView: View {
             } else if slotsVM.hasSlots {
                 Divider()
                     .padding(.vertical, theme.spacing.xs)
-                MentorSlotsSection(dayGroups: slotsVM.dayGroups)
+                MentorSlotsSection(viewModel: slotsVM)
             }
         }
     }

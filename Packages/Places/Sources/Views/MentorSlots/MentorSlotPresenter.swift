@@ -10,19 +10,20 @@ struct MentorSlotPresenter: Sendable {
             let header = formatDayHeader(key)
             let rows = daySlots
                 .sorted { $0.startTime < $1.startTime }
-                .map(mapSlot)
+                .map { mapSlot($0, dayHeader: header) }
             return MentorSlotDayGroup(dayHeader: header, slots: rows)
         }
     }
 
-    private func mapSlot(_ slot: MentorSlot) -> MentorSlotRowViewData {
+    private func mapSlot(_ slot: MentorSlot, dayHeader: String) -> MentorSlotRowViewData {
         MentorSlotRowViewData(
             id: slot.id,
             timeRange: formatTimeRange(start: slot.startTime, end: slot.endTime),
             duration: formatDuration(slot.duration),
             price: formatPrice(slot.price, currency: slot.currency),
             sportName: slot.sport.name,
-            placeName: slot.place?.name
+            placeName: slot.place?.name,
+            dayHeader: dayHeader
         )
     }
 

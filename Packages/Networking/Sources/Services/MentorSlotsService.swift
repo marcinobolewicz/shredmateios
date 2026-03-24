@@ -7,6 +7,9 @@ public protocol MentorSlotsServiceProtocol: Sendable {
         to: String?,
         limit: Int
     ) async throws -> MentorSlotsResponse
+
+    func bookSlot(id: String) async throws -> MentorSlot
+    func deleteSlot(id: String) async throws
 }
 
 public final class MentorSlotsService: MentorSlotsServiceProtocol, Sendable {
@@ -31,5 +34,13 @@ public final class MentorSlotsService: MentorSlotsServiceProtocol, Sendable {
                 limit: limit
             )
         )
+    }
+
+    public func bookSlot(id: String) async throws -> MentorSlot {
+        try await client.send(MentorSlotsAPI.bookSlot(id: id))
+    }
+
+    public func deleteSlot(id: String) async throws {
+        _ = try await client.send(MentorSlotsAPI.deleteSlot(id: id))
     }
 }
