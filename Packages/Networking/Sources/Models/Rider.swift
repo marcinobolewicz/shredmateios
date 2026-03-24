@@ -168,13 +168,15 @@ public struct Sport: Codable, Sendable, Equatable, Identifiable {
 
 /// Skill level for a sport
 public enum SkillLevel: String, Codable, Sendable, CaseIterable {
+    case casual = "CASUAL"
     case beginner = "BEGINNER"
     case intermediate = "INTERMEDIATE"
     case advanced = "ADVANCED"
     case expert = "EXPERT"
-    
+
     public var displayName: String {
         switch self {
+        case .casual: return "Casual"
         case .beginner: return "Beginner"
         case .intermediate: return "Intermediate"
         case .advanced: return "Advanced"
@@ -190,7 +192,7 @@ public struct RiderSport: Codable, Sendable, Equatable, Identifiable {
     public let sport: Sport?
     public let level: SkillLevel
     public let isMentor: Bool
-    
+
     public init(
         id: String,
         sportId: String,
@@ -203,6 +205,15 @@ public struct RiderSport: Codable, Sendable, Equatable, Identifiable {
         self.sport = sport
         self.level = level
         self.isMentor = isMentor
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.sportId = try container.decode(String.self, forKey: .sportId)
+        self.id = try container.decodeIfPresent(String.self, forKey: .id) ?? sportId
+        self.sport = try container.decodeIfPresent(Sport.self, forKey: .sport)
+        self.level = try container.decode(SkillLevel.self, forKey: .level)
+        self.isMentor = try container.decodeIfPresent(Bool.self, forKey: .isMentor) ?? false
     }
 }
 

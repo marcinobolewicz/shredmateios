@@ -41,24 +41,44 @@ public final class ProfileViewModel {
     private let presenter: ProfileFormPresenter
     private let authState: AuthState
     let feedService: any FeedServiceProtocol
+    let mentorSlotsService: any MentorSlotsServiceProtocol
 
     // MARK: - Computed
 
     public var riderId: UUID? { rider?.id }
 
+    public var isMentor: Bool {
+        guard let type = rider?.type else { return false }
+        return type == .mentor || type == .both
+    }
+
     // MARK: - Init
 
-    public init(riderService: any RiderServiceProtocol, sportsService: any SportsServiceProtocol, feedService: any FeedServiceProtocol, authState: AuthState) {
+    public init(
+        riderService: any RiderServiceProtocol,
+        sportsService: any SportsServiceProtocol,
+        feedService: any FeedServiceProtocol,
+        mentorSlotsService: any MentorSlotsServiceProtocol,
+        authState: AuthState
+    ) {
         self.repository = ProfileRepository(riderService: riderService, sportsService: sportsService)
         self.presenter = ProfileFormPresenter()
         self.feedService = feedService
+        self.mentorSlotsService = mentorSlotsService
         self.authState = authState
     }
 
-    init(repository: any ProfileRepositoryProtocol, feedService: any FeedServiceProtocol, presenter: ProfileFormPresenter = .init(), authState: AuthState) {
+    init(
+        repository: any ProfileRepositoryProtocol,
+        feedService: any FeedServiceProtocol,
+        mentorSlotsService: any MentorSlotsServiceProtocol,
+        presenter: ProfileFormPresenter = .init(),
+        authState: AuthState
+    ) {
         self.repository = repository
         self.presenter = presenter
         self.feedService = feedService
+        self.mentorSlotsService = mentorSlotsService
         self.authState = authState
     }
     

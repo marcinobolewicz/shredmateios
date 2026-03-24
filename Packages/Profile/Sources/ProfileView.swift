@@ -12,6 +12,11 @@ import PhotosUI
 import UIKit
 import MapKit
 
+enum ProfileRoute: Hashable {
+    case myBookings
+    case mySlots
+}
+
 public struct ProfileView: View {
 
     @State private var viewModel: ProfileViewModel
@@ -31,6 +36,8 @@ public struct ProfileView: View {
                     loadingSection
                 } else {
                     myPostsSection
+                    myBookingsSection
+                    mySlotsSection
                     profileSection
                     locationSection
                     sportsSection
@@ -40,8 +47,16 @@ public struct ProfileView: View {
             }
             .navigationTitle(ProfileStrings.navigationTitle.localized)
             .navigationBarTitleDisplayMode(.inline)
-            .navigationDestination(for: String.self) { riderId in
-                MyPostsView(riderId: riderId, feedService: viewModel.feedService)
+            .navigationDestination(for: UUID.self) { riderId in
+                MyPostsView(riderId: riderId.uuidString.lowercased(), feedService: viewModel.feedService)
+            }
+            .navigationDestination(for: ProfileRoute.self) { route in
+                switch route {
+                case .myBookings:
+                    MyBookingsView(service: viewModel.mentorSlotsService)
+                case .mySlots:
+                    MySlotsView(service: viewModel.mentorSlotsService)
+                }
             }
         }
         .task {
@@ -102,6 +117,22 @@ public struct ProfileView: View {
                 NavigationLink(value: riderId) {
                     Label(ProfileStrings.myPostsNavigationTitle.localized, systemImage: "newspaper")
                 }
+            }
+        }
+    }
+
+    private var myBookingsSection: some View {
+        Section(ProfileStrings.sectionMyBookings.localized) {
+            NavigationLink(value: ProfileRoute.myBookings) {
+                Label(ProfileStrings.myBookingsTitle.localized, systemImage: "calendar.badge.clock")
+            }
+        }
+    }
+
+    private var mySlotsSection: some View {
+        Section(ProfileStrings.sectionMySlots.localized) {
+            NavigationLink(value: ProfileRoute.mySlots) {
+                Label(ProfileStrings.mySlotsTitle.localized, systemImage: "clock.badge")
             }
         }
     }

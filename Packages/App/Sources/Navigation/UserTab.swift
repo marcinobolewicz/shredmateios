@@ -51,6 +51,7 @@ struct UserTabView: View {
                     riderService: dependencies.riderService,
                     sportsService: dependencies.sportsService,
                     feedService: dependencies.feedService,
+                    mentorSlotsService: dependencies.mentorSlotsService,
                     authState: dependencies.authState
                 )
             )

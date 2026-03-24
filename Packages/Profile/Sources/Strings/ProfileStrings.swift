@@ -78,6 +78,40 @@ enum ProfileStrings: String {
     case deletePost = "profile.delete_post"
     case ok = "profile.ok"
 
+    // MARK: - My Bookings
+    case sectionMyBookings = "profile.section_my_bookings"
+    case myBookingsTitle = "profile.my_bookings_title"
+    case myBookingsEmpty = "profile.my_bookings_empty"
+    case myBookingsEmptyDescription = "profile.my_bookings_empty_description"
+    case myBookingsFailed = "profile.my_bookings_failed"
+
+    case statusBooked = "profile.status_booked"
+    case statusCompleted = "profile.status_completed"
+    case statusCancelled = "profile.status_cancelled"
+    case statusAvailable = "profile.status_available"
+
+    case bookingCancelTitle = "profile.booking_cancel_title"
+    case bookingCancelConfirm = "profile.booking_cancel_confirm"
+    case bookingCancelButton = "profile.booking_cancel_button"
+    case bookingTooLateToCancel = "profile.booking_too_late_to_cancel"
+    case bookingConfirmSession = "profile.booking_confirm_session"
+    case bookingCompleteTitle = "profile.booking_complete_title"
+    case bookingCompleteMessageFormat = "profile.booking_complete_message_format"
+    case bookingRecommend = "profile.booking_recommend"
+    case bookingNoRecommend = "profile.booking_no_recommend"
+    case bookingRecommended = "profile.booking_recommended"
+
+    // MARK: - My Slots (Mentor)
+    case sectionMySlots = "profile.section_my_slots"
+    case mySlotsTitle = "profile.my_slots_title"
+    case mySlotsEmpty = "profile.my_slots_empty"
+    case mySlotsEmptyDescription = "profile.my_slots_empty_description"
+    case mySlotsFailed = "profile.my_slots_failed"
+    case slotFilterAll = "profile.slot_filter_all"
+    case slotDeleteTitle = "profile.slot_delete_title"
+    case slotDeleteConfirm = "profile.slot_delete_confirm"
+    case slotDeleteButton = "profile.slot_delete_button"
+
     // MARK: - Check-In
     case sectionCheckIn = "profile.section_check_in"
     case checkedInAsFormat = "profile.checked_in_as_format"
@@ -124,5 +158,9 @@ enum ProfileStrings: String {
 
     static func checkedInAs(_ role: String) -> String {
         String(format: NSLocalizedString(ProfileStrings.checkedInAsFormat.rawValue, bundle: .module, comment: ""), role)
+    }
+
+    static func bookingCompleteMessage(_ mentorName: String) -> String {
+        String(format: NSLocalizedString(ProfileStrings.bookingCompleteMessageFormat.rawValue, bundle: .module, comment: ""), mentorName)
     }
 }
