@@ -8,7 +8,7 @@
 import SwiftUI
 import Networking
 import Common
-import PhotosUI
+import MediaPicker
 import UIKit
 import MapKit
 
@@ -22,8 +22,7 @@ public struct ProfileView: View {
     @State private var viewModel: ProfileViewModel
     @State private var showDeleteConfirmation = false
     @State private var showLocationPicker = false
-    @State private var selectedAvatarItem: PhotosPickerItem?
-    private let avatarImageProcessor = AvatarImageProcessor()
+    @State private var showAvatarPicker = false
 
     public init(viewModel: ProfileViewModel) {
         self._viewModel = State(initialValue: viewModel)
@@ -151,10 +150,9 @@ public struct ProfileView: View {
     private var profileSection: some View {
         Section(ProfileStrings.sectionProfileInformation.localized) {
             HStack(alignment: .top, spacing: 16) {
-                PhotosPicker(
-                    selection: $selectedAvatarItem,
-                    matching: .images
-                ) {
+                Button {
+                    showAvatarPicker = true
+                } label: {
                     profileAvatar
                         .overlay(alignment: .bottomTrailing) {
                             Text(ProfileStrings.changeAvatarBadge.localized)
@@ -202,11 +200,9 @@ public struct ProfileView: View {
             }
             .disabled(viewModel.isSaving)
         }
-        .onChange(of: selectedAvatarItem) { _, newItem in
-            guard let newItem else { return }
-            Task {
-                guard let data = try? await newItem.loadTransferable(type: Data.self) else { return }
-                viewModel.avatarImage = avatarImageProcessor.process(data) ?? data
+        .imageCropPicker(isPresented: $showAvatarPicker) { result in
+            if case .success(let data) = result {
+                viewModel.avatarImage = data
             }
         }
     }
