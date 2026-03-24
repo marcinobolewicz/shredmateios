@@ -1,7 +1,7 @@
 import Foundation
 
 struct PlaceRiderRowViewData: Identifiable, Equatable, Hashable, Sendable {
-    let id: String
+    let id: UUID
     let riderId: UUID
     let userId: UUID
     let displayName: String
@@ -9,6 +9,7 @@ struct PlaceRiderRowViewData: Identifiable, Equatable, Hashable, Sendable {
     let avatarURL: URL?
     let subtitle: String
     let hasHomeLocation: Bool
+    let isMentor: Bool
 
     var riderCardData: RiderCardViewData {
         RiderCardViewData(
@@ -19,7 +20,8 @@ struct PlaceRiderRowViewData: Identifiable, Equatable, Hashable, Sendable {
             avatarInitials: avatarInitials,
             avatarURL: avatarURL,
             description: subtitle,
-            hasHomeLocation: hasHomeLocation
+            hasHomeLocation: hasHomeLocation,
+            isMentor: isMentor
         )
     }
 }

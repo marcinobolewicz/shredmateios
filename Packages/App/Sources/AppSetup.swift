@@ -13,6 +13,7 @@ public final class AppDependencies {
     public let followRepository: FollowRepository
     public let placesService: any PlacesServiceProtocol
     public let sportsService: any SportsServiceProtocol
+    public let mentorSlotsService: any MentorSlotsServiceProtocol
     public let feedService: any FeedServiceProtocol
     public let chatService: any ChatServiceProtocol
     public let chatRealtimeClient: ChatRealtimeProviding
@@ -28,6 +29,7 @@ public final class AppDependencies {
         followRepository: FollowRepository,
         placesService: any PlacesServiceProtocol,
         sportsService: any SportsServiceProtocol,
+        mentorSlotsService: any MentorSlotsServiceProtocol,
         feedService: any FeedServiceProtocol,
         chatService: any ChatServiceProtocol,
         chatRealtimeClient: ChatRealtimeProviding,
@@ -42,6 +44,7 @@ public final class AppDependencies {
         self.followRepository = followRepository
         self.placesService = placesService
         self.sportsService = sportsService
+        self.mentorSlotsService = mentorSlotsService
         self.feedService = feedService
         self.chatService = chatService
         self.chatRealtimeClient = chatRealtimeClient
@@ -93,6 +96,7 @@ public struct AppSetup {
             followRepository: followRepository,
             placesService: services.places,
             sportsService: services.sports,
+            mentorSlotsService: services.mentorSlots,
             feedService: services.feed,
             chatService: chat.service,
             chatRealtimeClient: chat.realtimeClient,
@@ -163,6 +167,7 @@ public struct AppSetup {
         let rider: any RiderServiceProtocol
         let places: any PlacesServiceProtocol
         let sports: any SportsServiceProtocol
+        let mentorSlots: any MentorSlotsServiceProtocol
         let feed: any FeedServiceProtocol
     }
 
@@ -171,6 +176,7 @@ public struct AppSetup {
             rider: RiderService(client: httpClient),
             places: PlacesService(client: httpClient),
             sports: SportsServiceService(client: httpClient),
+            mentorSlots: MentorSlotsService(client: httpClient),
             feed: FeedService(client: httpClient)
         )
     }

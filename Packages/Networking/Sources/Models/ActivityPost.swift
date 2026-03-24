@@ -59,7 +59,7 @@ public struct ActivityPostPlace: Decodable, Sendable, Identifiable, Hashable {
 }
 
 public struct ActivityPostRider: Decodable, Sendable, Identifiable, Hashable {
-    public let id: String
+    public let id: UUID
     public let displayName: String
     public let avatarUrl: String?
 

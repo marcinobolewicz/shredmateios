@@ -44,7 +44,7 @@ public final class ProfileViewModel {
 
     // MARK: - Computed
 
-    public var riderId: String? { rider?.id }
+    public var riderId: UUID? { rider?.id }
 
     // MARK: - Init
 

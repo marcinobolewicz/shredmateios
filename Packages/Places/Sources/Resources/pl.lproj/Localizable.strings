@@ -34,6 +34,10 @@
 "places.details_mentors_empty_description" = "Mentorzy dostępni w tym spocie pojawią się tutaj.";
 "places.map_details_button" = "Szczegóły";
 
+/* Sloty mentora */
+"places.mentor_slots_title" = "Dostępne terminy";
+"places.mentor_slots_empty" = "Brak dostępnych terminów";
+
 /* Profil ridera */
 "places.follow_button"   = "Obserwuj";
 "places.unfollow_button" = "Przestań obserwować";

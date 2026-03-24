@@ -17,7 +17,7 @@ public enum RiderType: String, Codable, Sendable, CaseIterable {
 
 /// Rider profile model
 public struct Rider: Codable, Sendable, Equatable, Identifiable {
-    public let id: String
+    public let id: UUID
     public let userId: String
     public let type: RiderType?
     public let displayName: String?
@@ -28,7 +28,7 @@ public struct Rider: Codable, Sendable, Equatable, Identifiable {
     public let updatedAt: Date?
     
     public init(
-        id: String,
+        id: UUID,
         userId: String,
         type: RiderType? = nil,
         displayName: String? = nil,
@@ -228,4 +228,23 @@ public struct FollowedRider: Decodable, Sendable, Identifiable {
     public let id: String
     public let displayName: String?
     public let avatarUrl: String?
+
+    private enum WrapperKeys: String, CodingKey { case following }
+    private enum RiderKeys: String, CodingKey { case id, displayName, avatarUrl }
+
+    public init(from decoder: Decoder) throws {
+        // API wraps each entry: { "following": { "id", "displayName", "avatarUrl" } }
+        if let wrapper = try? decoder.container(keyedBy: WrapperKeys.self),
+           wrapper.contains(.following) {
+            let nested = try wrapper.nestedContainer(keyedBy: RiderKeys.self, forKey: .following)
+            self.id = try nested.decode(String.self, forKey: .id)
+            self.displayName = try nested.decodeIfPresent(String.self, forKey: .displayName)
+            self.avatarUrl = try nested.decodeIfPresent(String.self, forKey: .avatarUrl)
+        } else {
+            let container = try decoder.container(keyedBy: RiderKeys.self)
+            self.id = try container.decode(String.self, forKey: .id)
+            self.displayName = try container.decodeIfPresent(String.self, forKey: .displayName)
+            self.avatarUrl = try container.decodeIfPresent(String.self, forKey: .avatarUrl)
+        }
+    }
 }

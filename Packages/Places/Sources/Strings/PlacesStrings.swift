@@ -48,6 +48,10 @@ enum PlacesStrings: String {
     case unfollowButton = "places.unfollow_button"
     case messageButton = "places.message_button"
 
+    // MARK: - Mentor Slots
+    case mentorSlotsTitle = "places.mentor_slots_title"
+    case mentorSlotsEmpty = "places.mentor_slots_empty"
+
     // MARK: - Check-In
     case checkInButton = "places.check_in_button"
     case checkOutButton = "places.check_out_button"

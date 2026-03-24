@@ -8,17 +8,20 @@ public struct FeedView: View {
     let feedService: any FeedServiceProtocol
     let placesService: any PlacesServiceProtocol
     let riderService: any RiderServiceProtocol
+    let mentorSlotsService: any MentorSlotsServiceProtocol
     @State private var router = FeedRouter()
     @State private var viewModel: FeedViewModel
 
     public init(
         feedService: any FeedServiceProtocol,
         placesService: any PlacesServiceProtocol,
-        riderService: any RiderServiceProtocol
+        riderService: any RiderServiceProtocol,
+        mentorSlotsService: any MentorSlotsServiceProtocol
     ) {
         self.feedService = feedService
         self.placesService = placesService
         self.riderService = riderService
+        self.mentorSlotsService = mentorSlotsService
         _viewModel = State(wrappedValue: FeedViewModel(feedService: feedService))
     }
 
@@ -37,6 +40,7 @@ public struct FeedView: View {
                     feedService: feedService,
                     placesService: placesService,
                     riderService: riderService,
+                    mentorSlotsService: mentorSlotsService,
                     router: router
                 )
         }

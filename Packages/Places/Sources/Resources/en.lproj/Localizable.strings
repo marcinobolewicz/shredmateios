@@ -34,6 +34,10 @@
 "places.details_mentors_empty_description" = "Mentors available at this spot will appear here.";
 "places.map_details_button" = "Details";
 
+/* Mentor Slots */
+"places.mentor_slots_title" = "Available sessions";
+"places.mentor_slots_empty" = "No available sessions";
+
 /* Rider Card */
 "places.follow_button"   = "Follow";
 "places.unfollow_button" = "Unfollow";

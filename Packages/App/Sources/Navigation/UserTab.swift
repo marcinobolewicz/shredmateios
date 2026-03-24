@@ -25,13 +25,15 @@ struct UserTabView: View {
     
     var body: some View {
         TabView(selection: $selectedTab) {
-            FeedView(feedService: dependencies.feedService, placesService: dependencies.placesService, riderService: dependencies.riderService)
+            FeedView(feedService: dependencies.feedService, placesService: dependencies.placesService, riderService: dependencies.riderService, mentorSlotsService: dependencies.mentorSlotsService)
             .tabItem { Label(AppStrings.userTabHome.localized, systemImage: "house") }
             .tag(UserTab.home)
 
             PlacesRootView(
                 placesService: dependencies.placesService,
-                sportsService: dependencies.sportsService
+                sportsService: dependencies.sportsService,
+                riderService: dependencies.riderService,
+                mentorSlotsService: dependencies.mentorSlotsService
             )
             .tabItem { Label(AppStrings.userTabSpots.localized, systemImage: "map") }
             .tag(UserTab.spots)
