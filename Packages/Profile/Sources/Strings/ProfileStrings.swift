@@ -2,6 +2,7 @@ import Foundation
 
 enum ProfileStrings: String {
     case navigationTitle = "profile.navigation_title"
+    case editRiderTitle = "profile.edit_rider_title"
 
     case successAlertTitle = "profile.success_alert_title"
 

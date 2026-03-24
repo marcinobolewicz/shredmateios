@@ -21,55 +21,48 @@ struct GenerateSlotsView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: theme.spacing.lg) {
-                    sportSection
-                    placeSection
-                    dateRangeSection
-                    weekdaysSection
-                    timeSection
-                    durationSection
-                    priceSection
+        ScrollView {
+            VStack(alignment: .leading, spacing: theme.spacing.lg) {
+                sportSection
+                placeSection
+                dateRangeSection
+                weekdaysSection
+                timeSection
+                durationSection
+                priceSection
 
-                    if let error = viewModel.validationError {
-                        Text(error)
-                            .dsTextStyle(.caption)
-                            .foregroundStyle(theme.colors.error)
-                    }
+                if let error = viewModel.validationError {
+                    Text(error)
+                        .dsTextStyle(.caption)
+                        .foregroundStyle(theme.colors.error)
+                }
 
-                    generateButton
-                }
-                .padding(theme.spacing.md)
+                generateButton
             }
-            .background(theme.colors.background)
-            .navigationTitle(ProfileStrings.generateSlotsTitle.localized)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button(CommonStrings.cancelButton.localized) { dismiss() }
-                }
-            }
-            .task { await viewModel.loadPlaces() }
-            .alert(item: $viewModel.actionError) { err in
-                Alert(
-                    title: Text(err.title),
-                    message: Text(err.message),
-                    dismissButton: .default(Text(CommonStrings.okButton.localized))
-                )
-            }
-            .alert(
-                ProfileStrings.generateResultTitle.localized,
-                isPresented: .init(
-                    get: { viewModel.result != nil },
-                    set: { if !$0 { dismiss() } }
-                )
-            ) {
-                Button(CommonStrings.okButton.localized) { dismiss() }
-            } message: {
-                if let result = viewModel.result {
-                    Text(resultMessage(result))
-                }
+            .padding(theme.spacing.md)
+        }
+        .background(theme.colors.background)
+        .navigationTitle(ProfileStrings.generateSlotsTitle.localized)
+        .navigationBarTitleDisplayMode(.inline)
+        .task { await viewModel.loadPlaces() }
+        .alert(item: $viewModel.actionError) { err in
+            Alert(
+                title: Text(err.title),
+                message: Text(err.message),
+                dismissButton: .default(Text(CommonStrings.okButton.localized))
+            )
+        }
+        .alert(
+            ProfileStrings.generateResultTitle.localized,
+            isPresented: .init(
+                get: { viewModel.result != nil },
+                set: { if !$0 { dismiss() } }
+            )
+        ) {
+            Button(CommonStrings.okButton.localized) { dismiss() }
+        } message: {
+            if let result = viewModel.result {
+                Text(resultMessage(result))
             }
         }
     }
