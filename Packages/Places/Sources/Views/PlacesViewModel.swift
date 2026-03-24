@@ -27,9 +27,13 @@ public final class PlacesViewModel {
     var searchText: String = ""
     private(set) var state: LoadState = .idle
 
+    private(set) var availableTags: [PlaceTag] = []
+    var selectedTagIds: Set<UUID> = []
+
     let repository: any PlacesRepositoryProtocol
     private let presenter: SpotRowPresenter
 
+    private var allPlaces: [Place] = []
     private var loadTask: Task<Void, Never>?
 
     init(
@@ -60,10 +64,10 @@ public final class PlacesViewModel {
     }
     
     func refresh() {
-        load(force: true)
+        load()
     }
 
-    func load(force: Bool = false) {
+    func load() {
         if case .loading = state { return }
         loadTask?.cancel()
 
@@ -78,10 +82,9 @@ public final class PlacesViewModel {
                 let places = try await repository.fetchPlaces(for: sportSlug)
                 try Task.checkCancellation()
 
-                let filtered = self.applySearch(places: places, text: self.searchText)
-                let rows = filtered.map { presenter.map(place: $0) }
-
-                self.rows = rows
+                self.allPlaces = places
+                self.availableTags = Self.extractTags(from: places)
+                self.applyFilters()
                 self.state = .loaded
             } catch is CancellationError {
                 self.state = .idle
@@ -90,20 +93,48 @@ public final class PlacesViewModel {
             }
         }
     }
-    
+
     func selectSport(_ sport: PlaceSport) {
         selectedSport = sport
-        load(force: true)
+        selectedTagIds.removeAll()
+        load()
     }
 
-    func onSportChanged(_ sport: PlaceSport) {
-        selectedSport = sport
-        load(force: true)
+    func toggleTag(_ tagId: UUID) {
+        if selectedTagIds.contains(tagId) {
+            selectedTagIds.remove(tagId)
+        } else {
+            selectedTagIds.insert(tagId)
+        }
+        applyFilters()
     }
 
-    func applySearch(places: [Place], text: String) -> [Place] {
-        let query = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !query.isEmpty else { return places }
-        return places.filter { $0.name.localizedCaseInsensitiveContains(query) }
+    func applyFilters() {
+        var result = allPlaces
+
+        let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !query.isEmpty {
+            result = result.filter { $0.name.localizedCaseInsensitiveContains(query) }
+        }
+
+        if !selectedTagIds.isEmpty {
+            result = result.filter { place in
+                let placeTagIds = Set(place.tags.map(\.id))
+                return selectedTagIds.isSubset(of: placeTagIds)
+            }
+        }
+
+        rows = result.map { presenter.map(place: $0) }
+    }
+
+    private static func extractTags(from places: [Place]) -> [PlaceTag] {
+        var seen = Set<UUID>()
+        var tags: [PlaceTag] = []
+        for place in places {
+            for tag in place.tags where seen.insert(tag.id).inserted {
+                tags.append(tag)
+            }
+        }
+        return tags.sorted { $0.name.localizedCompare($1.name) == .orderedAscending }
     }
 }

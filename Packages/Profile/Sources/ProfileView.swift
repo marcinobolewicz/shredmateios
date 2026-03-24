@@ -8,7 +8,6 @@
 import SwiftUI
 import Networking
 import Common
-import UIKit
 
 enum ProfileRoute: Hashable {
     case editRider
