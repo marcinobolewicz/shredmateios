@@ -63,7 +63,7 @@ public struct PlacesView: View {
                                 : theme.colors.textPrimary
                         )
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, theme.spacing.xs)
+                        .padding(.vertical, theme.spacing.xs + Constants.Spacing.xxs)
                         .background(
                             Capsule()
                                 .fill(
