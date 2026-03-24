@@ -364,7 +364,7 @@ private struct SportRow: View {
     let onUpsert: (SkillLevel, Bool) -> Void
     let onRemove: () -> Void
 
-    @State private var selectedLevel: SkillLevel = .beginner
+    @State private var selectedLevel: SkillLevel = .casual
     @State private var isMentor: Bool = false
     @State private var isExpanded: Bool = false
 

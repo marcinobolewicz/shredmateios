@@ -169,18 +169,14 @@ public struct Sport: Codable, Sendable, Equatable, Identifiable, Hashable {
 /// Skill level for a sport
 public enum SkillLevel: String, Codable, Sendable, CaseIterable {
     case casual = "CASUAL"
-    case beginner = "BEGINNER"
     case intermediate = "INTERMEDIATE"
-    case advanced = "ADVANCED"
-    case expert = "EXPERT"
+    case pro = "PRO"
 
     public var displayName: String {
         switch self {
-        case .casual: return "Casual"
-        case .beginner: return "Beginner"
-        case .intermediate: return "Intermediate"
-        case .advanced: return "Advanced"
-        case .expert: return "Expert"
+        case .casual: return "Rekreacyjny"
+        case .intermediate: return "Średniozaawansowany"
+        case .pro: return "Profesjonalny"
         }
     }
 }
