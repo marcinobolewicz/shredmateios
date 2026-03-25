@@ -69,15 +69,12 @@ public struct RiderDetailLoadingView: View {
     }
 
     private var resolvedViewData: RiderCardViewData {
-        guard
-            let r = fullRider,
-            let userId = UUID(uuidString: r.userId)
-        else { return partialViewData }
+        guard let r = fullRider else { return partialViewData }
 
         return RiderCardViewData(
             id: r.id,
             riderId: r.id,
-            userId: userId,
+            userId: UUID(uuidString: r.userId),
             displayName: r.displayName ?? partialViewData.displayName,
             avatarInitials: partialViewData.avatarInitials,
             avatarURL: r.avatarUrl.flatMap(URL.init) ?? partialViewData.avatarURL,

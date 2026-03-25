@@ -9,6 +9,7 @@ public struct FeedView: View {
     let placesService: any PlacesServiceProtocol
     let riderService: any RiderServiceProtocol
     let mentorSlotsService: any MentorSlotsServiceProtocol
+    let onOpenChat: (_ userId: UUID, _ displayName: String) -> Void
     @State private var router = FeedRouter()
     @State private var viewModel: FeedViewModel
 
@@ -16,12 +17,14 @@ public struct FeedView: View {
         feedService: any FeedServiceProtocol,
         placesService: any PlacesServiceProtocol,
         riderService: any RiderServiceProtocol,
-        mentorSlotsService: any MentorSlotsServiceProtocol
+        mentorSlotsService: any MentorSlotsServiceProtocol,
+        onOpenChat: @escaping (_ userId: UUID, _ displayName: String) -> Void = { _, _ in }
     ) {
         self.feedService = feedService
         self.placesService = placesService
         self.riderService = riderService
         self.mentorSlotsService = mentorSlotsService
+        self.onOpenChat = onOpenChat
         _viewModel = State(wrappedValue: FeedViewModel(feedService: feedService))
     }
 
@@ -41,7 +44,8 @@ public struct FeedView: View {
                     placesService: placesService,
                     riderService: riderService,
                     mentorSlotsService: mentorSlotsService,
-                    router: router
+                    router: router,
+                    onOpenChat: onOpenChat
                 )
         }
         .task { viewModel.loadOnAppear() }

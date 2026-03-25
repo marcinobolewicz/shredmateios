@@ -10,17 +10,19 @@ import Theme
 import Networking
 
 public struct ConversationsRootView: View {
-    @State private var router = ConversationsRouter()
+    @Bindable var router: ConversationsRouter
     private let viewModel: ConversationsListViewModel
     private let repository: ChatRepository
     private let riderService: any RiderServiceProtocol
     private let currentUserId: String
 
     public init(
+        router: ConversationsRouter,
         repository: ChatRepository,
         riderService: any RiderServiceProtocol,
         currentUserId: String
     ) {
+        self.router = router
         self.repository = repository
         self.riderService = riderService
         self.currentUserId = currentUserId
@@ -28,8 +30,6 @@ public struct ConversationsRootView: View {
     }
 
     public var body: some View {
-        @Bindable var router = router
-
         NavigationStack(path: $router.path) {
             ConversationsListView(viewModel: viewModel)
                 .navigationTitle(ConversationsStrings.rootNavigationTitle.localized)
@@ -48,6 +48,12 @@ public struct ConversationsRootView: View {
                 )
         }
         .environment(router)
+        .onChange(of: router.pendingRoute) { _, route in
+            guard let route else { return }
+            router.pendingRoute = nil
+            router.popToRoot()
+            router.navigate(to: route)
+        }
         .fullScreenCover(isPresented: $router.showNewConversation) {
             NewConversationView(
                 viewModel: NewConversationViewModel(

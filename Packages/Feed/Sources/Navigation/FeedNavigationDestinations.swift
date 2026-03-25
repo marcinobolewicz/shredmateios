@@ -9,6 +9,7 @@ struct FeedNavigationDestinations: ViewModifier {
     let riderService: any RiderServiceProtocol
     let mentorSlotsService: any MentorSlotsServiceProtocol
     let router: FeedRouter
+    let onOpenChat: (_ userId: UUID, _ displayName: String) -> Void
 
     @Environment(AuthState.self) private var authState
 
@@ -58,14 +59,15 @@ struct FeedNavigationDestinations: ViewModifier {
                 partialViewData: RiderCardViewData(
                     id: rider.id,
                     riderId: rider.id,
-                    userId: UUID(),
+                    userId: nil,
                     displayName: rider.displayName,
                     avatarInitials: rider.initials,
                     avatarURL: rider.avatarUrl.flatMap(URL.init),
                     description: ""
                 ),
                 riderService: riderService,
-                mentorSlotsService: mentorSlotsService
+                mentorSlotsService: mentorSlotsService,
+                onMessageTap: onOpenChat
             )
         }
     }
@@ -83,7 +85,8 @@ struct FeedNavigationDestinations: ViewModifier {
             RiderDetailLoadingView(
                 partialViewData: viewData,
                 riderService: riderService,
-                mentorSlotsService: mentorSlotsService
+                mentorSlotsService: mentorSlotsService,
+                onMessageTap: onOpenChat
             )
         }
     }
@@ -95,14 +98,16 @@ extension View {
         placesService: any PlacesServiceProtocol,
         riderService: any RiderServiceProtocol,
         mentorSlotsService: any MentorSlotsServiceProtocol,
-        router: FeedRouter
+        router: FeedRouter,
+        onOpenChat: @escaping (_ userId: UUID, _ displayName: String) -> Void = { _, _ in }
     ) -> some View {
         modifier(FeedNavigationDestinations(
             feedService: feedService,
             placesService: placesService,
             riderService: riderService,
             mentorSlotsService: mentorSlotsService,
-            router: router
+            router: router,
+            onOpenChat: onOpenChat
         ))
     }
 }

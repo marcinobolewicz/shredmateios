@@ -11,11 +11,16 @@ import SwiftUI
 public final class ConversationsRouter {
     public var path = NavigationPath()
     public var showNewConversation = false
+    public var pendingRoute: ConversationsRoute?
 
     public init() {}
 
     public func navigate(to route: ConversationsRoute) {
         path.append(route)
+    }
+
+    public func openChat(conversationId: String, participantName: String) {
+        pendingRoute = .chat(conversationId: conversationId, participantName: participantName)
     }
 
     public func pop() {

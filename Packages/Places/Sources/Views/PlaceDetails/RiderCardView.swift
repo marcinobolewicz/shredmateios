@@ -5,7 +5,7 @@ import Networking
 public struct RiderCardViewData: Equatable, Hashable, Sendable, Identifiable {
     public let id: UUID
     public let riderId: UUID
-    public let userId: UUID
+    public let userId: UUID?
     public let displayName: String
     public let avatarInitials: String
     public let avatarURL: URL?
@@ -16,7 +16,7 @@ public struct RiderCardViewData: Equatable, Hashable, Sendable, Identifiable {
     public init(
         id: UUID,
         riderId: UUID,
-        userId: UUID,
+        userId: UUID?,
         displayName: String,
         avatarInitials: String,
         avatarURL: URL?,
@@ -40,6 +40,7 @@ public struct RiderCardView: View {
     @Environment(AppTheme.self) private var theme
 
     let viewData: RiderCardViewData
+    let isOwnProfile: Bool
     let onMessageTap: (_ userId: UUID, _ displayName: String) -> Void
     @State private var viewModel: RiderCardViewModel
     @State private var slotsViewModel: MentorSlotsViewModel?
@@ -54,6 +55,7 @@ public struct RiderCardView: View {
         self.viewData = viewData
         self.onMessageTap = onMessageTap
         let riderIdString = viewData.riderId.uuidString.lowercased()
+        self.isOwnProfile = currentRiderId == riderIdString
         _viewModel = State(wrappedValue: RiderCardViewModel(
             riderId: riderIdString,
             followRepository: followRepository
@@ -72,7 +74,9 @@ public struct RiderCardView: View {
             VStack(alignment: .leading, spacing: theme.spacing.md) {
                 header
                 descriptionSection
-                actionButtons
+                if !isOwnProfile {
+                    actionButtons
+                }
                 mentorSlotsContent
                 Spacer(minLength: 0)
             }
@@ -158,11 +162,14 @@ public struct RiderCardView: View {
         .disabled(viewModel.isLoading)
     }
 
+    @ViewBuilder
     private var messageButton: some View {
-        Button(PlacesStrings.messageButton.localized) {
-            onMessageTap(viewData.userId, viewData.displayName)
+        if let userId = viewData.userId {
+            Button(PlacesStrings.messageButton.localized) {
+                onMessageTap(userId, viewData.displayName)
+            }
+            .buttonStyle(.dsGhost)
         }
-        .buttonStyle(.dsGhost)
     }
 
     // MARK: - Mentor Slots
