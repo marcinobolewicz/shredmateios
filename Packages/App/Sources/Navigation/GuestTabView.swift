@@ -48,6 +48,7 @@ struct GuestTabView: View {
                 }
                 .tag(GuestTab.login)
         }
+        .tint(theme.colors.primary)
         .onChange(of: selectedTab) { _, tab in
             if tab == .login {
                 onLoginTap()

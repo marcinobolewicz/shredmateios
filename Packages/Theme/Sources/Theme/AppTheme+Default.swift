@@ -18,7 +18,10 @@ extension AppTheme {
     public static let `default` = AppTheme(
         colors: ColorTokens(
             // Brand
-            primary: Color(.systemBlue),
+            primary: Color(
+                light: Color(red: 0.40, green: 0.30, blue: 0.75),
+                dark: Color(red: 0.65, green: 0.55, blue: 0.95)
+            ),
             primaryForeground: .white,
             accent: Color(red: 0.47, green: 0.32, blue: 0.91),
             accentForeground: .white,
@@ -45,7 +48,10 @@ extension AppTheme {
 
             // Border
             border: Color(.separator),
-            borderFocused: Color(.systemBlue)
+            borderFocused: Color(
+                light: Color(red: 0.40, green: 0.30, blue: 0.75),
+                dark: Color(red: 0.65, green: 0.55, blue: 0.95)
+            )
         )
     )
 }

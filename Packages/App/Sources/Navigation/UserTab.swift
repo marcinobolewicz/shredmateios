@@ -63,6 +63,7 @@ struct UserTabView: View {
             .tabItem { Label(AppStrings.userTabProfile.localized, systemImage: "person") }
             .tag(UserTab.profile)
         }
+        .tint(theme.colors.primary)
     }
 
     private func openChat(userId: UUID, displayName: String) {
