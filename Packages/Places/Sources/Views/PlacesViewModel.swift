@@ -83,7 +83,9 @@ public final class PlacesViewModel {
                 try Task.checkCancellation()
 
                 self.allPlaces = places
-                self.availableTags = Self.extractTags(from: places)
+                withAnimation(.easeInOut) {
+                    self.availableTags = Self.extractTags(from: places)
+                }
                 self.applyFilters()
                 self.state = .loaded
             } catch is CancellationError {
@@ -95,7 +97,7 @@ public final class PlacesViewModel {
     }
 
     func selectSport(_ sport: PlaceSport) {
-        selectedSport = sport
+        selectedSport = selectedSport == sport ? nil : sport
         selectedTagIds.removeAll()
         load()
     }

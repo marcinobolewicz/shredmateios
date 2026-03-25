@@ -108,7 +108,7 @@ public struct PlacesView: View {
 
     @ViewBuilder
     private var tagChips: some View {
-        if !viewModel.availableTags.isEmpty {
+        if viewModel.selectedSport != nil, !viewModel.availableTags.isEmpty {
             chipRow {
                 ForEach(viewModel.availableTags) { tag in
                     DSChip(
@@ -121,6 +121,7 @@ public struct PlacesView: View {
                     }
                 }
             }
+            .transition(.opacity.combined(with: .move(edge: .top)))
         }
     }
 
