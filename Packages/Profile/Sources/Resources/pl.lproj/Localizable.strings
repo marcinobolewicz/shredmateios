@@ -124,6 +124,11 @@
 "profile.generate_validation_time" = "Godzina końca musi być po godzinie startu";
 "profile.generate_validation_price" = "Cena musi być większa niż 0";
 
+/* Poziomy umiejętności */
+"profile.skill_level_casual" = "Rekreacyjny";
+"profile.skill_level_intermediate" = "Średniozaawansowany";
+"profile.skill_level_pro" = "Profesjonalny";
+
 /* Zameldowanie */
 "profile.section_check_in" = "Aktualne zameldowanie";
 "profile.checked_in_as_format" = "Zameldowany jako %@";

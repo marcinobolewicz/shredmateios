@@ -218,7 +218,7 @@ private struct SportRow: View {
             VStack(alignment: .leading, spacing: 12) {
                 Picker(ProfileStrings.levelPickerTitle.localized, selection: $selectedLevel) {
                     ForEach(SkillLevel.allCases, id: \.self) { level in
-                        Text(level.displayName).tag(level)
+                        Text(level.localizedName).tag(level)
                     }
                 }
                 .pickerStyle(.segmented)
@@ -255,7 +255,7 @@ private struct SportRow: View {
                 Spacer()
 
                 if let rs = riderSport {
-                    Text(rs.level.displayName)
+                    Text(rs.level.localizedName)
                         .font(.caption)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)

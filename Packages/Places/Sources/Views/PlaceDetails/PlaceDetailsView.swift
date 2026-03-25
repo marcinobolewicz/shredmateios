@@ -155,35 +155,158 @@ public struct PlaceDetailsView: View {
     @ViewBuilder
     private var checkInSection: some View {
         if authState.isLoggedIn {
-            VStack(spacing: theme.spacing.sm) {
+            VStack(spacing: theme.spacing.md) {
                 if viewModel.hasJoined {
-                    HStack(spacing: theme.spacing.xs) {
-                        Image(systemName: "checkmark.circle.fill")
-                            .foregroundStyle(theme.colors.primary)
-                        Text(PlacesStrings.checkedInAs(
-                            viewModel.joinedRole?.displayName ?? ""
-                        ))
-                        .dsTextStyle(.subheadline)
-                    }
+                    checkedInCard
                 } else {
-                    Button {
-                        viewModel.showRolePicker = true
-                    } label: {
-                        HStack(spacing: theme.spacing.xs) {
-                            if viewModel.isJoining {
-                                ProgressView().controlSize(.small)
-                            }
-                            Image(systemName: "mappin.and.ellipse")
-                            Text(PlacesStrings.checkInButton.localized)
-                        }
-                    }
-                    .buttonStyle(.dsOutline)
-                    .disabled(viewModel.isJoining)
+                    checkInCard
                 }
             }
             .padding(.horizontal, theme.spacing.md)
-            .padding(.vertical, theme.spacing.sm)
+            .padding(.top, theme.spacing.md)
         }
+    }
+    
+    private var checkedInCard: some View {
+        VStack(alignment: .leading, spacing: theme.spacing.md) {
+            HStack(spacing: theme.spacing.sm) {
+                ZStack {
+                    Circle()
+                        .fill(Color.green.opacity(0.14))
+                        .frame(width: 44, height: 44)
+
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundStyle(Color.green)
+                        .font(.system(size: 20, weight: .semibold))
+                }
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Jesteś checked-in")
+                        .dsTextStyle(.heading)
+
+                    Text("Rola: \(viewModel.joinedRole?.displayName ?? "—")")
+                        .dsTextStyle(.subheadline)
+                        .foregroundStyle(theme.colors.textSecondary)
+                }
+
+                Spacer()
+            }
+
+            HStack(spacing: theme.spacing.sm) {
+                Button {
+                    viewModel.showRolePicker = true
+                } label: {
+                    Text("Zmień rolę")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.dsOutline)
+
+                Button(role: .destructive) {
+                    // przyszłościowo: Task { await viewModel.checkOut() }
+                } label: {
+                    Text("Check out")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
+            }
+        }
+        .padding(theme.spacing.md)
+        .background(Color.green.opacity(0.06))
+        .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                .stroke(Color.green.opacity(0.22), lineWidth: 1)
+        )
+    }
+    
+    private var checkInCard: some View {
+        VStack(alignment: .leading, spacing: theme.spacing.md) {
+            HStack(alignment: .top, spacing: theme.spacing.sm) {
+                ZStack {
+                    Circle()
+                        .fill(theme.colors.primary.opacity(0.12))
+                        .frame(width: 44, height: 44)
+
+                    Image(systemName: "mappin.and.ellipse")
+                        .foregroundStyle(theme.colors.primary)
+                        .font(.system(size: 18, weight: .semibold))
+                }
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Dołącz do spotu")
+                        .dsTextStyle(.heading)
+
+                    Text("Daj znać innym, że jesteś na miejscu jako Rider albo Mentor.")
+                        .dsTextStyle(.subheadline)
+                        .foregroundStyle(theme.colors.textSecondary)
+                }
+
+                Spacer()
+            }
+
+            HStack(spacing: theme.spacing.sm) {
+                spotStatPill(
+                    icon: "figure.outdoor.cycle",
+                    text: "\(viewModel.ridersCount) rider\(viewModel.ridersCount == 1 ? "" : "ów")"
+                )
+
+                spotStatPill(
+                    icon: "person.badge.shield.checkmark",
+                    text: "\(viewModel.mentorsCount) mentor\(viewModel.mentorsCount == 1 ? "" : "ów")"
+                )
+            }
+
+            Button {
+                viewModel.showRolePicker = true
+            } label: {
+                HStack(spacing: theme.spacing.sm) {
+                    if viewModel.isJoining {
+                        ProgressView()
+                            .controlSize(.small)
+                            .tint(.white)
+                    }
+
+                    Text("Check in")
+                        .fontWeight(.semibold)
+
+                    Spacer()
+
+                    Image(systemName: "arrow.right")
+                        .font(.system(size: 14, weight: .semibold))
+                }
+                .foregroundStyle(Color.white)
+                .padding(.horizontal, theme.spacing.md)
+                .padding(.vertical, theme.spacing.md)
+                .frame(maxWidth: .infinity)
+                .background(theme.colors.primary)
+                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+            }
+            .buttonStyle(.plain)
+            .disabled(viewModel.isJoining)
+        }
+        .padding(theme.spacing.md)
+        .background(theme.colors.surface)
+        .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                .stroke(theme.colors.border.opacity(0.5), lineWidth: 1)
+        )
+        .shadow(color: .black.opacity(0.04), radius: 12, y: 4)
+    }
+    
+    private func spotStatPill(icon: String, text: String) -> some View {
+        HStack(spacing: 6) {
+            Image(systemName: icon)
+                .font(.system(size: 12, weight: .medium))
+            Text(text)
+                .font(.footnote)
+                .fontWeight(.medium)
+        }
+        .foregroundStyle(theme.colors.textSecondary)
+        .padding(.horizontal, 10)
+        .padding(.vertical, 8)
+        .background(theme.colors.surfaceSecondary)
+        .clipShape(Capsule())
     }
 
     // MARK: - Hero
@@ -222,15 +345,18 @@ public struct PlaceDetailsView: View {
     }
 
     private var heroInfo: some View {
-        VStack(spacing: theme.spacing.sm) {
+        VStack(
+            alignment: .leading,
+            spacing: theme.spacing.sm
+        ) {
             sportFiltersSection
             placeTagsSection
 
             if !viewData.description.isEmpty {
                 Text(viewData.description)
                     .dsTextStyle(.subheadline)
-                    .multilineTextAlignment(.center)
                     .padding(.horizontal, theme.spacing.lg)
+                    .multilineTextAlignment(.leading)
             }
         }
         .frame(maxWidth: .infinity)

@@ -124,6 +124,11 @@
 "profile.generate_validation_time" = "End time must be after start time";
 "profile.generate_validation_price" = "Price must be greater than 0";
 
+/* Skill Levels */
+"profile.skill_level_casual" = "Casual";
+"profile.skill_level_intermediate" = "Intermediate";
+"profile.skill_level_pro" = "Pro";
+
 /* Check-In */
 "profile.section_check_in" = "Current Check-In";
 "profile.checked_in_as_format" = "Checked in as %@";

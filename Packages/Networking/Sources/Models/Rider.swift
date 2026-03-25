@@ -171,14 +171,6 @@ public enum SkillLevel: String, Codable, Sendable, CaseIterable {
     case casual = "CASUAL"
     case intermediate = "INTERMEDIATE"
     case pro = "PRO"
-
-    public var displayName: String {
-        switch self {
-        case .casual: return "Rekreacyjny"
-        case .intermediate: return "Średniozaawansowany"
-        case .pro: return "Profesjonalny"
-        }
-    }
 }
 
 /// Rider's sport with level and mentor status

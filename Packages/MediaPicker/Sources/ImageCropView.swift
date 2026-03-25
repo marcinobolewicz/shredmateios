@@ -121,7 +121,7 @@ struct ImageCropView: View {
             let rect = computeCropRectInImagePixels(geo: geo, cropWin: cropWin)
             onConfirm(rect)
         } label: {
-            Text("Use Photo")
+            Text(MediaPickerStrings.usePhotoButton.localized)
                 .font(.headline)
                 .foregroundStyle(.black)
                 .frame(maxWidth: .infinity)

@@ -140,6 +140,11 @@ enum ProfileStrings: String {
     case generateValidationTime = "profile.generate_validation_time"
     case generateValidationPrice = "profile.generate_validation_price"
 
+    // MARK: - Skill Levels
+    case skillLevelCasual = "profile.skill_level_casual"
+    case skillLevelIntermediate = "profile.skill_level_intermediate"
+    case skillLevelPro = "profile.skill_level_pro"
+
     // MARK: - Check-In
     case sectionCheckIn = "profile.section_check_in"
     case checkedInAsFormat = "profile.checked_in_as_format"
@@ -198,5 +203,17 @@ enum ProfileStrings: String {
 
     static func generateSuccessResult(_ generated: Int) -> String {
         String(format: NSLocalizedString(ProfileStrings.generateSuccessResultFormat.rawValue, bundle: .module, comment: ""), generated)
+    }
+}
+
+import Networking
+
+extension SkillLevel {
+    var localizedName: String {
+        switch self {
+        case .casual: return ProfileStrings.skillLevelCasual.localized
+        case .intermediate: return ProfileStrings.skillLevelIntermediate.localized
+        case .pro: return ProfileStrings.skillLevelPro.localized
+        }
     }
 }

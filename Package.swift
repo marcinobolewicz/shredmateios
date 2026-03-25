@@ -31,6 +31,9 @@ let package = Package(
         .target(
             name: "MediaPicker",
             path: "Packages/MediaPicker/Sources",
+            resources: [
+                .process("Resources")
+            ],
             swiftSettings: [
                 .enableUpcomingFeature("StrictConcurrency")
             ]
