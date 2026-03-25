@@ -1,0 +1,129 @@
+import Foundation
+import Networking
+import Common
+
+enum MySlotFilter: String, CaseIterable, Sendable {
+    case all
+    case available
+    case booked
+
+    var label: String {
+        switch self {
+        case .all: return ProfileStrings.slotFilterAll.localized
+        case .available: return ProfileStrings.statusAvailable.localized
+        case .booked: return ProfileStrings.statusBooked.localized
+        }
+    }
+}
+
+struct MySlotDayGroup: Identifiable, Equatable {
+    let id: String // date key "2026-03-28"
+    let dayHeader: String
+    let slots: [MentorSlot]
+}
+
+@MainActor
+@Observable
+final class MySlotsViewModel {
+
+    private(set) var allSlots: [MentorSlot] = []
+    private(set) var state: LoadState = .idle
+
+    var filter: MySlotFilter = .all
+
+    var selectedSlot: MentorSlot?
+    var showDeleteConfirmation = false
+    var actionError: AppError?
+
+    private let service: MentorSlotsServiceProtocol
+
+    init(service: MentorSlotsServiceProtocol) {
+        self.service = service
+    }
+
+    // MARK: - Computed
+
+    var dayGroups: [MySlotDayGroup] {
+        let filtered = filteredSlots
+        let grouped = Dictionary(grouping: filtered) { dayKey($0.startTime) }
+        return grouped.keys.sorted().compactMap { key in
+            guard let slots = grouped[key] else { return nil }
+            return MySlotDayGroup(
+                id: key,
+                dayHeader: formatDayHeader(key),
+                slots: slots.sorted { $0.startTime < $1.startTime }
+            )
+        }
+    }
+
+    var isEmpty: Bool { filteredSlots.isEmpty }
+
+    private var filteredSlots: [MentorSlot] {
+        switch filter {
+        case .all: return allSlots
+        case .available: return allSlots.filter { $0.status == .available }
+        case .booked: return allSlots.filter { $0.status == .booked }
+        }
+    }
+
+    // MARK: - Actions
+
+    func loadOnAppear() {
+        guard state == .idle else { return }
+        Task { await load() }
+    }
+
+    func refresh() {
+        Task { await load() }
+    }
+
+    func deleteTapped(_ slot: MentorSlot) {
+        guard slot.status == .available else { return }
+        selectedSlot = slot
+        showDeleteConfirmation = true
+    }
+
+    func confirmDelete() async {
+        guard let slot = selectedSlot else { return }
+        do {
+            try await service.deleteSlot(id: slot.id)
+            await load()
+        } catch {
+            actionError = .from(error)
+        }
+        selectedSlot = nil
+    }
+
+    func dismissAction() {
+        selectedSlot = nil
+        showDeleteConfirmation = false
+    }
+
+    // MARK: - Private
+
+    private func load() async {
+        state = .loading
+        do {
+            let response = try await service.fetchMySlots()
+            allSlots = response.items
+            state = .loaded
+        } catch {
+            state = .failed(.from(error))
+        }
+    }
+
+    private func dayKey(_ isoString: String) -> String {
+        String(isoString.prefix(10))
+    }
+
+    private func formatDayHeader(_ dateString: String) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        formatter.locale = Locale.current
+        guard let date = formatter.date(from: dateString) else { return dateString }
+        let display = DateFormatter()
+        display.locale = Locale.current
+        display.setLocalizedDateFormatFromTemplate("EEEEddMMMM")
+        return display.string(from: date).localizedCapitalized
+    }
+}

@@ -1,5 +1,5 @@
 import SwiftUI
-import PhotosUI
+import MediaPicker
 import Networking
 import Places
 
@@ -7,7 +7,7 @@ struct CreatePostView: View {
 
     @State private var viewModel: CreatePostViewModel
     @State private var isPlacePickerPresented = false
-    @State private var selectedPhotoItem: PhotosPickerItem?
+    @State private var isPhotoCropPickerPresented = false
 
     let placesService: any PlacesServiceProtocol
 
@@ -62,10 +62,8 @@ struct CreatePostView: View {
                 }
             )
         }
-        .onChange(of: selectedPhotoItem) { _, newItem in
-            guard let newItem else { return }
-            Task {
-                guard let data = try? await newItem.loadTransferable(type: Data.self) else { return }
+        .imageCropPicker(isPresented: $isPhotoCropPickerPresented) { result in
+            if case .success(let data) = result {
                 viewModel.photoSelected(data)
             }
         }
@@ -100,11 +98,9 @@ struct CreatePostView: View {
                let uiImage = UIImage(data: photoData) {
                 photoPreview(uiImage)
             } else {
-                PhotosPicker(
-                    selection: $selectedPhotoItem,
-                    matching: .images,
-                    photoLibrary: .shared()
-                ) {
+                Button {
+                    isPhotoCropPickerPresented = true
+                } label: {
                     Label(FeedStrings.addPhoto.localized, systemImage: "photo")
                 }
             }
@@ -129,11 +125,9 @@ struct CreatePostView: View {
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 } else {
-                    PhotosPicker(
-                        selection: $selectedPhotoItem,
-                        matching: .images,
-                        photoLibrary: .shared()
-                    ) {
+                    Button {
+                        isPhotoCropPickerPresented = true
+                    } label: {
                         Text(FeedStrings.changePhoto.localized)
                             .font(.subheadline)
                     }
@@ -142,7 +136,7 @@ struct CreatePostView: View {
                 Spacer()
 
                 Button(FeedStrings.removePhoto.localized, role: .destructive) {
-                    selectedPhotoItem = nil
+                    isPhotoCropPickerPresented = false
                     viewModel.removePhoto()
                 }
                 .font(.subheadline)

@@ -21,7 +21,7 @@ public final class FollowRepository {
     // MARK: - Load
 
     public func loadIfNeeded() async {
-        guard !isLoaded, let riderId = authState.rider?.id else { return }
+        guard !isLoaded, let riderId = authState.rider?.id.uuidString else { return }
         do {
             let riders = try await riderService.fetchFollowing(riderId: riderId)
             followedRiderIds = Set(riders.map(\.id))

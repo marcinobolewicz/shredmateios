@@ -25,8 +25,8 @@ private struct TagPillModifier: ViewModifier {
         content
             .font(.caption.weight(.semibold))
             .foregroundStyle(Color.black.opacity(0.65))
-            .padding(.horizontal, theme.spacing.xs + 2)
-            .padding(.vertical, theme.spacing.xxs + 2)
+            .padding(.horizontal, theme.spacing.md)
+            .padding(.vertical, theme.spacing.xs)
             .background(
                 Capsule().fill(Self.palette[index % Self.palette.count])
             )

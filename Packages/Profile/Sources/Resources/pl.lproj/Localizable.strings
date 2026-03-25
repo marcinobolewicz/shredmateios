@@ -1,4 +1,5 @@
 "profile.navigation_title" = "Profil";
+"profile.edit_rider_title" = "Edytuj Ridera";
 "profile.success_alert_title" = "Sukces";
 "profile.delete_account_dialog_title" = "Usuń konto";
 "profile.delete_account_button" = "Usuń konto";
@@ -57,6 +58,76 @@
 "profile.my_posts_empty" = "Brak postów";
 "profile.my_posts_empty_description" = "Twoje zameldowania i posty pojawią się tutaj.";
 "profile.my_posts_failed" = "Nie udało się wczytać postów";
+
+/* Moje rezerwacje */
+"profile.section_my_bookings" = "Moje rezerwacje";
+"profile.my_bookings_title" = "Moje rezerwacje";
+"profile.my_bookings_empty" = "Brak rezerwacji";
+"profile.my_bookings_empty_description" = "Twoje zarezerwowane sesje z mentorem pojawią się tutaj.";
+"profile.my_bookings_failed" = "Nie udało się wczytać rezerwacji";
+
+"profile.status_booked" = "Zarezerwowane";
+"profile.status_completed" = "Zakończone";
+"profile.status_cancelled" = "Anulowane";
+"profile.status_available" = "Dostępne";
+
+"profile.booking_cancel_title" = "Anulować rezerwację?";
+"profile.booking_cancel_confirm" = "Anuluj rezerwację";
+"profile.booking_cancel_button" = "Anuluj rezerwację";
+"profile.booking_too_late_to_cancel" = "Zbyt późno na anulowanie (mniej niż 2h przed startem)";
+"profile.booking_confirm_session" = "Potwierdź sesję";
+"profile.booking_complete_title" = "Jak minęła sesja?";
+"profile.booking_complete_message_format" = "Jak minęła sesja z %@?";
+"profile.booking_recommend" = "Polecam mentora";
+"profile.booking_no_recommend" = "Bez rekomendacji";
+"profile.booking_recommended" = "Polecono";
+
+/* Moje posty */
+"profile.delete_post" = "Usuń post";
+"profile.ok" = "OK";
+
+/* Moje sloty (Mentor) */
+"profile.section_my_slots" = "Moje sloty";
+"profile.my_slots_title" = "Moje sloty";
+"profile.my_slots_empty" = "Brak slotów";
+"profile.my_slots_empty_description" = "Twoje sloty sesji mentorskich pojawią się tutaj.";
+"profile.my_slots_failed" = "Nie udało się wczytać slotów";
+"profile.slot_filter_all" = "Wszystkie";
+"profile.slot_delete_title" = "Usunąć slot?";
+"profile.slot_delete_confirm" = "Usuń";
+"profile.slot_delete_button" = "Usuń slot";
+
+/* Profil mentora / Generowanie slotów */
+"profile.section_mentor_profile" = "Profil mentora";
+"profile.generate_slots_title" = "Dodaj sloty";
+"profile.generate_sport_label" = "Sport";
+"profile.generate_sport_placeholder" = "Wybierz sport...";
+"profile.generate_place_label" = "Spot (opcjonalnie)";
+"profile.generate_place_placeholder" = "Brak / dowolny";
+"profile.generate_date_range_label" = "Zakres dat";
+"profile.preset_this_week" = "Ten tydzień";
+"profile.preset_next_week" = "Następny tydzień";
+"profile.preset_this_and_next" = "Ten i następny";
+"profile.generate_weekdays_label" = "Dni tygodnia";
+"profile.generate_workdays" = "Dni robocze";
+"profile.generate_all_days" = "Cały tydzień";
+"profile.generate_time_label" = "Godziny";
+"profile.generate_duration_label" = "Czas trwania";
+"profile.generate_price_label" = "Cena za sesję";
+"profile.generate_slots_button" = "Wygeneruj sloty";
+"profile.generate_result_title" = "Sloty wygenerowane";
+"profile.generate_all_skipped" = "Wszystkie sloty już istnieją w tym przedziale.";
+"profile.generate_partial_result_format" = "Wygenerowano %d slotów. Pominięto %d (konflikt z istniejącymi).";
+"profile.generate_success_result_format" = "Wygenerowano %d slotów.";
+"profile.generate_validation_sport" = "Wybierz sport";
+"profile.generate_validation_weekdays" = "Wybierz co najmniej jeden dzień";
+"profile.generate_validation_time" = "Godzina końca musi być po godzinie startu";
+"profile.generate_validation_price" = "Cena musi być większa niż 0";
+
+/* Poziomy umiejętności */
+"profile.skill_level_casual" = "Rekreacyjny";
+"profile.skill_level_intermediate" = "Średniozaawansowany";
+"profile.skill_level_pro" = "Profesjonalny";
 
 /* Zameldowanie */
 "profile.section_check_in" = "Aktualne zameldowanie";

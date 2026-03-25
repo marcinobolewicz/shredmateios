@@ -18,6 +18,7 @@ let package = Package(
         .library(name: "Places", targets: ["Places"]),
         .library(name: "Conversations", targets: ["Conversations"]),
         .library(name: "Feed", targets: ["Feed"]),
+        .library(name: "MediaPicker", targets: ["MediaPicker"]),
         .library(name: "Theme", targets: ["Theme"])
     ],
     dependencies: [
@@ -26,6 +27,23 @@ let package = Package(
         .package(url: "https://github.com/kean/Pulse.git", from: "5.0.0")
     ],
     targets: [
+        // MediaPicker Package
+        .target(
+            name: "MediaPicker",
+            path: "Packages/MediaPicker/Sources",
+            resources: [
+                .process("Resources")
+            ],
+            swiftSettings: [
+                .enableUpcomingFeature("StrictConcurrency")
+            ]
+        ),
+        .testTarget(
+            name: "MediaPickerTests",
+            dependencies: ["MediaPicker"],
+            path: "Packages/MediaPicker/Tests"
+        ),
+
         // Theme Package
         .target(
             name: "Theme",
@@ -122,7 +140,7 @@ let package = Package(
         // Feed Package
         .target(
             name: "Feed",
-            dependencies: ["Networking", "Common", "Places", "Theme"],
+            dependencies: ["Networking", "Common", "Places", "Theme", "MediaPicker"],
             path: "Packages/Feed/Sources",
             resources: [
                 .process("Resources")
@@ -164,7 +182,7 @@ let package = Package(
         // Profile Package
         .target(
             name: "Profile",
-            dependencies: ["Core", "Networking", "Common", "Theme"],
+            dependencies: ["Core", "Networking", "Common", "Theme", "MediaPicker"],
             path: "Packages/Profile/Sources",
             resources: [
                 .process("Resources")

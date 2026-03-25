@@ -10,11 +10,12 @@ private let logger = Logger(subsystem: "com.shredmate.auth", category: "AuthStat
 public final class AuthState {
     
     // MARK: - Published State
-    
+
     public private(set) var user: User?
     public private(set) var rider: Rider?
     public private(set) var isLoading = false
     public private(set) var error: AuthError?
+    public var sessionExpired = false
     
     public var isLoggedIn: Bool { user != nil }
     
@@ -168,16 +169,23 @@ public final class AuthState {
     public func deleteAccount() async throws {
         await pushDeviceService?.unregisterCurrentDeviceIfNeeded()
         try await riderService.deleteMyAccount()
-        await handleSessionInvalidation()
-    }
-    
-    // MARK: - Session Management
-    
-    public func handleSessionInvalidation() async {
         try? await tokenStorage.clearAll()
         user = nil
         rider = nil
         error = nil
+    }
+    
+    // MARK: - Session Management
+
+    public func handleSessionInvalidation() async {
+        let wasLoggedIn = isLoggedIn
+        try? await tokenStorage.clearAll()
+        user = nil
+        rider = nil
+        error = nil
+        if wasLoggedIn {
+            sessionExpired = true
+        }
     }
     
     public func clearError() {

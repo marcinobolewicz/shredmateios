@@ -27,6 +27,7 @@ public struct PlacesView: View {
         VStack(spacing: 0) {
             headerSection
             sportChips
+            tagChips
             contentSection
         }
         .task { viewModel.loadOnAppear() }
@@ -38,7 +39,7 @@ public struct PlacesView: View {
             displayModePicker
             DSSearchBar(PlacesStrings.searchPlaceholder.localized, text: $viewModel.searchText)
                 .onChange(of: viewModel.searchText) { _, _ in
-                    viewModel.load(force: true)
+                    viewModel.applyFilters()
                 }
         }
         .padding(.horizontal, theme.spacing.md)
@@ -63,7 +64,7 @@ public struct PlacesView: View {
                                 : theme.colors.textPrimary
                         )
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, theme.spacing.xs)
+                        .padding(.vertical, theme.spacing.xs + Constants.Spacing.xxs)
                         .background(
                             Capsule()
                                 .fill(
@@ -91,19 +92,42 @@ public struct PlacesView: View {
     }
 
     private var sportChips: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: theme.spacing.xs) {
-                ForEach(viewModel.sports) { sport in
+        chipRow {
+            ForEach(viewModel.sports) { sport in
+                DSChip(
+                    title: sport.slug,
+                    isSelected: viewModel.selectedSport == sport
+                ) {
+                    withAnimation(.snappy(duration: Constants.Animation.chipDuration)) {
+                        viewModel.selectSport(sport)
+                    }
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var tagChips: some View {
+        if !viewModel.availableTags.isEmpty {
+            chipRow {
+                ForEach(viewModel.availableTags) { tag in
                     DSChip(
-//                        TODO: localizable sport
-                        title: sport.slug,
-                        isSelected: viewModel.selectedSport == sport
+                        title: tag.name,
+                        isSelected: viewModel.selectedTagIds.contains(tag.id)
                     ) {
                         withAnimation(.snappy(duration: Constants.Animation.chipDuration)) {
-                            viewModel.selectSport(sport)
+                            viewModel.toggleTag(tag.id)
                         }
                     }
                 }
+            }
+        }
+    }
+
+    private func chipRow<Content: View>(@ViewBuilder content: () -> Content) -> some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: theme.spacing.xs) {
+                content()
             }
             .padding(.horizontal, theme.spacing.md)
             .padding(.vertical, theme.spacing.xs)

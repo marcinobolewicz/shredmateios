@@ -1,6 +1,7 @@
 import SwiftUI
 import Networking
 import Login
+import Common
 import Conversations
 #if DEBUG
 import PulseUI
@@ -73,6 +74,14 @@ public struct RootView: View {
                 disconnectChat()
                 followRepository.reset()
             }
+        }
+        .alert(
+            CommonStrings.sessionExpiredTitle.localized,
+            isPresented: Bindable(authState).sessionExpired
+        ) {
+            Button(CommonStrings.okButton.localized) {}
+        } message: {
+            Text(CommonStrings.sessionExpiredMessage.localized)
         }
         .environment(router)
     }

@@ -12,14 +12,15 @@ struct PlaceRiderRowPresenter: Sendable {
         }
 
         return PlaceRiderRowViewData(
-            id: entry.id,
+            id: entry.rider.id,
             riderId: entry.rider.id,
             userId: entry.rider.userId,
             displayName: name,
             avatarInitials: initials(from: name),
             avatarURL: entry.rider.avatarUrl.flatMap(URL.init(string:)),
             subtitle: parts.joined(separator: " • "),
-            hasHomeLocation: entry.rider.baseLocation != nil
+            hasHomeLocation: entry.rider.baseLocation != nil,
+            isMentor: entry.role == .mentor
         )
     }
 

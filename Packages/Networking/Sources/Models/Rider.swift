@@ -17,7 +17,7 @@ public enum RiderType: String, Codable, Sendable, CaseIterable {
 
 /// Rider profile model
 public struct Rider: Codable, Sendable, Equatable, Identifiable {
-    public let id: String
+    public let id: UUID
     public let userId: String
     public let type: RiderType?
     public let displayName: String?
@@ -28,7 +28,7 @@ public struct Rider: Codable, Sendable, Equatable, Identifiable {
     public let updatedAt: Date?
     
     public init(
-        id: String,
+        id: UUID,
         userId: String,
         type: RiderType? = nil,
         displayName: String? = nil,
@@ -141,7 +141,7 @@ struct BaseLocationDTO: Encodable, Sendable {
 // MARK: - Sports
 
 /// Sport definition
-public struct Sport: Codable, Sendable, Equatable, Identifiable {
+public struct Sport: Codable, Sendable, Equatable, Identifiable, Hashable {
     public let id: UUID
     public let name: String
     public let slug: String
@@ -168,19 +168,9 @@ public struct Sport: Codable, Sendable, Equatable, Identifiable {
 
 /// Skill level for a sport
 public enum SkillLevel: String, Codable, Sendable, CaseIterable {
-    case beginner = "BEGINNER"
+    case casual = "CASUAL"
     case intermediate = "INTERMEDIATE"
-    case advanced = "ADVANCED"
-    case expert = "EXPERT"
-    
-    public var displayName: String {
-        switch self {
-        case .beginner: return "Beginner"
-        case .intermediate: return "Intermediate"
-        case .advanced: return "Advanced"
-        case .expert: return "Expert"
-        }
-    }
+    case pro = "PRO"
 }
 
 /// Rider's sport with level and mentor status
@@ -190,7 +180,7 @@ public struct RiderSport: Codable, Sendable, Equatable, Identifiable {
     public let sport: Sport?
     public let level: SkillLevel
     public let isMentor: Bool
-    
+
     public init(
         id: String,
         sportId: String,
@@ -203,6 +193,15 @@ public struct RiderSport: Codable, Sendable, Equatable, Identifiable {
         self.sport = sport
         self.level = level
         self.isMentor = isMentor
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.sportId = try container.decode(String.self, forKey: .sportId)
+        self.id = try container.decodeIfPresent(String.self, forKey: .id) ?? sportId
+        self.sport = try container.decodeIfPresent(Sport.self, forKey: .sport)
+        self.level = try container.decode(SkillLevel.self, forKey: .level)
+        self.isMentor = try container.decodeIfPresent(Bool.self, forKey: .isMentor) ?? false
     }
 }
 
@@ -228,4 +227,23 @@ public struct FollowedRider: Decodable, Sendable, Identifiable {
     public let id: String
     public let displayName: String?
     public let avatarUrl: String?
+
+    private enum WrapperKeys: String, CodingKey { case following }
+    private enum RiderKeys: String, CodingKey { case id, displayName, avatarUrl }
+
+    public init(from decoder: Decoder) throws {
+        // API wraps each entry: { "following": { "id", "displayName", "avatarUrl" } }
+        if let wrapper = try? decoder.container(keyedBy: WrapperKeys.self),
+           wrapper.contains(.following) {
+            let nested = try wrapper.nestedContainer(keyedBy: RiderKeys.self, forKey: .following)
+            self.id = try nested.decode(String.self, forKey: .id)
+            self.displayName = try nested.decodeIfPresent(String.self, forKey: .displayName)
+            self.avatarUrl = try nested.decodeIfPresent(String.self, forKey: .avatarUrl)
+        } else {
+            let container = try decoder.container(keyedBy: RiderKeys.self)
+            self.id = try container.decode(String.self, forKey: .id)
+            self.displayName = try container.decodeIfPresent(String.self, forKey: .displayName)
+            self.avatarUrl = try container.decodeIfPresent(String.self, forKey: .avatarUrl)
+        }
+    }
 }

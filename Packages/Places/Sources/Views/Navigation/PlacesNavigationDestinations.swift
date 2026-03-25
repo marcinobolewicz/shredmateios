@@ -11,6 +11,8 @@ import Foundation
 
 public struct PlacesNavigationDestinations: ViewModifier {
     let placesService: PlacesServiceProtocol
+    let riderService: RiderServiceProtocol
+    let mentorSlotsService: MentorSlotsServiceProtocol
     let onOpenChat: (_ userId: UUID, _ displayName: String) -> Void
     @Environment(AuthState.self) private var authState
     @Environment(FollowRepository.self) private var followRepository
@@ -32,9 +34,10 @@ public struct PlacesNavigationDestinations: ViewModifier {
                 authState: authState
             )
         case .riderCard(let viewData):
-            RiderCardView(
-                viewData: viewData,
-                followRepository: followRepository,
+            RiderDetailLoadingView(
+                partialViewData: viewData,
+                riderService: riderService,
+                mentorSlotsService: mentorSlotsService,
                 onMessageTap: onOpenChat
             )
         }
@@ -44,11 +47,15 @@ public struct PlacesNavigationDestinations: ViewModifier {
 public extension View {
     func placesDestinations(
         placesService: PlacesServiceProtocol,
+        riderService: RiderServiceProtocol,
+        mentorSlotsService: MentorSlotsServiceProtocol,
         onOpenChat: @escaping (_ userId: UUID, _ displayName: String) -> Void = { _, _ in }
     ) -> some View {
         modifier(
             PlacesNavigationDestinations(
                 placesService: placesService,
+                riderService: riderService,
+                mentorSlotsService: mentorSlotsService,
                 onOpenChat: onOpenChat
             )
         )

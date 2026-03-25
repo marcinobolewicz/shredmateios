@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct PlaceDto: Decodable, Equatable, Sendable {
+public struct PlaceDto: Decodable, Equatable, Sendable, Identifiable, Hashable {
     public let id: UUID
     public let name: String
     public let description: String?
@@ -20,6 +20,10 @@ public struct PlaceDto: Decodable, Equatable, Sendable {
     public let tags: [PlaceTagDto]?
     public let mentorsCount: Int?
     public let ridersCount: Int?
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
 }
 
 public struct PlaceSportDto: Decodable, Equatable, Sendable {

@@ -2,6 +2,7 @@ import Foundation
 
 enum ProfileStrings: String {
     case navigationTitle = "profile.navigation_title"
+    case editRiderTitle = "profile.edit_rider_title"
 
     case successAlertTitle = "profile.success_alert_title"
 
@@ -78,6 +79,72 @@ enum ProfileStrings: String {
     case deletePost = "profile.delete_post"
     case ok = "profile.ok"
 
+    // MARK: - My Bookings
+    case sectionMyBookings = "profile.section_my_bookings"
+    case myBookingsTitle = "profile.my_bookings_title"
+    case myBookingsEmpty = "profile.my_bookings_empty"
+    case myBookingsEmptyDescription = "profile.my_bookings_empty_description"
+    case myBookingsFailed = "profile.my_bookings_failed"
+
+    case statusBooked = "profile.status_booked"
+    case statusCompleted = "profile.status_completed"
+    case statusCancelled = "profile.status_cancelled"
+    case statusAvailable = "profile.status_available"
+
+    case bookingCancelTitle = "profile.booking_cancel_title"
+    case bookingCancelConfirm = "profile.booking_cancel_confirm"
+    case bookingCancelButton = "profile.booking_cancel_button"
+    case bookingTooLateToCancel = "profile.booking_too_late_to_cancel"
+    case bookingConfirmSession = "profile.booking_confirm_session"
+    case bookingCompleteTitle = "profile.booking_complete_title"
+    case bookingCompleteMessageFormat = "profile.booking_complete_message_format"
+    case bookingRecommend = "profile.booking_recommend"
+    case bookingNoRecommend = "profile.booking_no_recommend"
+    case bookingRecommended = "profile.booking_recommended"
+
+    // MARK: - My Slots (Mentor)
+    case sectionMySlots = "profile.section_my_slots"
+    case mySlotsTitle = "profile.my_slots_title"
+    case mySlotsEmpty = "profile.my_slots_empty"
+    case mySlotsEmptyDescription = "profile.my_slots_empty_description"
+    case mySlotsFailed = "profile.my_slots_failed"
+    case slotFilterAll = "profile.slot_filter_all"
+    case slotDeleteTitle = "profile.slot_delete_title"
+    case slotDeleteConfirm = "profile.slot_delete_confirm"
+    case slotDeleteButton = "profile.slot_delete_button"
+
+    // MARK: - Mentor Profile / Generate Slots
+    case sectionMentorProfile = "profile.section_mentor_profile"
+    case generateSlotsTitle = "profile.generate_slots_title"
+    case generateSportLabel = "profile.generate_sport_label"
+    case generateSportPlaceholder = "profile.generate_sport_placeholder"
+    case generatePlaceLabel = "profile.generate_place_label"
+    case generatePlacePlaceholder = "profile.generate_place_placeholder"
+    case generateDateRangeLabel = "profile.generate_date_range_label"
+    case presetThisWeek = "profile.preset_this_week"
+    case presetNextWeek = "profile.preset_next_week"
+    case presetThisAndNext = "profile.preset_this_and_next"
+    case generateWeekdaysLabel = "profile.generate_weekdays_label"
+    case generateWorkdays = "profile.generate_workdays"
+    case generateAllDays = "profile.generate_all_days"
+    case generateTimeLabel = "profile.generate_time_label"
+    case generateDurationLabel = "profile.generate_duration_label"
+    case generatePriceLabel = "profile.generate_price_label"
+    case generateSlotsButton = "profile.generate_slots_button"
+    case generateResultTitle = "profile.generate_result_title"
+    case generateAllSkipped = "profile.generate_all_skipped"
+    case generatePartialResultFormat = "profile.generate_partial_result_format"
+    case generateSuccessResultFormat = "profile.generate_success_result_format"
+    case generateValidationSport = "profile.generate_validation_sport"
+    case generateValidationWeekdays = "profile.generate_validation_weekdays"
+    case generateValidationTime = "profile.generate_validation_time"
+    case generateValidationPrice = "profile.generate_validation_price"
+
+    // MARK: - Skill Levels
+    case skillLevelCasual = "profile.skill_level_casual"
+    case skillLevelIntermediate = "profile.skill_level_intermediate"
+    case skillLevelPro = "profile.skill_level_pro"
+
     // MARK: - Check-In
     case sectionCheckIn = "profile.section_check_in"
     case checkedInAsFormat = "profile.checked_in_as_format"
@@ -124,5 +191,29 @@ enum ProfileStrings: String {
 
     static func checkedInAs(_ role: String) -> String {
         String(format: NSLocalizedString(ProfileStrings.checkedInAsFormat.rawValue, bundle: .module, comment: ""), role)
+    }
+
+    static func bookingCompleteMessage(_ mentorName: String) -> String {
+        String(format: NSLocalizedString(ProfileStrings.bookingCompleteMessageFormat.rawValue, bundle: .module, comment: ""), mentorName)
+    }
+
+    static func generatePartialResult(_ generated: Int, _ skipped: Int) -> String {
+        String(format: NSLocalizedString(ProfileStrings.generatePartialResultFormat.rawValue, bundle: .module, comment: ""), generated, skipped)
+    }
+
+    static func generateSuccessResult(_ generated: Int) -> String {
+        String(format: NSLocalizedString(ProfileStrings.generateSuccessResultFormat.rawValue, bundle: .module, comment: ""), generated)
+    }
+}
+
+import Networking
+
+extension SkillLevel {
+    var localizedName: String {
+        switch self {
+        case .casual: return ProfileStrings.skillLevelCasual.localized
+        case .intermediate: return ProfileStrings.skillLevelIntermediate.localized
+        case .pro: return ProfileStrings.skillLevelPro.localized
+        }
     }
 }

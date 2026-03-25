@@ -3,24 +3,26 @@ import Theme
 import Networking
 
 public struct RiderCardViewData: Equatable, Hashable, Sendable, Identifiable {
-    public let id: String
+    public let id: UUID
     public let riderId: UUID
-    public let userId: UUID
+    public let userId: UUID?
     public let displayName: String
     public let avatarInitials: String
     public let avatarURL: URL?
     public let description: String
     public let hasHomeLocation: Bool
+    public let isMentor: Bool
 
     public init(
-        id: String,
+        id: UUID,
         riderId: UUID,
-        userId: UUID,
+        userId: UUID?,
         displayName: String,
         avatarInitials: String,
         avatarURL: URL?,
         description: String,
-        hasHomeLocation: Bool = false
+        hasHomeLocation: Bool = false,
+        isMentor: Bool = false
     ) {
         self.id = id
         self.riderId = riderId
@@ -30,6 +32,7 @@ public struct RiderCardViewData: Equatable, Hashable, Sendable, Identifiable {
         self.avatarURL = avatarURL
         self.description = description
         self.hasHomeLocation = hasHomeLocation
+        self.isMentor = isMentor
     }
 }
 
@@ -37,20 +40,33 @@ public struct RiderCardView: View {
     @Environment(AppTheme.self) private var theme
 
     let viewData: RiderCardViewData
+    let isOwnProfile: Bool
     let onMessageTap: (_ userId: UUID, _ displayName: String) -> Void
     @State private var viewModel: RiderCardViewModel
+    @State private var slotsViewModel: MentorSlotsViewModel?
 
     public init(
         viewData: RiderCardViewData,
         followRepository: FollowRepository,
+        mentorSlotsService: (any MentorSlotsServiceProtocol)? = nil,
+        currentRiderId: String? = nil,
         onMessageTap: @escaping (_ userId: UUID, _ displayName: String) -> Void = { _, _ in }
     ) {
         self.viewData = viewData
         self.onMessageTap = onMessageTap
+        let riderIdString = viewData.riderId.uuidString.lowercased()
+        self.isOwnProfile = currentRiderId == riderIdString
         _viewModel = State(wrappedValue: RiderCardViewModel(
-            riderId: viewData.riderId.uuidString,
+            riderId: riderIdString,
             followRepository: followRepository
         ))
+        if let service = mentorSlotsService {
+            _slotsViewModel = State(wrappedValue: MentorSlotsViewModel(
+                mentorRiderId: riderIdString,
+                currentRiderId: currentRiderId,
+                service: service
+            ))
+        }
     }
 
     public var body: some View {
@@ -58,7 +74,10 @@ public struct RiderCardView: View {
             VStack(alignment: .leading, spacing: theme.spacing.md) {
                 header
                 descriptionSection
-                actionButtons
+                if !isOwnProfile {
+                    actionButtons
+                }
+                mentorSlotsContent
                 Spacer(minLength: 0)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -70,6 +89,7 @@ public struct RiderCardView: View {
         .navigationTitle(viewData.displayName)
         .navigationBarTitleDisplayMode(.inline)
         .task { await viewModel.loadOnAppear() }
+        .task { await slotsViewModel?.loadSlots() }
     }
 
     private var header: some View {
@@ -142,10 +162,29 @@ public struct RiderCardView: View {
         .disabled(viewModel.isLoading)
     }
 
+    @ViewBuilder
     private var messageButton: some View {
-        Button(PlacesStrings.messageButton.localized) {
-            onMessageTap(viewData.userId, viewData.displayName)
+        if let userId = viewData.userId {
+            Button(PlacesStrings.messageButton.localized) {
+                onMessageTap(userId, viewData.displayName)
+            }
+            .buttonStyle(.dsGhost)
         }
-        .buttonStyle(.dsGhost)
+    }
+
+    // MARK: - Mentor Slots
+
+    @ViewBuilder
+    private var mentorSlotsContent: some View {
+        if let slotsVM = slotsViewModel {
+            if slotsVM.isLoading {
+                ProgressView()
+                    .frame(maxWidth: .infinity, minHeight: 60)
+            } else if slotsVM.hasSlots {
+                Divider()
+                    .padding(.vertical, theme.spacing.xs)
+                MentorSlotsSection(viewModel: slotsVM)
+            }
+        }
     }
 }

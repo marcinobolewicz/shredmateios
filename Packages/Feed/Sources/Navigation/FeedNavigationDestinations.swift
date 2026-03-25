@@ -7,10 +7,11 @@ struct FeedNavigationDestinations: ViewModifier {
     let feedService: any FeedServiceProtocol
     let placesService: any PlacesServiceProtocol
     let riderService: any RiderServiceProtocol
+    let mentorSlotsService: any MentorSlotsServiceProtocol
     let router: FeedRouter
+    let onOpenChat: (_ userId: UUID, _ displayName: String) -> Void
 
     @Environment(AuthState.self) private var authState
-    @Environment(FollowRepository.self) private var followRepository
 
     func body(content: Content) -> some View {
         content
@@ -54,10 +55,19 @@ struct FeedNavigationDestinations: ViewModifier {
             }
 
         case .riderDetails(let rider):
-            FeedRiderDetailView(
-                rider: rider,
+            RiderDetailLoadingView(
+                partialViewData: RiderCardViewData(
+                    id: rider.id,
+                    riderId: rider.id,
+                    userId: nil,
+                    displayName: rider.displayName,
+                    avatarInitials: rider.initials,
+                    avatarURL: rider.avatarUrl.flatMap(URL.init),
+                    description: ""
+                ),
                 riderService: riderService,
-                onMessageTap: { _, _ in }
+                mentorSlotsService: mentorSlotsService,
+                onMessageTap: onOpenChat
             )
         }
     }
@@ -72,9 +82,11 @@ struct FeedNavigationDestinations: ViewModifier {
                 authState: authState
             )
         case .riderCard(let viewData):
-            RiderCardView(
-                viewData: viewData,
-                followRepository: followRepository
+            RiderDetailLoadingView(
+                partialViewData: viewData,
+                riderService: riderService,
+                mentorSlotsService: mentorSlotsService,
+                onMessageTap: onOpenChat
             )
         }
     }
@@ -85,13 +97,17 @@ extension View {
         feedService: any FeedServiceProtocol,
         placesService: any PlacesServiceProtocol,
         riderService: any RiderServiceProtocol,
-        router: FeedRouter
+        mentorSlotsService: any MentorSlotsServiceProtocol,
+        router: FeedRouter,
+        onOpenChat: @escaping (_ userId: UUID, _ displayName: String) -> Void = { _, _ in }
     ) -> some View {
         modifier(FeedNavigationDestinations(
             feedService: feedService,
             placesService: placesService,
             riderService: riderService,
-            router: router
+            mentorSlotsService: mentorSlotsService,
+            router: router,
+            onOpenChat: onOpenChat
         ))
     }
 }

@@ -8,17 +8,23 @@ public struct FeedView: View {
     let feedService: any FeedServiceProtocol
     let placesService: any PlacesServiceProtocol
     let riderService: any RiderServiceProtocol
+    let mentorSlotsService: any MentorSlotsServiceProtocol
+    let onOpenChat: (_ userId: UUID, _ displayName: String) -> Void
     @State private var router = FeedRouter()
     @State private var viewModel: FeedViewModel
 
     public init(
         feedService: any FeedServiceProtocol,
         placesService: any PlacesServiceProtocol,
-        riderService: any RiderServiceProtocol
+        riderService: any RiderServiceProtocol,
+        mentorSlotsService: any MentorSlotsServiceProtocol,
+        onOpenChat: @escaping (_ userId: UUID, _ displayName: String) -> Void = { _, _ in }
     ) {
         self.feedService = feedService
         self.placesService = placesService
         self.riderService = riderService
+        self.mentorSlotsService = mentorSlotsService
+        self.onOpenChat = onOpenChat
         _viewModel = State(wrappedValue: FeedViewModel(feedService: feedService))
     }
 
@@ -37,7 +43,9 @@ public struct FeedView: View {
                     feedService: feedService,
                     placesService: placesService,
                     riderService: riderService,
-                    router: router
+                    mentorSlotsService: mentorSlotsService,
+                    router: router,
+                    onOpenChat: onOpenChat
                 )
         }
         .task { viewModel.loadOnAppear() }
@@ -189,8 +197,9 @@ private struct ActivityPostRow: View {
                     Text(caption).dsTextStyle(.body)
                 }
 
-                Text(post.createdAt.relativeFormatted)
+                Text(post.createdAt.formattedTimestamp)
                     .dsTextStyle(.caption)
+                    .foregroundStyle(theme.colors.textSecondary)
                     .frame(maxWidth: .infinity, alignment: .trailing)
             }
         }
@@ -201,10 +210,20 @@ private struct ActivityPostRow: View {
 // MARK: - Date Formatting
 
 private extension String {
-    var relativeFormatted: String {
-        guard let date = ISO8601DateFormatter().date(from: self) else { return self }
-        let formatter = RelativeDateTimeFormatter()
-        formatter.unitsStyle = .short
-        return formatter.localizedString(for: date, relativeTo: .now)
+    var formattedTimestamp: String {
+        let parser = ISO8601DateFormatter()
+        parser.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        guard let date = parser.date(from: self) else { return self }
+
+        let relative = RelativeDateTimeFormatter()
+        relative.unitsStyle = .short
+
+        let absolute = DateFormatter()
+        absolute.locale = .current
+        absolute.doesRelativeDateFormatting = true
+        absolute.dateStyle = .medium
+        absolute.timeStyle = .short
+
+        return "\(relative.localizedString(for: date, relativeTo: .now)) · \(absolute.string(from: date))"
     }
 }
