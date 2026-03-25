@@ -57,6 +57,13 @@
 "places.role_mentor" = "Mentor";
 "places.cancel_button" = "Anuluj";
 "places.check_in_error_title" = "Błąd zameldowania";
+"places.checked_in_title" = "Jesteś zameldowany";
+"places.checked_in_role_format" = "Rola: %@";
+"places.change_role_button" = "Zmień rolę";
+"places.join_spot_title" = "Dołącz do spotu";
+"places.join_spot_description" = "Daj znać innym, że jesteś na miejscu jako Rider albo Mentor.";
+"places.riders_count_format" = "%d riderów";
+"places.mentors_count_format" = "%d mentorów";
 "places.checked_in_as_format" = "Zameldowany jako %@";
 "places.checked_in_elsewhere_format" = "Już zameldowany w %@";
 "places.failed_check_in_format" = "Nie udało się zameldować: %@";

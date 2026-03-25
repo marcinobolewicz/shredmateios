@@ -6,6 +6,7 @@ struct PlaceSportFiltersRow: View {
 
     let filters: [PlaceDetailsViewData.SportFilter]
     let selectedSportSlug: String?
+    var horizontalContentPadding: CGFloat = Constants.Spacing.md
     let onSelect: (String) -> Void
 
     var body: some View {
@@ -29,7 +30,7 @@ struct PlaceSportFiltersRow: View {
                     }
                 }
             }
-            .padding(.horizontal, theme.spacing.md)
+            .padding(.horizontal, horizontalContentPadding)
             .padding(.top, theme.spacing.xs)
         }
     }

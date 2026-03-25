@@ -57,6 +57,13 @@
 "places.role_mentor" = "Mentor";
 "places.cancel_button" = "Cancel";
 "places.check_in_error_title" = "Check-In Error";
+"places.checked_in_title" = "You're checked in";
+"places.checked_in_role_format" = "Role: %@";
+"places.change_role_button" = "Change role";
+"places.join_spot_title" = "Join the spot";
+"places.join_spot_description" = "Let others know you're here as a Rider or Mentor.";
+"places.riders_count_format" = "%d riders";
+"places.mentors_count_format" = "%d mentors";
 "places.checked_in_as_format" = "Checked in as %@";
 "places.checked_in_elsewhere_format" = "Already checked in at %@";
 "places.failed_check_in_format" = "Failed to check in: %@";

@@ -82,10 +82,7 @@ public struct PlaceDetailsView: View {
     @State private var viewModel: PlaceDetailsViewModel
 
     enum DetailTab: String, CaseIterable, Identifiable {
-        case riders
-        case mentors
-        case map
-
+        case riders, mentors, map
         var id: String { rawValue }
     }
 
@@ -107,8 +104,8 @@ public struct PlaceDetailsView: View {
     public var body: some View {
         ScrollView {
             VStack(spacing: 0) {
-                heroPhoto
-                heroInfo
+                heroSection
+                infoSection
                 checkInSection
                 tabSection
                 contentSection
@@ -119,9 +116,7 @@ public struct PlaceDetailsView: View {
         .navigationTitle(viewData.name)
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.hidden, for: .navigationBar)
-        .task {
-            await viewModel.loadRiders()
-        }
+        .task { await viewModel.loadRiders() }
         .alert(
             PlacesStrings.checkInErrorTitle.localized,
             isPresented: .init(
@@ -150,166 +145,41 @@ public struct PlaceDetailsView: View {
         }
     }
 
-    // MARK: - Check-In Section
-
-    @ViewBuilder
-    private var checkInSection: some View {
-        if authState.isLoggedIn {
-            VStack(spacing: theme.spacing.md) {
-                if viewModel.hasJoined {
-                    checkedInCard
-                } else {
-                    checkInCard
-                }
-            }
-            .padding(.horizontal, theme.spacing.md)
-            .padding(.top, theme.spacing.md)
-        }
-    }
-    
-    private var checkedInCard: some View {
-        VStack(alignment: .leading, spacing: theme.spacing.md) {
-            HStack(spacing: theme.spacing.sm) {
-                ZStack {
-                    Circle()
-                        .fill(Color.green.opacity(0.14))
-                        .frame(width: 44, height: 44)
-
-                    Image(systemName: "checkmark.circle.fill")
-                        .foregroundStyle(Color.green)
-                        .font(.system(size: 20, weight: .semibold))
-                }
-
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Jesteś checked-in")
-                        .dsTextStyle(.heading)
-
-                    Text("Rola: \(viewModel.joinedRole?.displayName ?? "—")")
-                        .dsTextStyle(.subheadline)
-                        .foregroundStyle(theme.colors.textSecondary)
-                }
-
-                Spacer()
-            }
-
-            HStack(spacing: theme.spacing.sm) {
-                Button {
-                    viewModel.showRolePicker = true
-                } label: {
-                    Text("Zmień rolę")
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.dsOutline)
-
-                Button(role: .destructive) {
-                    // przyszłościowo: Task { await viewModel.checkOut() }
-                } label: {
-                    Text("Check out")
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.bordered)
-            }
-        }
-        .padding(theme.spacing.md)
-        .background(Color.green.opacity(0.06))
-        .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .stroke(Color.green.opacity(0.22), lineWidth: 1)
-        )
-    }
-    
-    private var checkInCard: some View {
-        VStack(alignment: .leading, spacing: theme.spacing.md) {
-            HStack(alignment: .top, spacing: theme.spacing.sm) {
-                ZStack {
-                    Circle()
-                        .fill(theme.colors.primary.opacity(0.12))
-                        .frame(width: 44, height: 44)
-
-                    Image(systemName: "mappin.and.ellipse")
-                        .foregroundStyle(theme.colors.primary)
-                        .font(.system(size: 18, weight: .semibold))
-                }
-
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Dołącz do spotu")
-                        .dsTextStyle(.heading)
-
-                    Text("Daj znać innym, że jesteś na miejscu jako Rider albo Mentor.")
-                        .dsTextStyle(.subheadline)
-                        .foregroundStyle(theme.colors.textSecondary)
-                }
-
-                Spacer()
-            }
-
-            HStack(spacing: theme.spacing.sm) {
-                spotStatPill(
-                    icon: "figure.outdoor.cycle",
-                    text: "\(viewModel.ridersCount) rider\(viewModel.ridersCount == 1 ? "" : "ów")"
-                )
-
-                spotStatPill(
-                    icon: "person.badge.shield.checkmark",
-                    text: "\(viewModel.mentorsCount) mentor\(viewModel.mentorsCount == 1 ? "" : "ów")"
-                )
-            }
-
-            Button {
-                viewModel.showRolePicker = true
-            } label: {
-                HStack(spacing: theme.spacing.sm) {
-                    if viewModel.isJoining {
-                        ProgressView()
-                            .controlSize(.small)
-                            .tint(.white)
-                    }
-
-                    Text("Check in")
-                        .fontWeight(.semibold)
-
-                    Spacer()
-
-                    Image(systemName: "arrow.right")
-                        .font(.system(size: 14, weight: .semibold))
-                }
-                .foregroundStyle(Color.white)
-                .padding(.horizontal, theme.spacing.md)
-                .padding(.vertical, theme.spacing.md)
-                .frame(maxWidth: .infinity)
-                .background(theme.colors.primary)
-                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-            }
-            .buttonStyle(.plain)
-            .disabled(viewModel.isJoining)
-        }
-        .padding(theme.spacing.md)
-        .background(theme.colors.surface)
-        .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .stroke(theme.colors.border.opacity(0.5), lineWidth: 1)
-        )
-        .shadow(color: .black.opacity(0.04), radius: 12, y: 4)
-    }
-    
-    private func spotStatPill(icon: String, text: String) -> some View {
-        HStack(spacing: 6) {
-            Image(systemName: icon)
-                .font(.system(size: 12, weight: .medium))
-            Text(text)
-                .font(.footnote)
-                .fontWeight(.medium)
-        }
-        .foregroundStyle(theme.colors.textSecondary)
-        .padding(.horizontal, 10)
-        .padding(.vertical, 8)
-        .background(theme.colors.surfaceSecondary)
-        .clipShape(Capsule())
-    }
-
     // MARK: - Hero
+
+    private var heroSection: some View {
+        ZStack(alignment: .bottomLeading) {
+            heroPhoto
+
+            LinearGradient(
+                stops: [
+                    .init(color: .clear, location: 0.3),
+                    .init(color: .black.opacity(0.7), location: 1.0)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+
+            VStack(alignment: .leading, spacing: theme.spacing.xs) {
+                sportFiltersSection
+                placeTagsSection
+            }
+            .padding(.bottom, theme.spacing.md)
+        }
+    }
+
+    private var infoSection: some View {
+        VStack(alignment: .leading, spacing: theme.spacing.xs) {
+            if !viewData.description.isEmpty {
+                Text(viewData.description)
+                    .dsTextStyle(.subheadline)
+                    .foregroundStyle(theme.colors.textSecondary)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, theme.spacing.md)
+        .padding(.vertical, theme.spacing.sm)
+    }
 
     @ViewBuilder
     private var heroPhoto: some View {
@@ -319,18 +189,16 @@ public struct PlaceDetailsView: View {
                 switch phase {
                 case .success(let image):
                     image.resizable().scaledToFill()
-                case .failure, .empty:
-                    heroPhotoPlaceholder
-                @unknown default:
+                default:
                     heroPhotoPlaceholder
                 }
             }
-            .aspectRatio(1, contentMode: .fit)
+            .aspectRatio(4 / 3, contentMode: .fit)
             .frame(maxWidth: .infinity)
             .clipped()
         default:
             heroPhotoPlaceholder
-                .aspectRatio(1, contentMode: .fit)
+                .aspectRatio(4 / 3, contentMode: .fit)
                 .frame(maxWidth: .infinity)
         }
     }
@@ -344,24 +212,66 @@ public struct PlaceDetailsView: View {
         }
     }
 
-    private var heroInfo: some View {
-        VStack(
-            alignment: .leading,
-            spacing: theme.spacing.sm
-        ) {
-            sportFiltersSection
-            placeTagsSection
+    // MARK: - Check-In
 
-            if !viewData.description.isEmpty {
-                Text(viewData.description)
-                    .dsTextStyle(.subheadline)
-                    .padding(.horizontal, theme.spacing.lg)
-                    .multilineTextAlignment(.leading)
+    @ViewBuilder
+    private var checkInSection: some View {
+        if authState.isLoggedIn {
+            if viewModel.hasJoined {
+                checkedInStrip
+            } else {
+                checkInButton
             }
         }
-        .frame(maxWidth: .infinity)
-        .padding(.top, theme.spacing.sm)
-        .padding(.bottom, theme.spacing.sm)
+    }
+
+    private var checkInButton: some View {
+        Button {
+            viewModel.showRolePicker = true
+        } label: {
+            HStack(spacing: theme.spacing.xs) {
+                if viewModel.isJoining {
+                    ProgressView()
+                        .controlSize(.small)
+                        .tint(theme.colors.primary)
+                }
+                Text(PlacesStrings.checkInButton.localized)
+                    .fontWeight(.semibold)
+            }
+            .frame(maxWidth: .infinity)
+        }
+        .buttonStyle(.dsOutline)
+        .disabled(viewModel.isJoining)
+        .padding(.horizontal, theme.spacing.md)
+        .padding(.top, theme.spacing.md)
+    }
+
+    private var checkedInStrip: some View {
+        HStack(spacing: theme.spacing.sm) {
+            Image(systemName: "checkmark.circle.fill")
+                .foregroundStyle(theme.colors.success)
+                .font(.title3)
+
+            VStack(alignment: .leading, spacing: theme.spacing.xxs) {
+                Text(PlacesStrings.checkedInTitle.localized)
+                    .dsTextStyle(.body)
+
+                Text(PlacesStrings.checkedInRole(viewModel.joinedRole?.displayName ?? "—"))
+                    .dsTextStyle(.caption)
+            }
+
+            Spacer()
+
+            Button(PlacesStrings.changeRoleButton.localized) {
+                viewModel.showRolePicker = true
+            }
+            .buttonStyle(.dsOutline)
+        }
+        .padding(theme.spacing.sm)
+        .background(theme.colors.success.opacity(0.08))
+        .clipShape(RoundedRectangle(cornerRadius: theme.radius.md, style: .continuous))
+        .padding(.horizontal, theme.spacing.md)
+        .padding(.top, theme.spacing.md)
     }
 
     // MARK: - Tabs
@@ -399,7 +309,7 @@ public struct PlaceDetailsView: View {
             }
         }
         .padding(.horizontal, theme.spacing.md)
-        .padding(.top, theme.spacing.sm)
+        .padding(.top, theme.spacing.md)
     }
 
     private func tabTitle(for tab: DetailTab) -> String {
@@ -439,7 +349,7 @@ public struct PlaceDetailsView: View {
                 case .map:
                     PlaceDetailsMapView(viewData: viewData, riderEntries: viewModel.riderEntries)
                         .frame(height: 420)
-                        .clipShape(RoundedRectangle(cornerRadius: 0))
+                        .padding(.horizontal, -theme.spacing.md)
                 }
             }
         }
@@ -447,12 +357,15 @@ public struct PlaceDetailsView: View {
         .padding(.horizontal, theme.spacing.md)
     }
 
+    // MARK: - Filters
+
     @ViewBuilder
     private var sportFiltersSection: some View {
         if !viewModel.sportFilters.isEmpty {
             PlaceSportFiltersRow(
                 filters: viewModel.sportFilters,
-                selectedSportSlug: viewModel.selectedSportSlug
+                selectedSportSlug: viewModel.selectedSportSlug,
+                horizontalContentPadding: theme.spacing.md
             ) { sportSlug in
                 Task { await viewModel.selectSport(sportSlug) }
             }
@@ -463,8 +376,15 @@ public struct PlaceDetailsView: View {
         PlaceTagsRow(tags: viewData.placeTags, horizontalContentPadding: theme.spacing.md)
     }
 
+    // MARK: - Riders List
+
     @ViewBuilder
-    private func ridersList(rows: [PlaceRiderRowViewData], emptyTitle: String, emptySubtitle: String, emptyIcon: String) -> some View {
+    private func ridersList(
+        rows: [PlaceRiderRowViewData],
+        emptyTitle: String,
+        emptySubtitle: String,
+        emptyIcon: String
+    ) -> some View {
         if rows.isEmpty {
             placeholderList(title: emptyTitle, subtitle: emptySubtitle, icon: emptyIcon)
         } else {
