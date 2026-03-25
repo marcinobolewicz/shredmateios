@@ -12,15 +12,18 @@ import Conversations
 import Feed
 import Core
 import Networking
+import Theme
 
 enum UserTab: Hashable {
     case home
     case spots
+    case mentors
     case messages
     case profile
 }
 
 struct UserTabView: View {
+    @Environment(AppTheme.self) private var theme
     let dependencies: AppDependencies
     @State private var selectedTab: UserTab = .home
     @State private var conversationsRouter = ConversationsRouter()
@@ -40,6 +43,17 @@ struct UserTabView: View {
             )
             .tabItem { Label(AppStrings.userTabSpots.localized, systemImage: "map") }
             .tag(UserTab.spots)
+
+            MentorsRootView(
+                mentorsService: dependencies.mentorsService,
+                sportsService: dependencies.sportsService,
+                placesService: dependencies.placesService,
+                riderService: dependencies.riderService,
+                mentorSlotsService: dependencies.mentorSlotsService,
+                onOpenChat: openChat
+            )
+            .tabItem { Label(AppStrings.userTabMentors.localized, systemImage: "person.badge.shield.checkmark") }
+            .tag(UserTab.mentors)
 
             ConversationsView(
                 router: conversationsRouter,

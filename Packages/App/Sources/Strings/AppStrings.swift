@@ -10,6 +10,7 @@ enum AppStrings: String {
     case userTabHome = "app.user_tab_home"
     case userTabSpots = "app.user_tab_spots"
     case userTabChat = "app.user_tab_chat"
+    case userTabMentors = "app.user_tab_mentors"
     case userTabProfile = "app.user_tab_profile"
 
     case homeNavigationTitle = "app.home_navigation_title"

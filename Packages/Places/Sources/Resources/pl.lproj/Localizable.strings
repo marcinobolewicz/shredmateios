@@ -34,6 +34,12 @@
 "places.details_mentors_empty_description" = "Mentorzy dostępni w tym spocie pojawią się tutaj.";
 "places.map_details_button" = "Szczegóły";
 
+/* Szukaj mentora */
+"places.mentors_search_title" = "Znajdź mentora";
+"places.mentors_search_description" = "Przeglądaj instruktorów, filtruj po sporcie i spocie, zarezerwuj sesję.";
+"places.mentors_all_sports" = "Wszystkie sporty";
+"places.mentors_all_spots" = "Wszystkie spoty";
+
 /* Sloty mentora */
 "places.mentor_slots_title" = "Dostępne terminy";
 "places.mentor_slots_empty" = "Brak dostępnych terminów";

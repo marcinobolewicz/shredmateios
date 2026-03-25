@@ -9,6 +9,7 @@ import SwiftUI
 import Login
 import Places
 import Core
+import Theme
 
 enum GuestTab: Hashable {
     case welcome
@@ -17,11 +18,12 @@ enum GuestTab: Hashable {
 }
 
 struct GuestTabView: View {
+    @Environment(AppTheme.self) private var theme
     let dependencies: AppDependencies
     @State private var selectedTab: GuestTab = .welcome
-    
+
     let onLoginTap: () -> Void
-    
+
     var body: some View {
         TabView(selection: $selectedTab) {
             GuestWelcomeView(
