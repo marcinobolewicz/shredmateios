@@ -128,13 +128,13 @@ public struct AppSetup {
         let baseURL = URL(string: "https://api.shredmate.eu/api/v1")!
         let tokenStorage = TokenStorage()
         let pushDeviceStorage = PushDeviceStorage()
-        let tokenProvider = DefaultTokenProvider(tokenStorage: tokenStorage, baseURL: baseURL)
-
         #if DEBUG
         let networkSession: any NetworkSessioning = URLSessionProxy(configuration: .default)
         #else
         let networkSession: any NetworkSessioning = URLSession.shared
         #endif
+
+        let tokenProvider = DefaultTokenProvider(tokenStorage: tokenStorage, baseURL: baseURL, session: networkSession)
 
         let httpClient = AuthenticatingHTTPClient(
             baseURL: baseURL,

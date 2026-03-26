@@ -49,10 +49,11 @@ extension Endpoint {
     public static func post<Body: Encodable & Sendable>(
         _ path: String,
         body: Body,
+        keys: JSONKeyStrategy = .snakeCase,
         headers: [String: String] = [:],
         auth: AuthRequirement = .none
     ) -> Endpoint {
-        Endpoint(method: .post, path: path, headers: headers, auth: auth, body: .json(body))
+        Endpoint(method: .post, path: path, headers: headers, auth: auth, body: .json(body, keys: keys))
     }
     
     /// Creates a POST endpoint without body
