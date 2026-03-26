@@ -91,6 +91,20 @@ final class MentorsViewModel {
         selectedSportId = match?.id
     }
 
+    func refresh() async {
+        mentors = []
+        currentPage = 1
+        hasMorePages = true
+        isLoading = false
+
+        async let sportsResult = sportsService.fetchSports()
+        async let placesResult = placesService.fetchPlaces(sportSlug: selectedSportSlug)
+
+        sports = (try? await sportsResult) ?? []
+        places = (try? await placesResult) ?? []
+        await fetchPage(1)
+    }
+
     func loadMore() async {
         guard !isLoading, hasMorePages else { return }
         await fetchPage(currentPage + 1)

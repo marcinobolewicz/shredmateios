@@ -21,4 +21,11 @@ struct SpotRowViewData: Identifiable, Equatable, Sendable {
     let ridersCount: Int
     let mentorsCount: Int
     let avatar: Avatar
+
+    var initials: String {
+        if case .initials(let text) = avatar { return text }
+        let parts = title.split(separator: " ")
+        let letters = parts.prefix(2).compactMap(\.first)
+        return String(letters).uppercased()
+    }
 }

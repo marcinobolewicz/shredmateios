@@ -33,6 +33,7 @@ struct MentorsView: View {
             }
         }
         .background(theme.colors.backgroundSecondary)
+        .refreshable { await viewModel.refresh() }
         .task { await viewModel.loadInitial() }
         .onAppear { Task { await viewModel.syncSportPreference() } }
     }
