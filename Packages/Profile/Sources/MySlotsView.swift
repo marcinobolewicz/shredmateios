@@ -17,7 +17,7 @@ struct MySlotsView: View {
             filterPicker
             content
         }
-        .background(theme.colors.background)
+        .background(theme.colors.backgroundSecondary)
         .navigationTitle(ProfileStrings.mySlotsTitle.localized)
         .navigationBarTitleDisplayMode(.inline)
         .task { viewModel.loadOnAppear() }

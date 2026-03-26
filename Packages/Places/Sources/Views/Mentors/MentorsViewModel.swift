@@ -21,7 +21,10 @@ final class MentorsViewModel {
     }
 
     func toggleSport(_ sportId: UUID) {
-        selectedSportId = selectedSportId == sportId ? nil : sportId
+        let newId = selectedSportId == sportId ? nil : sportId
+        selectedSportId = newId
+        let slug = newId.flatMap { id in sports.first { $0.id == id }?.slug }
+        Task { await sportPreferenceStorage.saveSportSlug(slug) }
     }
 
     var selectedPlaceId: UUID? {
@@ -36,6 +39,7 @@ final class MentorsViewModel {
     private let mentorsService: any MentorsServiceProtocol
     private let sportsService: any SportsServiceProtocol
     private let placesService: any PlacesServiceProtocol
+    private let sportPreferenceStorage: any SportPreferenceStorageProtocol
     private var currentPage = 1
 
     // MARK: - Init
@@ -43,11 +47,13 @@ final class MentorsViewModel {
     init(
         mentorsService: any MentorsServiceProtocol,
         sportsService: any SportsServiceProtocol,
-        placesService: any PlacesServiceProtocol
+        placesService: any PlacesServiceProtocol,
+        sportPreferenceStorage: any SportPreferenceStorageProtocol
     ) {
         self.mentorsService = mentorsService
         self.sportsService = sportsService
         self.placesService = placesService
+        self.sportPreferenceStorage = sportPreferenceStorage
     }
 
     // MARK: - Loading
@@ -60,6 +66,29 @@ final class MentorsViewModel {
         sports = (try? await sportsResult) ?? []
         places = (try? await placesResult) ?? []
         await mentorsResult
+        await applySavedSportPreference()
+        didLoadInitial = true
+    }
+
+    private var didLoadInitial = false
+
+    private func applySavedSportPreference() async {
+        guard selectedSportId == nil else { return }
+        let savedSlug = await sportPreferenceStorage.savedSportSlug()
+        guard let savedSlug,
+              let match = sports.first(where: { $0.slug == savedSlug }) else { return }
+        selectedSportId = match.id
+    }
+
+    func syncSportPreference() async {
+        guard didLoadInitial, !sports.isEmpty else { return }
+        let savedSlug = await sportPreferenceStorage.savedSportSlug()
+        let currentSlug = selectedSportSlug
+
+        guard savedSlug != currentSlug else { return }
+
+        let match = savedSlug.flatMap { slug in sports.first { $0.slug == slug } }
+        selectedSportId = match?.id
     }
 
     func loadMore() async {

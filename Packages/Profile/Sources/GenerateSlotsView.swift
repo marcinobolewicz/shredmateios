@@ -41,7 +41,7 @@ struct GenerateSlotsView: View {
             }
             .padding(theme.spacing.md)
         }
-        .background(theme.colors.background)
+        .background(theme.colors.backgroundSecondary)
         .navigationTitle(ProfileStrings.generateSlotsTitle.localized)
         .navigationBarTitleDisplayMode(.inline)
         .task { await viewModel.loadPlaces() }

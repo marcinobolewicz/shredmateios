@@ -32,35 +32,56 @@ public final class PlacesViewModel {
 
     let repository: any PlacesRepositoryProtocol
     private let presenter: SpotRowPresenter
+    private let sportPreferenceStorage: any SportPreferenceStorageProtocol
 
     private var allPlaces: [Place] = []
     private var loadTask: Task<Void, Never>?
 
     init(
         repository: any PlacesRepositoryProtocol,
-        presenter: SpotRowPresenter = .init()
+        presenter: SpotRowPresenter = .init(),
+        sportPreferenceStorage: any SportPreferenceStorageProtocol
     ) {
         self.repository = repository
         self.presenter = presenter
+        self.sportPreferenceStorage = sportPreferenceStorage
     }
 
-    func loadOnAppear() {
+    func loadOnAppear() async {
         guard case .idle = state else { return }
-        loadSports()
+        await loadSports()
         load()
     }
-    
-    private func loadSports() {
+
+    private func loadSports() async {
         guard sports.isEmpty else { return }
-        Task { [weak self] in
-            guard let self else { return }
-            
-            do {
-                self.sports = try await repository.fetchSports()
-            } catch {
-                self.state = .failed(.from(error))
-            }
+        do {
+            sports = try await repository.fetchSports()
+            await applySavedSportPreference()
+        } catch {
+            state = .failed(.from(error))
         }
+    }
+
+    private func applySavedSportPreference() async {
+        guard selectedSport == nil else { return }
+        let savedSlug = await sportPreferenceStorage.savedSportSlug()
+        guard let savedSlug,
+              let match = sports.first(where: { $0.slug == savedSlug }) else { return }
+        selectedSport = match
+    }
+
+    func syncSportPreference() async {
+        guard !sports.isEmpty, case .loaded = state else { return }
+        let savedSlug = await sportPreferenceStorage.savedSportSlug()
+        let currentSlug = selectedSport?.slug
+
+        guard savedSlug != currentSlug else { return }
+
+        let match = savedSlug.flatMap { slug in sports.first { $0.slug == slug } }
+        selectedSport = match
+        selectedTagIds.removeAll()
+        load()
     }
     
     func refresh() {
@@ -97,8 +118,10 @@ public final class PlacesViewModel {
     }
 
     func selectSport(_ sport: PlaceSport) {
-        selectedSport = selectedSport == sport ? nil : sport
+        let newSport = selectedSport == sport ? nil : sport
+        selectedSport = newSport
         selectedTagIds.removeAll()
+        Task { await sportPreferenceStorage.saveSportSlug(newSport?.slug) }
         load()
     }
 

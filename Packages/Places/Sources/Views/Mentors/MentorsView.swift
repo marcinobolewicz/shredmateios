@@ -9,13 +9,15 @@ struct MentorsView: View {
     init(
         mentorsService: MentorsServiceProtocol,
         sportsService: SportsServiceProtocol,
-        placesService: PlacesServiceProtocol
+        placesService: PlacesServiceProtocol,
+        sportPreferenceStorage: any SportPreferenceStorageProtocol
     ) {
         _viewModel = State(
             wrappedValue: MentorsViewModel(
                 mentorsService: mentorsService,
                 sportsService: sportsService,
-                placesService: placesService
+                placesService: placesService,
+                sportPreferenceStorage: sportPreferenceStorage
             )
         )
     }
@@ -23,35 +25,16 @@ struct MentorsView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: theme.spacing.md) {
-                headerSection
+                DSScreenHeader(title: PlacesStrings.mentorsLabel.localized)
                 sportChips
                 placePicker
                     .padding(.horizontal, theme.spacing.md)
                 mentorsList
-                    .padding(.horizontal, theme.spacing.md)
             }
         }
-        .background(theme.colors.background)
+        .background(theme.colors.backgroundSecondary)
         .task { await viewModel.loadInitial() }
-    }
-
-    // MARK: - Header
-
-    private var headerSection: some View {
-        VStack(alignment: .leading, spacing: theme.spacing.xs) {
-            Text(PlacesStrings.mentorsLabel.localized.uppercased())
-                .dsTextStyle(.caption, color: \.primary)
-                .tracking(1.5)
-
-            Text(PlacesStrings.mentorsSearchTitle.localized)
-                .dsTextStyle(.largeTitle)
-
-            Text(PlacesStrings.mentorsSearchDescription.localized)
-                .dsTextStyle(.subheadline)
-                .foregroundStyle(theme.colors.textSecondary)
-        }
-        .padding(.horizontal, theme.spacing.md)
-        .padding(.top, theme.spacing.sm)
+        .onAppear { Task { await viewModel.syncSportPreference() } }
     }
 
     // MARK: - Sport Chips
@@ -91,7 +74,7 @@ struct MentorsView: View {
         .tint(theme.colors.textPrimary)
         .padding(.horizontal, theme.spacing.md)
         .padding(.vertical, theme.spacing.xs)
-        .background(theme.colors.surfaceTertiary)
+        .background(theme.colors.background)
         .clipShape(Capsule())
     }
 
@@ -108,12 +91,12 @@ struct MentorsView: View {
                 ForEach(viewModel.mentors) { mentor in
                     NavigationLink(value: riderCardData(for: mentor)) {
                         MentorRow(mentor: mentor)
+                            .padding(.horizontal, theme.spacing.md)
                     }
                     .buttonStyle(.plain)
 
                     if mentor.id != viewModel.mentors.last?.id {
                         Divider()
-                            .overlay(theme.colors.border.opacity(0.35))
                     }
                 }
 
@@ -125,9 +108,7 @@ struct MentorsView: View {
                 }
             }
         }
-        .padding(theme.spacing.md)
-        .background(theme.colors.surface)
-        .clipShape(RoundedRectangle(cornerRadius: theme.radius.lg, style: .continuous))
+        .dsCard()
     }
 
     private var emptyState: some View {

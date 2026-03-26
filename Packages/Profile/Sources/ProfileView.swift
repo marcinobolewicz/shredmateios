@@ -8,6 +8,7 @@
 import SwiftUI
 import Networking
 import Common
+import Theme
 
 enum ProfileRoute: Hashable {
     case editRider
@@ -17,7 +18,7 @@ enum ProfileRoute: Hashable {
 }
 
 public struct ProfileView: View {
-
+    @Environment(AppTheme.self) private var theme
     @State private var viewModel: ProfileViewModel
     @State private var showDeleteConfirmation = false
 
@@ -39,7 +40,7 @@ public struct ProfileView: View {
                 }
             }
             .scrollContentBackground(.hidden)
-            .background(Color(.systemGroupedBackground))
+            .background(theme.colors.backgroundSecondary)
             .navigationTitle(ProfileStrings.navigationTitle.localized)
             .navigationBarTitleDisplayMode(.inline)
             .navigationDestination(for: ProfileRoute.self) { route in

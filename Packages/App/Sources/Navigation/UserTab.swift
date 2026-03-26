@@ -30,7 +30,7 @@ struct UserTabView: View {
 
     var body: some View {
         TabView(selection: $selectedTab) {
-            FeedView(feedService: dependencies.feedService, placesService: dependencies.placesService, riderService: dependencies.riderService, mentorSlotsService: dependencies.mentorSlotsService, onOpenChat: openChat)
+            FeedView(feedService: dependencies.feedService, placesService: dependencies.placesService, riderService: dependencies.riderService, mentorSlotsService: dependencies.mentorSlotsService, sportPreferenceStorage: dependencies.sportPreferenceStorage, onOpenChat: openChat)
             .tabItem { Label(AppStrings.userTabHome.localized, systemImage: "house") }
             .tag(UserTab.home)
 
@@ -39,6 +39,7 @@ struct UserTabView: View {
                 sportsService: dependencies.sportsService,
                 riderService: dependencies.riderService,
                 mentorSlotsService: dependencies.mentorSlotsService,
+                sportPreferenceStorage: dependencies.sportPreferenceStorage,
                 onOpenChat: openChat
             )
             .tabItem { Label(AppStrings.userTabSpots.localized, systemImage: "map") }
@@ -50,6 +51,7 @@ struct UserTabView: View {
                 placesService: dependencies.placesService,
                 riderService: dependencies.riderService,
                 mentorSlotsService: dependencies.mentorSlotsService,
+                sportPreferenceStorage: dependencies.sportPreferenceStorage,
                 onOpenChat: openChat
             )
             .tabItem { Label(AppStrings.userTabMentors.localized, systemImage: "person.badge.shield.checkmark") }

@@ -7,6 +7,7 @@ public struct MentorsRootView: View {
     private let placesService: PlacesServiceProtocol
     private let riderService: RiderServiceProtocol
     private let mentorSlotsService: MentorSlotsServiceProtocol
+    private let sportPreferenceStorage: any SportPreferenceStorageProtocol
     private let onOpenChat: (_ userId: UUID, _ displayName: String) -> Void
     @State private var router = PlacesRouter()
 
@@ -16,6 +17,7 @@ public struct MentorsRootView: View {
         placesService: PlacesServiceProtocol,
         riderService: RiderServiceProtocol,
         mentorSlotsService: MentorSlotsServiceProtocol,
+        sportPreferenceStorage: any SportPreferenceStorageProtocol,
         onOpenChat: @escaping (_ userId: UUID, _ displayName: String) -> Void = { _, _ in }
     ) {
         self.mentorsService = mentorsService
@@ -23,6 +25,7 @@ public struct MentorsRootView: View {
         self.placesService = placesService
         self.riderService = riderService
         self.mentorSlotsService = mentorSlotsService
+        self.sportPreferenceStorage = sportPreferenceStorage
         self.onOpenChat = onOpenChat
     }
 
@@ -33,12 +36,14 @@ public struct MentorsRootView: View {
             MentorsView(
                 mentorsService: mentorsService,
                 sportsService: sportsService,
-                placesService: placesService
+                placesService: placesService,
+                sportPreferenceStorage: sportPreferenceStorage
             )
             .placesDestinations(
                 placesService: placesService,
                 riderService: riderService,
                 mentorSlotsService: mentorSlotsService,
+                sportPreferenceStorage: sportPreferenceStorage,
                 onOpenChat: onOpenChat
             )
         }

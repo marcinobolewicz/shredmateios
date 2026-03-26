@@ -4,11 +4,13 @@ import Common
 import Theme
 
 public struct FeedView: View {
+    @Environment(AppTheme.self) private var theme
 
     let feedService: any FeedServiceProtocol
     let placesService: any PlacesServiceProtocol
     let riderService: any RiderServiceProtocol
     let mentorSlotsService: any MentorSlotsServiceProtocol
+    let sportPreferenceStorage: any SportPreferenceStorageProtocol
     let onOpenChat: (_ userId: UUID, _ displayName: String) -> Void
     @State private var router = FeedRouter()
     @State private var viewModel: FeedViewModel
@@ -18,35 +20,43 @@ public struct FeedView: View {
         placesService: any PlacesServiceProtocol,
         riderService: any RiderServiceProtocol,
         mentorSlotsService: any MentorSlotsServiceProtocol,
+        sportPreferenceStorage: any SportPreferenceStorageProtocol,
         onOpenChat: @escaping (_ userId: UUID, _ displayName: String) -> Void = { _, _ in }
     ) {
         self.feedService = feedService
         self.placesService = placesService
         self.riderService = riderService
         self.mentorSlotsService = mentorSlotsService
+        self.sportPreferenceStorage = sportPreferenceStorage
         self.onOpenChat = onOpenChat
         _viewModel = State(wrappedValue: FeedViewModel(feedService: feedService))
     }
 
     public var body: some View {
         NavigationStack(path: $router.path) {
-            content
-                .navigationTitle(FeedStrings.navigationTitle.localized)
-                .toolbar {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button { router.navigate(to: .createPost) } label: {
-                            Image(systemName: "plus")
-                        }
+            VStack(spacing: 0) {
+                HStack {
+                    DSScreenHeader(title: FeedStrings.navigationTitle.localized)
+                    Spacer()
+                    Button { router.navigate(to: .createPost) } label: {
+                        Image(systemName: "plus")
+                            .font(.title3)
                     }
+                    .padding(.trailing, theme.spacing.md)
                 }
-                .feedDestinations(
-                    feedService: feedService,
-                    placesService: placesService,
-                    riderService: riderService,
-                    mentorSlotsService: mentorSlotsService,
-                    router: router,
-                    onOpenChat: onOpenChat
-                )
+                content
+            }
+            .background(theme.colors.backgroundSecondary)
+            .navigationBarHidden(true)
+            .feedDestinations(
+                feedService: feedService,
+                placesService: placesService,
+                riderService: riderService,
+                mentorSlotsService: mentorSlotsService,
+                sportPreferenceStorage: sportPreferenceStorage,
+                router: router,
+                onOpenChat: onOpenChat
+            )
         }
         .task { viewModel.loadOnAppear() }
         .errorAlert(state: viewModel.state) { viewModel.refresh() }
@@ -115,7 +125,7 @@ private struct _PostsList: View {
                     bottom: 0,
                     trailing: theme.spacing.md
                 ))
-                .listRowSeparator(.visible)
+                .listRowSeparator(.hidden)
                 .listRowSeparatorTint(theme.colors.border.opacity(0.4))
                 .listRowBackground(Color.clear)
                 .onAppear { viewModel.loadNextPageIfNeeded(currentPost: post) }
@@ -129,7 +139,7 @@ private struct _PostsList: View {
         }
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
-        .background(theme.colors.background)
+        .background(theme.colors.backgroundSecondary)
         .refreshable { viewModel.refresh() }
     }
 }
@@ -143,32 +153,36 @@ private struct ActivityPostRow: View {
     let onPlaceTap: () -> Void
 
     var body: some View {
-        HStack(alignment: .top, spacing: theme.spacing.sm) {
-            Button(action: onRiderTap) {
-                AvatarView(
-                    url: URL(string: post.rider.avatarUrl ?? ""),
-                    initials: post.rider.initials
-                )
-            }
-            .buttonStyle(.plain)
-
-            VStack(alignment: .leading, spacing: theme.spacing.xxs) {
-                HStack(spacing: theme.spacing.xxs) {
+//        HStack(alignment: .top, spacing: theme.spacing.sm) {
+            
+            VStack(alignment: .leading, spacing: theme.spacing.xs) {
+                HStack(alignment: .center, spacing: theme.spacing.sm) {
                     Button(action: onRiderTap) {
-                        Text(post.rider.displayName)
-                            .dsTextStyle(.heading)
-                            .lineLimit(1)
+                        AvatarView(
+                            url: URL(string: post.rider.avatarUrl ?? ""),
+                            initials: post.rider.initials
+                        )
                     }
                     .buttonStyle(.plain)
-
-                    Text("·").dsTextStyle(.subheadline)
-
-                    Button(action: onPlaceTap) {
-                        Text(post.place.name)
-                            .dsTextStyle(.subheadline)
-                            .lineLimit(1)
+                    
+                    VStack(
+                        alignment: .leading,
+                        spacing: theme.spacing.xxs
+                    ) {
+                        Button(action: onRiderTap) {
+                            Text(post.rider.displayName)
+                                .dsTextStyle(.heading)
+                                .lineLimit(1)
+                        }
+                        .buttonStyle(.plain)
+                        
+                        Button(action: onPlaceTap) {
+                            Text(post.place.name)
+                                .dsTextStyle(.subheadline)
+                                .lineLimit(1)
+                        }
+                        .buttonStyle(.plain)
                     }
-                    .buttonStyle(.plain)
                 }
 
                 if let photoUrl = post.photoUrl, let url = URL(string: photoUrl) {
@@ -202,8 +216,10 @@ private struct ActivityPostRow: View {
                     .foregroundStyle(theme.colors.textSecondary)
                     .frame(maxWidth: .infinity, alignment: .trailing)
             }
-        }
-        .padding(.vertical, theme.spacing.sm)
+            .padding(.horizontal, theme.spacing.sm)
+            .padding(.vertical, theme.spacing.md)
+//        }
+//        .padding(.vertical, theme.spacing.sm)
     }
 }
 

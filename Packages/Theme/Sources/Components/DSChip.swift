@@ -37,7 +37,7 @@ public struct DSChip: View {
                 .padding(.vertical, theme.spacing.xs)
                 .background(
                     Capsule()
-                        .fill(isSelected ? theme.colors.primary : theme.colors.surfaceTertiary)
+                        .fill(isSelected ? theme.colors.primary : theme.colors.background)
                 )
         }
         .buttonStyle(.plain)

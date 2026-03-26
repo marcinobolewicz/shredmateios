@@ -86,7 +86,12 @@ public struct PlaceDetailsView: View {
         var id: String { rawValue }
     }
 
-    public init(viewData: PlaceDetailsViewData, placesService: PlacesServiceProtocol, authState: AuthState) {
+    public init(
+        viewData: PlaceDetailsViewData,
+        placesService: PlacesServiceProtocol,
+        authState: AuthState,
+        sportPreferenceStorage: any SportPreferenceStorageProtocol
+    ) {
         self.viewData = viewData
         _viewModel = State(
             wrappedValue: PlaceDetailsViewModel(
@@ -94,7 +99,8 @@ public struct PlaceDetailsView: View {
                 sportIds: viewData.sportIds,
                 sportFilters: viewData.sportFilters,
                 placesService: placesService,
-                authState: authState
+                authState: authState,
+                sportPreferenceStorage: sportPreferenceStorage
             )
         )
     }
@@ -112,11 +118,14 @@ public struct PlaceDetailsView: View {
             }
         }
         .ignoresSafeArea(edges: .top)
-        .background(theme.colors.background)
+        .background(theme.colors.backgroundSecondary)
         .navigationTitle(viewData.name)
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.hidden, for: .navigationBar)
-        .task { await viewModel.loadRiders() }
+        .task {
+            await viewModel.applySavedSportPreference()
+            await viewModel.loadRiders()
+        }
         .alert(
             PlacesStrings.checkInErrorTitle.localized,
             isPresented: .init(
@@ -183,24 +192,32 @@ public struct PlaceDetailsView: View {
 
     @ViewBuilder
     private var heroPhoto: some View {
-        switch viewData.avatar {
-        case .imageRemote(let url):
-            AsyncImage(url: url) { phase in
-                switch phase {
-                case .success(let image):
-                    image.resizable().scaledToFill()
-                default:
-                    heroPhotoPlaceholder
+        GeometryReader { geo in
+            let size = geo.size.width
+            let offset = -size * 0.1
+
+            switch viewData.avatar {
+            case .imageRemote(let url):
+                AsyncImage(url: url) { phase in
+                    switch phase {
+                    case .success(let image):
+                        image.resizable().scaledToFill()
+                            .frame(width: size, height: size)
+                            .clipped()
+                    default:
+                        heroPhotoPlaceholder
+                            .frame(width: size, height: size)
+                    }
                 }
+                .offset(y: offset)
+            default:
+                heroPhotoPlaceholder
+                    .frame(width: size, height: size)
+                    .offset(y: offset)
             }
-            .aspectRatio(4 / 3, contentMode: .fit)
-            .frame(maxWidth: .infinity)
-            .clipped()
-        default:
-            heroPhotoPlaceholder
-                .aspectRatio(4 / 3, contentMode: .fit)
-                .frame(maxWidth: .infinity)
         }
+        .aspectRatio(1, contentMode: .fit)
+        .clipped()
     }
 
     private var heroPhotoPlaceholder: some View {

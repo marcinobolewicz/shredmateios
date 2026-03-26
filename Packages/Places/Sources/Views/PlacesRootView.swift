@@ -8,6 +8,7 @@
 import SwiftUI
 import Networking
 import Foundation
+import Theme
 
 public struct PlacesRootView: View {
     @Environment(AuthState.self) private var authState
@@ -15,6 +16,7 @@ public struct PlacesRootView: View {
     private let sportsService: SportsServiceProtocol
     private let riderService: RiderServiceProtocol
     private let mentorSlotsService: MentorSlotsServiceProtocol
+    private let sportPreferenceStorage: any SportPreferenceStorageProtocol
     private let onOpenChat: (_ userId: UUID, _ displayName: String) -> Void
     @State private var router = PlacesRouter()
 
@@ -23,12 +25,14 @@ public struct PlacesRootView: View {
         sportsService: SportsServiceProtocol,
         riderService: RiderServiceProtocol,
         mentorSlotsService: MentorSlotsServiceProtocol,
+        sportPreferenceStorage: any SportPreferenceStorageProtocol,
         onOpenChat: @escaping (_ userId: UUID, _ displayName: String) -> Void = { _, _ in }
     ) {
         self.placesService = placesService
         self.sportsService = sportsService
         self.riderService = riderService
         self.mentorSlotsService = mentorSlotsService
+        self.sportPreferenceStorage = sportPreferenceStorage
         self.onOpenChat = onOpenChat
     }
 
@@ -39,13 +43,15 @@ public struct PlacesRootView: View {
             PlacesView(
                 placesService: placesService,
                 sportsService: sportsService,
-                authState: authState
+                authState: authState,
+                sportPreferenceStorage: sportPreferenceStorage
             )
-            .navigationTitle(PlacesStrings.rootNavigationTitle.localized)
+            .navigationBarHidden(true)
             .placesDestinations(
                 placesService: placesService,
                 riderService: riderService,
                 mentorSlotsService: mentorSlotsService,
+                sportPreferenceStorage: sportPreferenceStorage,
                 onOpenChat: onOpenChat
             )
         }

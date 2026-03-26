@@ -22,6 +22,7 @@ public final class AppDependencies {
     public let chatLifecycleManager: ChatLifecycleManager
     public let chatEventHandler: ChatEventHandler
     public let notificationCenter: InAppNotificationCenter
+    public let sportPreferenceStorage: any SportPreferenceStorageProtocol
 
     public init(
         authState: AuthState,
@@ -38,7 +39,8 @@ public final class AppDependencies {
         chatRepository: ChatRepository,
         chatLifecycleManager: ChatLifecycleManager,
         chatEventHandler: ChatEventHandler,
-        notificationCenter: InAppNotificationCenter
+        notificationCenter: InAppNotificationCenter,
+        sportPreferenceStorage: any SportPreferenceStorageProtocol
     ) {
         self.authState = authState
         self.pushDeviceService = pushDeviceService
@@ -55,6 +57,7 @@ public final class AppDependencies {
         self.chatLifecycleManager = chatLifecycleManager
         self.chatEventHandler = chatEventHandler
         self.notificationCenter = notificationCenter
+        self.sportPreferenceStorage = sportPreferenceStorage
     }
 }
 
@@ -68,6 +71,7 @@ public struct AppSetup {
         let services = configureServices(httpClient: auth.httpClient)
         let chat = configureChat(httpClient: auth.httpClient, authState: auth.authState)
         let notificationCenter = InAppNotificationCenter()
+        let sportPreferenceStorage = SportPreferenceStorage()
         
         // Wire socket → in-app banner
         chat.eventHandler.onMessageReceived = { [weak notificationCenter] senderName, text, conversationId in
@@ -107,7 +111,8 @@ public struct AppSetup {
             chatRepository: chat.repository,
             chatLifecycleManager: chat.lifecycleManager,
             chatEventHandler: chat.eventHandler,
-            notificationCenter: notificationCenter
+            notificationCenter: notificationCenter,
+            sportPreferenceStorage: sportPreferenceStorage
         )
     }
 
