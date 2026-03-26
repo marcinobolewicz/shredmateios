@@ -76,11 +76,11 @@ public enum RiderAPI {
     }
     
     public static func upsertSport(sportId: String, request: UpsertRiderSportRequest) -> Endpoint<RiderSport> {
-        .post("/riders/me/sports/\(sportId)", body: request, auth: .bearerToken)
+        .post("/riders/me/sports/\(sportId.lowercased())", body: request, keys: .camelCase, auth: .bearerToken)
     }
-    
+
     public static func deleteSport(sportId: String) -> Endpoint<EmptyResponse> {
-        .delete("/riders/me/sports/\(sportId)", auth: .bearerToken)
+        .delete("/riders/me/sports/\(sportId.lowercased())", auth: .bearerToken)
     }
 
     // MARK: - Follow

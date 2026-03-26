@@ -88,10 +88,11 @@ extension Endpoint {
     /// Creates a DELETE endpoint
     public static func delete(
         _ path: String,
+        query: [URLQueryItem] = [],
         headers: [String: String] = [:],
         auth: AuthRequirement = .none
     ) -> Endpoint {
-        Endpoint(method: .delete, path: path, headers: headers, auth: auth)
+        Endpoint(method: .delete, path: path, query: query, headers: headers, auth: auth)
     }
     
     /// Creates a POST endpoint with multipart form data

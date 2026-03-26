@@ -124,7 +124,9 @@ public struct PlaceDetailsView: View {
         .toolbarBackground(.hidden, for: .navigationBar)
         .task {
             await viewModel.applySavedSportPreference()
-            await viewModel.loadRiders()
+            async let membership: Void = viewModel.checkMembership()
+            async let riders: Void = viewModel.loadRiders()
+            _ = await (membership, riders)
         }
         .alert(
             PlacesStrings.checkInErrorTitle.localized,
@@ -216,7 +218,7 @@ public struct PlaceDetailsView: View {
                     .offset(y: offset)
             }
         }
-        .aspectRatio(1, contentMode: .fit)
+        .aspectRatio(1 / 0.9, contentMode: .fit)
         .clipped()
     }
 
@@ -233,7 +235,7 @@ public struct PlaceDetailsView: View {
 
     @ViewBuilder
     private var checkInSection: some View {
-        if authState.isLoggedIn {
+        if authState.isLoggedIn, !viewModel.isCheckingMembership {
             if viewModel.hasJoined {
                 checkedInStrip
             } else {
@@ -279,10 +281,11 @@ public struct PlaceDetailsView: View {
 
             Spacer()
 
-            Button(PlacesStrings.changeRoleButton.localized) {
-                viewModel.showRolePicker = true
+            Button(PlacesStrings.checkOutButton.localized) {
+                Task { await viewModel.leavePlace() }
             }
             .buttonStyle(.dsOutline)
+            .disabled(viewModel.isLeaving)
         }
         .padding(theme.spacing.sm)
         .background(theme.colors.success.opacity(0.08))

@@ -108,6 +108,28 @@ final class PlaceDetailsViewModel {
         }
     }
 
+    // MARK: - Membership
+
+    private(set) var isCheckingMembership = false
+    private(set) var membershipSportId: UUID?
+
+    func checkMembership() async {
+        guard authState.isLoggedIn else { return }
+        isCheckingMembership = true
+        defer { isCheckingMembership = false }
+
+        do {
+            let membership = try await placesService.myMembership(placeId: placeId)
+            hasJoined = true
+            joinedRole = membership.role
+            membershipSportId = membership.sportId
+        } catch {
+            hasJoined = false
+            joinedRole = nil
+            membershipSportId = nil
+        }
+    }
+
     // MARK: - Join Place
 
     func joinWith(role: PlaceRiderRole) async {
@@ -125,8 +147,31 @@ final class PlaceDetailsViewModel {
             )
             hasJoined = true
             joinedRole = response.role ?? role
+            membershipSportId = response.sportId ?? someSportId
+            await loadRiders(force: true)
         } catch {
             self.error = PlacesStrings.failedCheckIn(error.localizedDescription)
+        }
+    }
+
+    // MARK: - Leave Place
+
+    private(set) var isLeaving = false
+
+    func leavePlace() async {
+        guard let sportId = membershipSportId ?? sportIds.first else { return }
+        isLeaving = true
+        error = nil
+        defer { isLeaving = false }
+
+        do {
+            try await placesService.leavePlace(placeId: placeId, sportId: sportId)
+            hasJoined = false
+            joinedRole = nil
+            membershipSportId = nil
+            await loadRiders(force: true)
+        } catch {
+            self.error = PlacesStrings.failedCheckOut(error.localizedDescription)
         }
     }
 
