@@ -56,15 +56,8 @@ public struct RootView: View {
             async let _ = dependencies.sportsService.fetchSports()
             await authState.restoreSession()
             router.flow = authState.isLoggedIn ? .user : .guest
-
-            if authState.isLoggedIn {
-                await connectChat()
-                await PushNotificationsBridge.requestAuthorizationAfterLogin()
-            }
         }
-        .onChange(of: authState.isLoggedIn) { _, isLoggedIn in
-            router.flow = isLoggedIn ? .user : .guest
-
+        .onChange(of: authState.isLoggedIn, initial: true) { _, isLoggedIn in
             if isLoggedIn {
                 Task {
                     await connectChat()
