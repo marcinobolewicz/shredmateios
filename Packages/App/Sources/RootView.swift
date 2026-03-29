@@ -58,6 +58,8 @@ public struct RootView: View {
             router.flow = authState.isLoggedIn ? .user : .guest
         }
         .onChange(of: authState.isLoggedIn, initial: true) { _, isLoggedIn in
+            router.flow = isLoggedIn ? .user : .guest
+
             if isLoggedIn {
                 Task {
                     await connectChat()
