@@ -34,6 +34,11 @@ struct EditRiderView: View {
                 Task { await viewModel.saveBaseLocation() }
             }
         }
+        .imageCropPicker(isPresented: $showAvatarPicker) { result in
+            if case .success(let data) = result {
+                viewModel.avatarImage = data
+            }
+        }
         .profileAlerts(viewModel: viewModel)
     }
 
@@ -92,40 +97,39 @@ struct EditRiderView: View {
             }
             .disabled(viewModel.isSaving)
         }
-        .imageCropPicker(isPresented: $showAvatarPicker) { result in
-            if case .success(let data) = result {
-                viewModel.avatarImage = data
-            }
-        }
     }
 
     // MARK: - Avatar
 
-    @ViewBuilder
     private var profileAvatar: some View {
-        if let avatarData = viewModel.avatarImage,
-           let image = UIImage(data: avatarData) {
-            Image(uiImage: image)
-                .resizable()
-                .scaledToFill()
-                .frame(width: 76, height: 76)
-                .clipShape(Circle())
-        } else if let avatarUrl = viewModel.rider?.avatarUrl,
-                  let url = URL(string: avatarUrl) {
-            AsyncImage(url: url) { image in
-                image.resizable().scaledToFill()
-            } placeholder: {
-                ProgressView()
+        ZStack {
+            if let avatarData = viewModel.avatarImage,
+               let image = UIImage(data: avatarData) {
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFill()
+            } else if let avatarUrl = viewModel.rider?.avatarUrl,
+                      let url = URL(string: avatarUrl) {
+                AsyncImage(url: url, transaction: Transaction()) { phase in
+                    if let image = phase.image {
+                        image.resizable().scaledToFill()
+                    } else {
+                        placeholderIcon
+                    }
+                }
+            } else {
+                placeholderIcon
             }
-            .frame(width: 76, height: 76)
-            .clipShape(Circle())
-        } else {
-            Image(systemName: "person.crop.circle.fill")
-                .resizable()
-                .scaledToFill()
-                .foregroundStyle(.secondary)
-                .frame(width: 76, height: 76)
         }
+        .frame(width: 76, height: 76)
+        .clipShape(Circle())
+    }
+
+    private var placeholderIcon: some View {
+        Image(systemName: "person.crop.circle.fill")
+            .resizable()
+            .scaledToFill()
+            .foregroundStyle(.secondary)
     }
 
     // MARK: - Location
