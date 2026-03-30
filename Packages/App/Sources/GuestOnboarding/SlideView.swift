@@ -2,7 +2,7 @@ import SwiftUI
 import Theme
 
 /// Single onboarding slide: full-bleed background image with a scrim and
-/// centred title / subtitle / CTA overlaid on top — similar to a web hero section.
+/// content card overlaid — similar to a web hero section.
 struct SlideView: View {
     let slide: GuestSlide
     var onCTATap: (() -> Void)?
@@ -26,23 +26,49 @@ struct SlideView: View {
             .ignoresSafeArea()
 
             // MARK: Content
-            VStack(spacing: 16) {
-                Text(slide.title)
-                    .font(.title.bold())
-                    .foregroundStyle(.white)
-                    .multilineTextAlignment(.center)
+            VStack {
+                if slide.contentAlignment == .bottom || slide.contentAlignment == .center {
+                    Spacer()
+                }
 
-                Text(slide.subtitle)
-                    .font(.body)
-                    .foregroundStyle(.white.opacity(0.85))
-                    .multilineTextAlignment(.center)
+                if slide.contentAlignment == .top || slide.contentAlignment == .bottom {
+                    Spacer().frame(height: UIScreen.main.bounds.height / 9)
+                }
 
-                Button(slide.ctaTitle) { onCTATap?() }
-                    .buttonStyle(.dsPrimary)
+                contentCard
+
+                if slide.contentAlignment == .top || slide.contentAlignment == .center {
+                    Spacer()
+                }
+
+                if slide.contentAlignment == .top || slide.contentAlignment == .bottom {
+                    Spacer().frame(height: UIScreen.main.bounds.height / 9)
+                }
             }
             .padding(.horizontal, 24)
             .safeAreaPadding()
         }
         .ignoresSafeArea()
+    }
+
+    // MARK: - Card
+
+    private var contentCard: some View {
+        VStack(spacing: 16) {
+            Text(slide.title)
+                .font(.title.bold())
+                .foregroundStyle(.white)
+                .multilineTextAlignment(.center)
+
+            Text(slide.subtitle)
+                .font(.body)
+                .foregroundStyle(.white.opacity(0.85))
+                .multilineTextAlignment(.center)
+
+            Button(slide.ctaTitle) { onCTATap?() }
+                .buttonStyle(.dsPrimary)
+        }
+        .padding(20)
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: Constants.Radius.xl, style: .continuous))
     }
 }
