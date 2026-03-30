@@ -130,7 +130,6 @@ final class MentorsViewModel {
         Task { await fetchPage(1) }
     }
 
-    @discardableResult
     private func fetchPage(_ page: Int) async -> Void {
         guard !isLoading else { return }
         isLoading = true
