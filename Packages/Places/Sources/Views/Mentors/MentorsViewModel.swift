@@ -13,7 +13,7 @@ final class MentorsViewModel {
 
     var selectedSportId: UUID? {
         didSet {
-            guard oldValue != selectedSportId else { return }
+            guard !isSyncingSport, oldValue != selectedSportId else { return }
             selectedPlaceId = nil
             reloadPlaces()
             resetAndLoad()
@@ -88,8 +88,15 @@ final class MentorsViewModel {
         guard savedSlug != currentSlug else { return }
 
         let match = savedSlug.flatMap { slug in sports.first { $0.slug == slug } }
+        isSyncingSport = true
         selectedSportId = match?.id
+        isSyncingSport = false
+        selectedPlaceId = nil
+        reloadPlaces()
+        resetAndLoad()
     }
+
+    private var isSyncingSport = false
 
     func refresh() async {
         mentors = []

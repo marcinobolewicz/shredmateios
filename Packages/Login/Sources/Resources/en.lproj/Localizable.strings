@@ -21,7 +21,7 @@
 "register.create_account_button" = "Create Account";
 "register.already_have_account" = "Already have an account?";
 "register.sign_in_button" = "Sign In";
-"register.consent_markdown" = "By signing up you agree to the processing of personal data in accordance with the [**Privacy Policy**](shredmate://privacy) and confirm that you have read the [**Terms of Service**](shredmate://terms) and accept its provisions.";
+"register.consent_markdown" = "By signing up you agree to the processing of personal data in accordance with the [**Privacy Policy**](https://shredmate.pl/privacy) and confirm that you have read the [**Terms of Service**](https://shredmate.pl/terms) and accept its provisions.";
 
 /* Forgot Password View */
 "forgot_password.navigation_title" = "Reset Password";

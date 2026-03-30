@@ -5,6 +5,7 @@ import Networking
 struct MentorsView: View {
     @Environment(AppTheme.self) private var theme
     @State private var viewModel: MentorsViewModel
+    @State private var appearCount = 0
 
     init(
         mentorsService: MentorsServiceProtocol,
@@ -35,7 +36,11 @@ struct MentorsView: View {
         .background(theme.colors.backgroundSecondary)
         .refreshable { await viewModel.refresh() }
         .task { await viewModel.loadInitial() }
-        .onAppear { Task { await viewModel.syncSportPreference() } }
+        .onAppear { appearCount += 1 }
+        .task(id: appearCount) {
+            guard appearCount > 0 else { return }
+            await viewModel.syncSportPreference()
+        }
     }
 
     // MARK: - Sport Chips

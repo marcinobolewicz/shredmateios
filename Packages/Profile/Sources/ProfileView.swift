@@ -18,8 +18,6 @@ enum ProfileRoute: Hashable {
     case mySlots
     case generateSlots
     case contact
-    case terms
-    case privacy
 }
 
 public struct ProfileView: View {
@@ -40,9 +38,9 @@ public struct ProfileView: View {
                     headerSection
                     menuSection
                         .listRowSeparator(.hidden)
-                    supportSection
-                        .listRowSeparator(.hidden)
                     accountSection
+                        .listRowSeparator(.hidden)
+                    supportSection
                         .listRowSeparator(.hidden)
                 }
             }
@@ -66,10 +64,6 @@ public struct ProfileView: View {
                     )
                 case .contact:
                     ContactView()
-                case .terms:
-                    LegalDocumentView(title: LegalContent.termsTitle, sections: LegalContent.termsSections)
-                case .privacy:
-                    LegalDocumentView(title: LegalContent.privacyTitle, sections: LegalContent.privacySections)
                 }
             }
             .navigationDestination(for: UUID.self) { riderId in
@@ -176,13 +170,17 @@ public struct ProfileView: View {
                 Label(ProfileStrings.contactTitle.localized, systemImage: "envelope")
             }
 
-            NavigationLink(value: ProfileRoute.terms) {
-                Label(ProfileStrings.termsTitle.localized, systemImage: "doc.text")
-            }
+            DSLinkButton(
+                ProfileStrings.termsTitle.localized,
+                systemImage: "doc.text",
+                url: URL(string: "https://shredmate.pl/terms")!
+            )
 
-            NavigationLink(value: ProfileRoute.privacy) {
-                Label(ProfileStrings.privacyTitle.localized, systemImage: "hand.raised")
-            }
+            DSLinkButton(
+                ProfileStrings.privacyTitle.localized,
+                systemImage: "hand.raised",
+                url: URL(string: "https://shredmate.pl/privacy")!
+            )
         }
     }
 
