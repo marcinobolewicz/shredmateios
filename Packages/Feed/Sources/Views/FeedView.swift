@@ -153,73 +153,69 @@ private struct ActivityPostRow: View {
     let onPlaceTap: () -> Void
 
     var body: some View {
-//        HStack(alignment: .top, spacing: theme.spacing.sm) {
-            
-            VStack(alignment: .leading, spacing: theme.spacing.xs) {
-                HStack(alignment: .center, spacing: theme.spacing.sm) {
+        VStack(alignment: .leading, spacing: theme.spacing.xs) {
+            HStack(alignment: .center, spacing: theme.spacing.sm) {
+                Button(action: onRiderTap) {
+                    AvatarView(
+                        url: URL(string: post.rider.avatarUrl ?? ""),
+                        initials: post.rider.initials
+                    )
+                }
+                .buttonStyle(.plain)
+                
+                VStack(
+                    alignment: .leading,
+                    spacing: theme.spacing.xxs
+                ) {
                     Button(action: onRiderTap) {
-                        AvatarView(
-                            url: URL(string: post.rider.avatarUrl ?? ""),
-                            initials: post.rider.initials
-                        )
+                        Text(post.rider.displayName)
+                            .dsTextStyle(.heading)
+                            .lineLimit(1)
                     }
                     .buttonStyle(.plain)
                     
-                    VStack(
-                        alignment: .leading,
-                        spacing: theme.spacing.xxs
-                    ) {
-                        Button(action: onRiderTap) {
-                            Text(post.rider.displayName)
-                                .dsTextStyle(.heading)
-                                .lineLimit(1)
-                        }
-                        .buttonStyle(.plain)
-                        
-                        Button(action: onPlaceTap) {
-                            Text(post.place.name)
-                                .dsTextStyle(.subheadline)
-                                .lineLimit(1)
-                        }
-                        .buttonStyle(.plain)
+                    Button(action: onPlaceTap) {
+                        Text(post.place.name)
+                            .dsTextStyle(.subheadline)
+                            .lineLimit(1)
                     }
+                    .buttonStyle(.plain)
                 }
-
-                if let photoUrl = post.photoUrl, let url = URL(string: photoUrl) {
-                    Color.clear
-                        .frame(maxWidth: .infinity)
-                        .aspectRatio(1, contentMode: .fit)
-                        .overlay {
-                            AsyncImage(url: url) { phase in
-                                switch phase {
-                                case .success(let image):
-                                    image
-                                        .resizable()
-                                        .scaledToFill()
-                                case .failure:
-                                    theme.colors.surfaceSecondary
-                                default:
-                                    theme.colors.surfaceSecondary
-                                }
+            }
+            
+            if let photoUrl = post.photoUrl, let url = URL(string: photoUrl) {
+                Color.clear
+                    .frame(maxWidth: .infinity)
+                    .aspectRatio(1, contentMode: .fit)
+                    .overlay {
+                        AsyncImage(url: url) { phase in
+                            switch phase {
+                            case .success(let image):
+                                image
+                                    .resizable()
+                                    .scaledToFill()
+                            case .failure:
+                                theme.colors.surfaceSecondary
+                            default:
+                                theme.colors.surfaceSecondary
                             }
                         }
-                        .clipped()
-                        .clipShape(RoundedRectangle(cornerRadius: theme.radius.sm))
-                }
-
-                if let caption = post.caption, !caption.isEmpty {
-                    Text(caption).dsTextStyle(.body)
-                }
-
-                Text(post.createdAt.formattedTimestamp)
-                    .dsTextStyle(.caption)
-                    .foregroundStyle(theme.colors.textSecondary)
-                    .frame(maxWidth: .infinity, alignment: .trailing)
+                    }
+                    .clipped()
+                    .clipShape(RoundedRectangle(cornerRadius: theme.radius.sm))
             }
-            .padding(.horizontal, theme.spacing.sm)
-            .padding(.vertical, theme.spacing.md)
-//        }
-//        .padding(.vertical, theme.spacing.sm)
+            
+            if let caption = post.caption, !caption.isEmpty {
+                Text(caption).dsTextStyle(.body)
+            }
+            
+            Text(post.createdAt.formattedTimestamp)
+                .dsTextStyle(.caption)
+                .foregroundStyle(theme.colors.textSecondary)
+                .frame(maxWidth: .infinity, alignment: .trailing)
+        }
+        .padding(.horizontal, theme.spacing.sm)
+        .padding(.vertical, theme.spacing.md)
     }
 }
 
