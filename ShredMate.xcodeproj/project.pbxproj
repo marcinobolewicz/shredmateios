@@ -180,6 +180,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				pl,
 				Base,
 			);
 			mainGroup = MainGroup;
