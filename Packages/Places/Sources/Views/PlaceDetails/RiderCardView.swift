@@ -74,6 +74,7 @@ public struct RiderCardView: View {
             VStack(alignment: .leading, spacing: theme.spacing.md) {
                 header
                 descriptionSection
+                mentorStatsSection
                 if !isOwnProfile {
                     actionButtons
                 }
@@ -143,6 +144,18 @@ public struct RiderCardView: View {
                 .dsTextStyle(.subheadline)
                 .foregroundStyle(theme.colors.textSecondary)
                 .frame(maxWidth: .infinity, alignment: .leading)
+        }
+    }
+
+    @ViewBuilder
+    private var mentorStatsSection: some View {
+        if let slotsVM = slotsViewModel,
+           let sessions = slotsVM.sessionCount, sessions > 0,
+           let recommendations = slotsVM.recommendationCount, recommendations > 0 {
+            MentorStatsView(
+                sessionCount: sessions,
+                recommendationCount: recommendations
+            )
         }
     }
 

@@ -8,6 +8,8 @@ public final class MentorSlotsViewModel {
     private(set) var dayGroups: [MentorSlotDayGroup] = []
     private(set) var isLoading = false
     private(set) var hasSlots = false
+    private(set) var sessionCount: Int?
+    private(set) var recommendationCount: Int?
     
     var actionError: String?
     var selectedSlot: MentorSlotRowViewData?
@@ -54,6 +56,9 @@ public final class MentorSlotsViewModel {
                 to: twoWeeks,
                 limit: 100
             )
+            let mentorRider = response.items.first?.mentorRider
+            sessionCount = mentorRider?.sessionCount
+            recommendationCount = mentorRider?.recommendationCount
             dayGroups = presenter.groupByDay(response.items)
             hasSlots = !response.items.isEmpty
         } catch {

@@ -40,6 +40,10 @@
 "places.mentors_all_sports" = "Wszystkie sporty";
 "places.mentors_all_spots" = "Wszystkie spoty";
 
+/* Statystyki mentora */
+"places.mentor_sessions_format" = "%d sesji";
+"places.mentor_recommendations_format" = "%d rekomendacji";
+
 /* Sloty mentora */
 "places.mentor_slots_title" = "Dostępne terminy";
 "places.mentor_slots_empty" = "Brak dostępnych terminów";

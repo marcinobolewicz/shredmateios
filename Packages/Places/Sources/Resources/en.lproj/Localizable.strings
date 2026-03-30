@@ -40,6 +40,10 @@
 "places.mentors_all_sports" = "All sports";
 "places.mentors_all_spots" = "All spots";
 
+/* Mentor Stats */
+"places.mentor_sessions_format" = "%d sessions";
+"places.mentor_recommendations_format" = "%d recommendations";
+
 /* Mentor Slots */
 "places.mentor_slots_title" = "Available sessions";
 "places.mentor_slots_empty" = "No available sessions";

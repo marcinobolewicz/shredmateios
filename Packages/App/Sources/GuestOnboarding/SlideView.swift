@@ -32,7 +32,7 @@ struct SlideView: View {
                 }
 
                 if slide.contentAlignment == .top || slide.contentAlignment == .bottom {
-                    Spacer().frame(height: UIScreen.main.bounds.height / 9)
+                    Spacer().frame(height: UIScreen.main.bounds.height / 6)
                 }
 
                 contentCard
@@ -42,7 +42,7 @@ struct SlideView: View {
                 }
 
                 if slide.contentAlignment == .top || slide.contentAlignment == .bottom {
-                    Spacer().frame(height: UIScreen.main.bounds.height / 9)
+                    Spacer().frame(height: UIScreen.main.bounds.height / 6)
                 }
             }
             .padding(.horizontal, 24)

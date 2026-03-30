@@ -48,6 +48,10 @@ enum PlacesStrings: String {
     case unfollowButton = "places.unfollow_button"
     case messageButton = "places.message_button"
 
+    // MARK: - Mentor Stats
+    case mentorSessionsFormat = "places.mentor_sessions_format"
+    case mentorRecommendationsFormat = "places.mentor_recommendations_format"
+
     // MARK: - Mentor Slots
     case mentorSlotsTitle = "places.mentor_slots_title"
     case mentorSlotsEmpty = "places.mentor_slots_empty"
@@ -102,6 +106,14 @@ enum PlacesStrings: String {
 
     static func failedCheckOut(_ error: String) -> String {
         String(format: NSLocalizedString(PlacesStrings.failedCheckOutFormat.rawValue, bundle: .module, comment: ""), error)
+    }
+
+    static func mentorSessions(_ count: Int) -> String {
+        String(format: NSLocalizedString(PlacesStrings.mentorSessionsFormat.rawValue, bundle: .module, comment: ""), count)
+    }
+
+    static func mentorRecommendations(_ count: Int) -> String {
+        String(format: NSLocalizedString(PlacesStrings.mentorRecommendationsFormat.rawValue, bundle: .module, comment: ""), count)
     }
 
     static func checkedInRole(_ role: String) -> String {
