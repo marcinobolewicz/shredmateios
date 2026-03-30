@@ -10,11 +10,16 @@ import Networking
 import Common
 import Theme
 
+
+
 enum ProfileRoute: Hashable {
     case editRider
     case myBookings
     case mySlots
     case generateSlots
+    case contact
+    case terms
+    case privacy
 }
 
 public struct ProfileView: View {
@@ -34,6 +39,8 @@ public struct ProfileView: View {
                 } else {
                     headerSection
                     menuSection
+                        .listRowSeparator(.hidden)
+                    supportSection
                         .listRowSeparator(.hidden)
                     accountSection
                         .listRowSeparator(.hidden)
@@ -57,6 +64,12 @@ public struct ProfileView: View {
                         placesService: viewModel.placesService,
                         riderSports: viewModel.riderSports
                     )
+                case .contact:
+                    ContactView()
+                case .terms:
+                    LegalDocumentView(title: LegalContent.termsTitle, sections: LegalContent.termsSections)
+                case .privacy:
+                    LegalDocumentView(title: LegalContent.privacyTitle, sections: LegalContent.privacySections)
                 }
             }
             .navigationDestination(for: UUID.self) { riderId in
@@ -151,6 +164,24 @@ public struct ProfileView: View {
                 NavigationLink(value: ProfileRoute.generateSlots) {
                     Label(ProfileStrings.generateSlotsTitle.localized, systemImage: "calendar.badge.plus")
                 }
+            }
+        }
+    }
+
+    // MARK: - Support & Legal
+
+    private var supportSection: some View {
+        Section(ProfileStrings.sectionSupport.localized) {
+            NavigationLink(value: ProfileRoute.contact) {
+                Label(ProfileStrings.contactTitle.localized, systemImage: "envelope")
+            }
+
+            NavigationLink(value: ProfileRoute.terms) {
+                Label(ProfileStrings.termsTitle.localized, systemImage: "doc.text")
+            }
+
+            NavigationLink(value: ProfileRoute.privacy) {
+                Label(ProfileStrings.privacyTitle.localized, systemImage: "hand.raised")
             }
         }
     }

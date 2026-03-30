@@ -8,3 +8,31 @@
 "common.send_button" = "Wyślij";
 "common.session_expired_title" = "Sesja wygasła";
 "common.session_expired_message" = "Twoja sesja wygasła. Zaloguj się ponownie.";
+
+/* Legal — Regulamin */
+"legal.terms_title" = "Regulamin";
+"legal.terms_section_1_heading" = "1. Akceptacja regulaminu";
+"legal.terms_section_1_body" = "Tworząc konto lub korzystając z ShredMate, akceptujesz niniejszy Regulamin. Jeśli nie wyrażasz zgody, nie możesz korzystać z aplikacji. Zastrzegamy sobie prawo do modyfikacji regulaminu — dalsze korzystanie oznacza akceptację zmian.";
+"legal.terms_section_2_heading" = "2. Konta użytkowników";
+"legal.terms_section_2_body" = "Podczas rejestracji musisz podać prawdziwe dane. Jesteś odpowiedzialny za zachowanie poufności danych logowania i za wszelkie działania na swoim koncie. Niezwłocznie powiadom nas o nieautoryzowanym użyciu.";
+"legal.terms_section_3_heading" = "3. Zasady korzystania";
+"legal.terms_section_3_body" = "Zobowiązujesz się nie używać ShredMate w celach niezgodnych z prawem, nie nękać innych użytkowników, nie publikować obraźliwych lub wprowadzających w błąd treści oraz nie zakłócać działania serwisu. Zastrzegamy sobie prawo do zawieszenia lub usunięcia kont naruszających te zasady.";
+"legal.terms_section_4_heading" = "4. Sesje mentorskie i płatności";
+"legal.terms_section_4_body" = "Rezerwacje sesji mentorskich stanowią umowy między riderami a mentorami. ShredMate ułatwia umawianie spotkań, ale nie jest stroną tych umów. Zasady anulowania i zwrotów są prezentowane podczas rezerwacji.";
+"legal.terms_section_5_heading" = "5. Ograniczenie odpowiedzialności";
+"legal.terms_section_5_body" = "ShredMate jest dostarczany „tak jak jest", bez jakichkolwiek gwarancji. Nie ponosimy odpowiedzialności za urazy, szkody ani straty wynikające z korzystania z aplikacji lub udziału w aktywnościach sportowych organizowanych za jej pośrednictwem.";
+"legal.terms_section_6_heading" = "6. Kontakt";
+"legal.terms_section_6_body" = "W razie pytań dotyczących regulaminu skontaktuj się z nami pod adresem support@shredmate.eu.";
+
+/* Legal — Polityka Prywatności */
+"legal.privacy_title" = "Polityka Prywatności";
+"legal.privacy_section_1_heading" = "1. Jakie dane zbieramy";
+"legal.privacy_section_1_body" = "Zbieramy dane podane bezpośrednio przez Ciebie: imię, adres e-mail, szczegóły profilu, dane lokalizacyjne i preferencje sportowe. Zbieramy również dane o użytkowaniu, takie jak informacje o urządzeniu, interakcje z aplikacją i raporty o błędach w celu ulepszania usługi.";
+"legal.privacy_section_2_heading" = "2. Jak wykorzystujemy Twoje dane";
+"legal.privacy_section_2_body" = "Twoje dane służą do świadczenia i personalizacji usługi, łączenia riderów z mentorami, wyświetlania odpowiednich spotów, wysyłania powiadomień i poprawy wydajności aplikacji. Nie sprzedajemy Twoich danych osobowych podmiotom trzecim.";
+"legal.privacy_section_3_heading" = "3. Udostępnianie danych";
+"legal.privacy_section_3_body" = "Twoje publiczne informacje profilowe (nazwa wyświetlana, avatar, preferencje sportowe) są widoczne dla innych użytkowników. Możemy udostępniać zanonimizowane dane analityczne dostawcom usług. Korzystamy z Firebase do raportowania błędów i powiadomień push.";
+"legal.privacy_section_4_heading" = "4. Przechowywanie i usuwanie danych";
+"legal.privacy_section_4_body" = "Twoje dane są przechowywane tak długo, jak Twoje konto jest aktywne. Możesz zażądać usunięcia konta w dowolnym momencie w ustawieniach aplikacji — wszystkie dane osobowe zostaną trwale usunięte w ciągu 30 dni od zgłoszenia.";
+"legal.privacy_section_5_heading" = "5. Twoje prawa";
+"legal.privacy_section_5_body" = "Masz prawo do dostępu, poprawiania i usunięcia swoich danych osobowych. Aby skorzystać z tych praw lub w razie pytań dotyczących prywatności, skontaktuj się z nami pod adresem privacy@shredmate.eu.";

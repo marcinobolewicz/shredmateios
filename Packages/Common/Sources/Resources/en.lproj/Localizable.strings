@@ -8,3 +8,31 @@
 "common.send_button" = "Send";
 "common.session_expired_title" = "Session Expired";
 "common.session_expired_message" = "Your session has expired. Please log in again.";
+
+/* Legal — Terms of Service */
+"legal.terms_title" = "Terms of Service";
+"legal.terms_section_1_heading" = "1. Acceptance of Terms";
+"legal.terms_section_1_body" = "By creating an account or using ShredMate, you agree to be bound by these Terms of Service. If you do not agree, you may not use the application. We reserve the right to modify these terms at any time — continued use constitutes acceptance of the updated terms.";
+"legal.terms_section_2_heading" = "2. User Accounts";
+"legal.terms_section_2_body" = "You must provide accurate information when registering. You are responsible for maintaining the confidentiality of your account credentials and for all activity under your account. Notify us immediately of any unauthorized use.";
+"legal.terms_section_3_heading" = "3. Acceptable Use";
+"legal.terms_section_3_body" = "You agree not to use ShredMate for any unlawful purpose, to harass other users, to post offensive or misleading content, or to interfere with the proper operation of the service. We reserve the right to suspend or terminate accounts that violate these rules.";
+"legal.terms_section_4_heading" = "4. Mentor Sessions & Payments";
+"legal.terms_section_4_body" = "Mentor session bookings are agreements between riders and mentors. ShredMate facilitates scheduling but is not a party to these agreements. Cancellation policies and refund conditions are displayed at the time of booking.";
+"legal.terms_section_5_heading" = "5. Limitation of Liability";
+"legal.terms_section_5_body" = "ShredMate is provided \"as is\" without warranties of any kind. We are not liable for injuries, damages, or losses arising from the use of the application or participation in sports activities arranged through it.";
+"legal.terms_section_6_heading" = "6. Contact";
+"legal.terms_section_6_body" = "If you have questions about these terms, please contact us at support@shredmate.eu.";
+
+/* Legal — Privacy Policy */
+"legal.privacy_title" = "Privacy Policy";
+"legal.privacy_section_1_heading" = "1. Information We Collect";
+"legal.privacy_section_1_body" = "We collect information you provide directly: name, email address, profile details, location data, and sport preferences. We also collect usage data such as device information, app interactions, and crash reports to improve the service.";
+"legal.privacy_section_2_heading" = "2. How We Use Your Data";
+"legal.privacy_section_2_body" = "Your data is used to provide and personalize the service, match riders with mentors, display relevant spots, send notifications, and improve app performance. We do not sell your personal data to third parties.";
+"legal.privacy_section_3_heading" = "3. Data Sharing";
+"legal.privacy_section_3_body" = "Your public profile information (display name, avatar, sport preferences) is visible to other users. We may share anonymized analytics data with service providers. We use Firebase for crash reporting and push notifications.";
+"legal.privacy_section_4_heading" = "4. Data Retention & Deletion";
+"legal.privacy_section_4_body" = "Your data is retained as long as your account is active. You can request account deletion at any time through the app settings — all personal data will be permanently removed within 30 days of the request.";
+"legal.privacy_section_5_heading" = "5. Your Rights";
+"legal.privacy_section_5_body" = "You have the right to access, correct, or delete your personal data. To exercise these rights or for any privacy-related questions, contact us at privacy@shredmate.eu.";

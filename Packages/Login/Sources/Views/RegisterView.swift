@@ -3,6 +3,74 @@ import Core
 import Theme
 import Common
 
+// MARK: - Legal Consent
+
+private struct LegalConsentRow: View {
+    @Environment(AppTheme.self) private var theme
+    @Binding var isAccepted: Bool
+    @State private var showTerms = false
+    @State private var showPrivacy = false
+
+    var body: some View {
+        HStack(alignment: .top, spacing: theme.spacing.sm) {
+            Button { isAccepted.toggle() } label: {
+                Image(systemName: isAccepted ? "checkmark.square.fill" : "square")
+                    .font(.title3)
+                    .foregroundStyle(isAccepted ? theme.colors.primary : theme.colors.textTertiary)
+            }
+            .buttonStyle(.plain)
+
+            Text(.init(RegisterStrings.consentMarkdown.localized))
+                .font(.caption)
+                .foregroundStyle(theme.colors.textSecondary)
+                .tint(theme.colors.textPrimary)
+                .environment(\.openURL, OpenURLAction { url in
+                    switch url.host() {
+                    case "terms": showTerms = true
+                    case "privacy": showPrivacy = true
+                    default: break
+                    }
+                    return .handled
+                })
+        }
+        .legalSheet(isPresented: $showTerms, title: LegalContent.termsTitle, sections: LegalContent.termsSections)
+        .legalSheet(isPresented: $showPrivacy, title: LegalContent.privacyTitle, sections: LegalContent.privacySections)
+    }
+}
+
+// MARK: - Legal Sheet Modifier
+
+private struct LegalSheetModifier: ViewModifier {
+    @Binding var isPresented: Bool
+    let title: String
+    let sections: [LegalDocumentView.Section]
+
+    func body(content: Content) -> some View {
+        content.sheet(isPresented: $isPresented) {
+            NavigationStack {
+                LegalDocumentView(title: title, sections: sections)
+                    .toolbar {
+                        ToolbarItem(placement: .cancellationAction) {
+                            Button(CommonStrings.okButton.localized) { isPresented = false }
+                        }
+                    }
+            }
+        }
+    }
+}
+
+private extension View {
+    func legalSheet(
+        isPresented: Binding<Bool>,
+        title: String,
+        sections: [LegalDocumentView.Section]
+    ) -> some View {
+        modifier(LegalSheetModifier(isPresented: isPresented, title: title, sections: sections))
+    }
+}
+
+// MARK: - Register View
+
 /// Register view for new user sign up
 public struct RegisterView: View {
 
@@ -18,6 +86,7 @@ public struct RegisterView: View {
             VStack(spacing: theme.spacing.lg) {
                 headerSection
                 formSection
+                LegalConsentRow(isAccepted: $viewModel.termsAccepted)
                 registerButton
                 loginLink
             }
