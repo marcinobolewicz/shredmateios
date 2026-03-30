@@ -34,6 +34,7 @@ final class PlaceDetailsViewModel {
     private let placesService: any PlacesServiceProtocol
     private let authState: AuthState
     private let rowPresenter: PlaceRiderRowPresenter
+    private let sportPreferenceStorage: any SportPreferenceStorageProtocol
     private var lastLoadedSportSlug: String?
 
     // MARK: - Init
@@ -44,6 +45,7 @@ final class PlaceDetailsViewModel {
         sportFilters: [PlaceDetailsViewData.SportFilter],
         placesService: any PlacesServiceProtocol,
         authState: AuthState,
+        sportPreferenceStorage: any SportPreferenceStorageProtocol,
         rowPresenter: PlaceRiderRowPresenter = .init()
     ) {
         self.placeId = placeId
@@ -51,6 +53,7 @@ final class PlaceDetailsViewModel {
         self.sportFilters = sportFilters
         self.placesService = placesService
         self.authState = authState
+        self.sportPreferenceStorage = sportPreferenceStorage
         self.rowPresenter = rowPresenter
         self.selectedSportSlug = nil
     }
@@ -74,7 +77,15 @@ final class PlaceDetailsViewModel {
     func selectSport(_ sportSlug: String) async {
         guard selectedSportSlug != sportSlug else { return }
         selectedSportSlug = sportSlug
+        Task { await sportPreferenceStorage.saveSportSlug(sportSlug) }
         await loadRiders(force: true)
+    }
+
+    func applySavedSportPreference() async {
+        guard selectedSportSlug == nil,
+              let savedSlug = await sportPreferenceStorage.savedSportSlug(),
+              sportFilters.contains(where: { $0.slug == savedSlug }) else { return }
+        selectedSportSlug = savedSlug
     }
 
     func loadRiders(force: Bool = false) async {
@@ -97,6 +108,28 @@ final class PlaceDetailsViewModel {
         }
     }
 
+    // MARK: - Membership
+
+    private(set) var isCheckingMembership = false
+    private(set) var membershipSportId: UUID?
+
+    func checkMembership() async {
+        guard authState.isLoggedIn else { return }
+        isCheckingMembership = true
+        defer { isCheckingMembership = false }
+
+        do {
+            let membership = try await placesService.myMembership(placeId: placeId)
+            hasJoined = true
+            joinedRole = membership.role
+            membershipSportId = membership.sportId
+        } catch {
+            hasJoined = false
+            joinedRole = nil
+            membershipSportId = nil
+        }
+    }
+
     // MARK: - Join Place
 
     func joinWith(role: PlaceRiderRole) async {
@@ -114,8 +147,31 @@ final class PlaceDetailsViewModel {
             )
             hasJoined = true
             joinedRole = response.role ?? role
+            membershipSportId = response.sportId ?? someSportId
+            await loadRiders(force: true)
         } catch {
             self.error = PlacesStrings.failedCheckIn(error.localizedDescription)
+        }
+    }
+
+    // MARK: - Leave Place
+
+    private(set) var isLeaving = false
+
+    func leavePlace() async {
+        guard let sportId = membershipSportId ?? sportIds.first else { return }
+        isLeaving = true
+        error = nil
+        defer { isLeaving = false }
+
+        do {
+            try await placesService.leavePlace(placeId: placeId, sportId: sportId)
+            hasJoined = false
+            joinedRole = nil
+            membershipSportId = nil
+            await loadRiders(force: true)
+        } catch {
+            self.error = PlacesStrings.failedCheckOut(error.localizedDescription)
         }
     }
 

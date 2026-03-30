@@ -85,7 +85,7 @@ struct MyPostsView: View {
         }
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
-        .background(theme.colors.background)
+        .background(theme.colors.backgroundSecondary)
     }
 }
 

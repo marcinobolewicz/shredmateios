@@ -35,6 +35,14 @@ public final class MentorSlotsViewModel {
         isLoading = true
         defer { isLoading = false }
 
+        await fetchSlots()
+    }
+
+    func refresh() async {
+        await fetchSlots()
+    }
+
+    private func fetchSlots() async {
         do {
             let now = ISO8601DateFormatter().string(from: Date())
             let twoWeeks = ISO8601DateFormatter().string(

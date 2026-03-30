@@ -1,5 +1,10 @@
 import Foundation
 
+/// Vertical placement of content overlay on a slide.
+enum SlideContentAlignment {
+    case top, center, bottom
+}
+
 /// Data model for a single full-screen guest onboarding slide.
 struct GuestSlide: Identifiable {
     let id: String
@@ -7,6 +12,7 @@ struct GuestSlide: Identifiable {
     let title: String
     let subtitle: String
     let ctaTitle: String
+    var contentAlignment: SlideContentAlignment = .center
 }
 
 extension GuestSlide {

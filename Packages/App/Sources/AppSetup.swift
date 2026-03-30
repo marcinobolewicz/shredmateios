@@ -14,6 +14,7 @@ public final class AppDependencies {
     public let placesService: any PlacesServiceProtocol
     public let sportsService: any SportsServiceProtocol
     public let mentorSlotsService: any MentorSlotsServiceProtocol
+    public let mentorsService: any MentorsServiceProtocol
     public let feedService: any FeedServiceProtocol
     public let chatService: any ChatServiceProtocol
     public let chatRealtimeClient: ChatRealtimeProviding
@@ -21,6 +22,7 @@ public final class AppDependencies {
     public let chatLifecycleManager: ChatLifecycleManager
     public let chatEventHandler: ChatEventHandler
     public let notificationCenter: InAppNotificationCenter
+    public let sportPreferenceStorage: any SportPreferenceStorageProtocol
 
     public init(
         authState: AuthState,
@@ -30,13 +32,15 @@ public final class AppDependencies {
         placesService: any PlacesServiceProtocol,
         sportsService: any SportsServiceProtocol,
         mentorSlotsService: any MentorSlotsServiceProtocol,
+        mentorsService: any MentorsServiceProtocol,
         feedService: any FeedServiceProtocol,
         chatService: any ChatServiceProtocol,
         chatRealtimeClient: ChatRealtimeProviding,
         chatRepository: ChatRepository,
         chatLifecycleManager: ChatLifecycleManager,
         chatEventHandler: ChatEventHandler,
-        notificationCenter: InAppNotificationCenter
+        notificationCenter: InAppNotificationCenter,
+        sportPreferenceStorage: any SportPreferenceStorageProtocol
     ) {
         self.authState = authState
         self.pushDeviceService = pushDeviceService
@@ -45,6 +49,7 @@ public final class AppDependencies {
         self.placesService = placesService
         self.sportsService = sportsService
         self.mentorSlotsService = mentorSlotsService
+        self.mentorsService = mentorsService
         self.feedService = feedService
         self.chatService = chatService
         self.chatRealtimeClient = chatRealtimeClient
@@ -52,6 +57,7 @@ public final class AppDependencies {
         self.chatLifecycleManager = chatLifecycleManager
         self.chatEventHandler = chatEventHandler
         self.notificationCenter = notificationCenter
+        self.sportPreferenceStorage = sportPreferenceStorage
     }
 }
 
@@ -65,6 +71,7 @@ public struct AppSetup {
         let services = configureServices(httpClient: auth.httpClient)
         let chat = configureChat(httpClient: auth.httpClient, authState: auth.authState)
         let notificationCenter = InAppNotificationCenter()
+        let sportPreferenceStorage = SportPreferenceStorage()
         
         // Wire socket → in-app banner
         chat.eventHandler.onMessageReceived = { [weak notificationCenter] senderName, text, conversationId in
@@ -97,13 +104,15 @@ public struct AppSetup {
             placesService: services.places,
             sportsService: services.sports,
             mentorSlotsService: services.mentorSlots,
+            mentorsService: services.mentors,
             feedService: services.feed,
             chatService: chat.service,
             chatRealtimeClient: chat.realtimeClient,
             chatRepository: chat.repository,
             chatLifecycleManager: chat.lifecycleManager,
             chatEventHandler: chat.eventHandler,
-            notificationCenter: notificationCenter
+            notificationCenter: notificationCenter,
+            sportPreferenceStorage: sportPreferenceStorage
         )
     }
 
@@ -119,13 +128,13 @@ public struct AppSetup {
         let baseURL = URL(string: "https://api.shredmate.eu/api/v1")!
         let tokenStorage = TokenStorage()
         let pushDeviceStorage = PushDeviceStorage()
-        let tokenProvider = DefaultTokenProvider(tokenStorage: tokenStorage, baseURL: baseURL)
-
         #if DEBUG
         let networkSession: any NetworkSessioning = URLSessionProxy(configuration: .default)
         #else
         let networkSession: any NetworkSessioning = URLSession.shared
         #endif
+
+        let tokenProvider = DefaultTokenProvider(tokenStorage: tokenStorage, baseURL: baseURL, session: networkSession)
 
         let httpClient = AuthenticatingHTTPClient(
             baseURL: baseURL,
@@ -168,6 +177,7 @@ public struct AppSetup {
         let places: any PlacesServiceProtocol
         let sports: any SportsServiceProtocol
         let mentorSlots: any MentorSlotsServiceProtocol
+        let mentors: any MentorsServiceProtocol
         let feed: any FeedServiceProtocol
     }
 
@@ -177,6 +187,7 @@ public struct AppSetup {
             places: PlacesService(client: httpClient),
             sports: SportsServiceService(client: httpClient),
             mentorSlots: MentorSlotsService(client: httpClient),
+            mentors: MentorsService(client: httpClient),
             feed: FeedService(client: httpClient)
         )
     }

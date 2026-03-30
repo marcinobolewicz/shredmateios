@@ -34,6 +34,12 @@
 "places.details_mentors_empty_description" = "Mentors available at this spot will appear here.";
 "places.map_details_button" = "Details";
 
+/* Mentors Search */
+"places.mentors_search_title" = "Find a mentor";
+"places.mentors_search_description" = "Browse instructors, filter by sport and spot, book a session.";
+"places.mentors_all_sports" = "All sports";
+"places.mentors_all_spots" = "All spots";
+
 /* Mentor Slots */
 "places.mentor_slots_title" = "Available sessions";
 "places.mentor_slots_empty" = "No available sessions";
@@ -57,6 +63,13 @@
 "places.role_mentor" = "Mentor";
 "places.cancel_button" = "Cancel";
 "places.check_in_error_title" = "Check-In Error";
+"places.checked_in_title" = "You're checked in";
+"places.checked_in_role_format" = "Role: %@";
+"places.change_role_button" = "Change role";
+"places.join_spot_title" = "Join the spot";
+"places.join_spot_description" = "Let others know you're here as a Rider or Mentor.";
+"places.riders_count_format" = "%d riders";
+"places.mentors_count_format" = "%d mentors";
 "places.checked_in_as_format" = "Checked in as %@";
 "places.checked_in_elsewhere_format" = "Already checked in at %@";
 "places.failed_check_in_format" = "Failed to check in: %@";

@@ -19,6 +19,7 @@ enum RegisterStrings: String {
     case createAccountButton = "register.create_account_button"
     case alreadyHaveAccount = "register.already_have_account"
     case signInButton = "register.sign_in_button"
+    case consentMarkdown = "register.consent_markdown"
 
     var localized: String {
         NSLocalizedString(rawValue, bundle: .module, comment: "")

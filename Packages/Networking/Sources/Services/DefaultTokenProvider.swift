@@ -25,10 +25,10 @@ public actor DefaultTokenProvider: TokenProvider {
         self.refreshClient = refreshClient
     }
     
-    /// Convenience initializer with base URL
-    public init(tokenStorage: TokenStorageProtocol, baseURL: URL) {
+    /// Convenience initializer with base URL and optional session
+    public init(tokenStorage: TokenStorageProtocol, baseURL: URL, session: NetworkSessioning = URLSession.shared) {
         self.tokenStorage = tokenStorage
-        self.refreshClient = APIClient(baseURL: baseURL)
+        self.refreshClient = APIClient(baseURL: baseURL, httpClient: DefaultHTTPClient(session: session))
     }
     
     // MARK: - TokenProvider

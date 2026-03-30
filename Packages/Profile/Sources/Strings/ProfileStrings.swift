@@ -145,6 +145,15 @@ enum ProfileStrings: String {
     case skillLevelIntermediate = "profile.skill_level_intermediate"
     case skillLevelPro = "profile.skill_level_pro"
 
+    // MARK: - Support & Legal
+    case sectionSupport = "profile.section_support"
+    case contactTitle = "profile.contact_title"
+    case contactDescription = "profile.contact_description"
+    case contactEmailLabel = "profile.contact_email_label"
+    case contactWebsiteLabel = "profile.contact_website_label"
+    case termsTitle = "profile.terms_title"
+    case privacyTitle = "profile.privacy_title"
+
     // MARK: - Check-In
     case sectionCheckIn = "profile.section_check_in"
     case checkedInAsFormat = "profile.checked_in_as_format"

@@ -45,3 +45,14 @@ public struct PlaceJoinResponse: Decodable, Sendable, Equatable {
     public let rating: Int?
     public let createdAt: Date?
 }
+
+/// Response model for GET /places/{id}/my-membership
+public struct PlaceMembership: Decodable, Sendable {
+    public let id: String?
+    public let riderId: String?
+    public let placeId: UUID?
+    public let sportId: UUID?
+    public let role: PlaceRiderRole?
+    public let rating: Int?
+    public let createdAt: Date?
+}

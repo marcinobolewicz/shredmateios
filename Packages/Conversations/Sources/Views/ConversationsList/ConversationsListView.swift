@@ -40,29 +40,28 @@ struct ConversationsListView: View {
                     description: Text(ConversationsStrings.listEmptyDescription.localized)
                 )
             } else {
-                List(viewModel.rows) { row in
-                    ConversationRowView(viewData: row)
-                        .listRowInsets(
-                            EdgeInsets(
-                                top: theme.spacing.xxs,
-                                leading: theme.spacing.md,
-                                bottom: theme.spacing.xxs,
-                                trailing: theme.spacing.md
-                            )
-                        )
-                        .listRowSeparator(.visible)
-                        .listRowBackground(Color.clear)
-                        .onAppear { viewModel.onRowAppear(row) }
-                        .onTapGesture {
-                            router.navigate(to: .chat(
-                                conversationId: row.id,
-                                participantName: row.participantName
-                            ))
+                ScrollView {
+                    LazyVStack(spacing: 0) {
+                        ForEach(viewModel.rows) { row in
+                            Button {
+                                router.navigate(to: .chat(
+                                    conversationId: row.id,
+                                    participantName: row.participantName
+                                ))
+                            } label: {
+                                ConversationRowView(viewData: row)
+                                    .padding(.horizontal, theme.spacing.md)
+                            }
+                            .buttonStyle(.plain)
+                            .onAppear { viewModel.onRowAppear(row) }
+
+                            if row.id != viewModel.rows.last?.id {
+                                Divider()
+                            }
                         }
+                    }
+                    .dsCard()
                 }
-                .listStyle(.plain)
-                .scrollContentBackground(.hidden)
-                .background(theme.colors.background)
             }
 
         case .failed:

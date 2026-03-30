@@ -12,22 +12,25 @@ import Conversations
 import Feed
 import Core
 import Networking
+import Theme
 
 enum UserTab: Hashable {
     case home
     case spots
+    case mentors
     case messages
     case profile
 }
 
 struct UserTabView: View {
+    @Environment(AppTheme.self) private var theme
     let dependencies: AppDependencies
     @State private var selectedTab: UserTab = .home
     @State private var conversationsRouter = ConversationsRouter()
 
     var body: some View {
         TabView(selection: $selectedTab) {
-            FeedView(feedService: dependencies.feedService, placesService: dependencies.placesService, riderService: dependencies.riderService, mentorSlotsService: dependencies.mentorSlotsService, onOpenChat: openChat)
+            FeedView(feedService: dependencies.feedService, placesService: dependencies.placesService, riderService: dependencies.riderService, mentorSlotsService: dependencies.mentorSlotsService, sportPreferenceStorage: dependencies.sportPreferenceStorage, onOpenChat: openChat)
             .tabItem { Label(AppStrings.userTabHome.localized, systemImage: "house") }
             .tag(UserTab.home)
 
@@ -36,10 +39,23 @@ struct UserTabView: View {
                 sportsService: dependencies.sportsService,
                 riderService: dependencies.riderService,
                 mentorSlotsService: dependencies.mentorSlotsService,
+                sportPreferenceStorage: dependencies.sportPreferenceStorage,
                 onOpenChat: openChat
             )
             .tabItem { Label(AppStrings.userTabSpots.localized, systemImage: "map") }
             .tag(UserTab.spots)
+
+            MentorsRootView(
+                mentorsService: dependencies.mentorsService,
+                sportsService: dependencies.sportsService,
+                placesService: dependencies.placesService,
+                riderService: dependencies.riderService,
+                mentorSlotsService: dependencies.mentorSlotsService,
+                sportPreferenceStorage: dependencies.sportPreferenceStorage,
+                onOpenChat: openChat
+            )
+            .tabItem { Label(AppStrings.userTabMentors.localized, systemImage: "person.badge.shield.checkmark") }
+            .tag(UserTab.mentors)
 
             ConversationsView(
                 router: conversationsRouter,
@@ -63,6 +79,7 @@ struct UserTabView: View {
             .tabItem { Label(AppStrings.userTabProfile.localized, systemImage: "person") }
             .tag(UserTab.profile)
         }
+        .tint(theme.colors.primary)
     }
 
     private func openChat(userId: UUID, displayName: String) {

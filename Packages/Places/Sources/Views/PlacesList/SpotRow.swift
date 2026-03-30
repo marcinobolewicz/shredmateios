@@ -16,41 +16,62 @@ struct SpotRow: View {
     let viewData: SpotRowViewData
 
     var body: some View {
-        HStack(spacing: theme.spacing.sm) {
-            avatar
+        HStack(alignment: .center, spacing: theme.spacing.sm) {
+            AvatarView(avatar: viewData.avatar, initials: viewData.initials, size: 56)
+                .fixedSize()
 
             VStack(alignment: .leading, spacing: theme.spacing.xxs) {
-                HStack(alignment: .firstTextBaseline) {
-                    Text(viewData.title)
-                        .dsTextStyle(.heading)
-                        .lineLimit(1)
-                    Spacer()
-                }
+                Text(viewData.title)
+                    .dsTextStyle(.heading)
+                    .lineLimit(1)
 
                 if !viewData.description.isEmpty {
                     Text(viewData.description)
                         .dsTextStyle(.subheadline)
                         .lineLimit(1)
+                        .padding(.trailing, 36)
                 }
 
-                PlaceTagsRow(tags: viewData.placeTags)
+                tagsRow
 
                 HStack(spacing: theme.spacing.sm) {
                     StatText(label: PlacesStrings.ridersLabel.localized, value: viewData.ridersCount)
                     StatText(label: PlacesStrings.mentorsLabel.localized, value: viewData.mentorsCount)
                 }
             }
-
-            Image(systemName: "chevron.right")
-                .font(.caption2.weight(.semibold))
-                .foregroundStyle(theme.colors.textTertiary)
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .overlay(alignment: .trailing) {
+            chevronCircle
         }
         .padding(.vertical, theme.spacing.sm)
         .contentShape(Rectangle())
     }
 
-    private var avatar: some View {
-        AvatarView(avatar: viewData.avatar, size: 44)
+    @ViewBuilder
+    private var tagsRow: some View {
+        if !viewData.placeTags.isEmpty {
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: theme.spacing.xs) {
+                    ForEach(Array(viewData.placeTags.enumerated()), id: \.offset) { index, tag in
+                        PlaceTagPill(text: tag, index: index)
+                    }
+                }
+            }
+        }
+    }
+
+    private var chevronCircle: some View {
+        ZStack {
+            Circle()
+                .fill(theme.colors.background)
+                .frame(width: 32, height: 32)
+                .shadow(color: .black.opacity(0.08), radius: 4, x: 0, y: 1)
+
+            Image(systemName: "chevron.right")
+                .font(.system(size: 11, weight: .semibold))
+                .foregroundStyle(theme.colors.textTertiary)
+        }
     }
 }
 
@@ -72,4 +93,3 @@ private struct StatText: View {
         }
     }
 }
-

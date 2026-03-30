@@ -39,7 +39,7 @@ public struct DSSearchBar: View {
         .padding(.vertical, theme.spacing.xs + Constants.Spacing.xxs)
         .background(
             Capsule()
-                .fill(theme.colors.surfaceTertiary)
+                .fill(theme.colors.background)
         )
     }
 

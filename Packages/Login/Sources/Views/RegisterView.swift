@@ -3,6 +3,31 @@ import Core
 import Theme
 import Common
 
+// MARK: - Legal Consent
+
+private struct LegalConsentRow: View {
+    @Environment(AppTheme.self) private var theme
+    @Binding var isAccepted: Bool
+
+    var body: some View {
+        HStack(alignment: .top, spacing: theme.spacing.sm) {
+            Button { isAccepted.toggle() } label: {
+                Image(systemName: isAccepted ? "checkmark.square.fill" : "square")
+                    .font(.title3)
+                    .foregroundStyle(isAccepted ? theme.colors.primary : theme.colors.textTertiary)
+            }
+            .buttonStyle(.plain)
+
+            Text(.init(RegisterStrings.consentMarkdown.localized))
+                .font(.caption)
+                .foregroundStyle(theme.colors.textSecondary)
+                .tint(theme.colors.textPrimary)
+        }
+    }
+}
+
+// MARK: - Register View
+
 /// Register view for new user sign up
 public struct RegisterView: View {
 
@@ -18,6 +43,7 @@ public struct RegisterView: View {
             VStack(spacing: theme.spacing.lg) {
                 headerSection
                 formSection
+                LegalConsentRow(isAccepted: $viewModel.termsAccepted)
                 registerButton
                 loginLink
             }

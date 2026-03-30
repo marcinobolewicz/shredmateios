@@ -49,10 +49,11 @@ extension Endpoint {
     public static func post<Body: Encodable & Sendable>(
         _ path: String,
         body: Body,
+        keys: JSONKeyStrategy = .snakeCase,
         headers: [String: String] = [:],
         auth: AuthRequirement = .none
     ) -> Endpoint {
-        Endpoint(method: .post, path: path, headers: headers, auth: auth, body: .json(body))
+        Endpoint(method: .post, path: path, headers: headers, auth: auth, body: .json(body, keys: keys))
     }
     
     /// Creates a POST endpoint without body
@@ -87,10 +88,11 @@ extension Endpoint {
     /// Creates a DELETE endpoint
     public static func delete(
         _ path: String,
+        query: [URLQueryItem] = [],
         headers: [String: String] = [:],
         auth: AuthRequirement = .none
     ) -> Endpoint {
-        Endpoint(method: .delete, path: path, headers: headers, auth: auth)
+        Endpoint(method: .delete, path: path, query: query, headers: headers, auth: auth)
     }
     
     /// Creates a POST endpoint with multipart form data

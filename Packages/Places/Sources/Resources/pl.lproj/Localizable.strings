@@ -34,6 +34,12 @@
 "places.details_mentors_empty_description" = "Mentorzy dostępni w tym spocie pojawią się tutaj.";
 "places.map_details_button" = "Szczegóły";
 
+/* Szukaj mentora */
+"places.mentors_search_title" = "Znajdź mentora";
+"places.mentors_search_description" = "Przeglądaj instruktorów, filtruj po sporcie i spocie, zarezerwuj sesję.";
+"places.mentors_all_sports" = "Wszystkie sporty";
+"places.mentors_all_spots" = "Wszystkie spoty";
+
 /* Sloty mentora */
 "places.mentor_slots_title" = "Dostępne terminy";
 "places.mentor_slots_empty" = "Brak dostępnych terminów";
@@ -57,6 +63,13 @@
 "places.role_mentor" = "Mentor";
 "places.cancel_button" = "Anuluj";
 "places.check_in_error_title" = "Błąd zameldowania";
+"places.checked_in_title" = "Jesteś zameldowany";
+"places.checked_in_role_format" = "Rola: %@";
+"places.change_role_button" = "Zmień rolę";
+"places.join_spot_title" = "Dołącz do spotu";
+"places.join_spot_description" = "Daj znać innym, że jesteś na miejscu jako Rider albo Mentor.";
+"places.riders_count_format" = "%d riderów";
+"places.mentors_count_format" = "%d mentorów";
 "places.checked_in_as_format" = "Zameldowany jako %@";
 "places.checked_in_elsewhere_format" = "Już zameldowany w %@";
 "places.failed_check_in_format" = "Nie udało się zameldować: %@";

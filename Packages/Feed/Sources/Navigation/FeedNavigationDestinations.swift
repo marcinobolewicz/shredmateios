@@ -8,6 +8,7 @@ struct FeedNavigationDestinations: ViewModifier {
     let placesService: any PlacesServiceProtocol
     let riderService: any RiderServiceProtocol
     let mentorSlotsService: any MentorSlotsServiceProtocol
+    let sportPreferenceStorage: any SportPreferenceStorageProtocol
     let router: FeedRouter
     let onOpenChat: (_ userId: UUID, _ displayName: String) -> Void
 
@@ -50,7 +51,8 @@ struct FeedNavigationDestinations: ViewModifier {
                         avatar: .imageRemote(place.avatarUrl.flatMap(URL.init))
                     ),
                     placesService: placesService,
-                    authState: authState
+                    authState: authState,
+                    sportPreferenceStorage: sportPreferenceStorage
                 )
             }
 
@@ -79,7 +81,8 @@ struct FeedNavigationDestinations: ViewModifier {
             PlaceDetailsView(
                 viewData: viewData,
                 placesService: placesService,
-                authState: authState
+                authState: authState,
+                sportPreferenceStorage: sportPreferenceStorage
             )
         case .riderCard(let viewData):
             RiderDetailLoadingView(
@@ -98,6 +101,7 @@ extension View {
         placesService: any PlacesServiceProtocol,
         riderService: any RiderServiceProtocol,
         mentorSlotsService: any MentorSlotsServiceProtocol,
+        sportPreferenceStorage: any SportPreferenceStorageProtocol,
         router: FeedRouter,
         onOpenChat: @escaping (_ userId: UUID, _ displayName: String) -> Void = { _, _ in }
     ) -> some View {
@@ -106,6 +110,7 @@ extension View {
             placesService: placesService,
             riderService: riderService,
             mentorSlotsService: mentorSlotsService,
+            sportPreferenceStorage: sportPreferenceStorage,
             router: router,
             onOpenChat: onOpenChat
         ))

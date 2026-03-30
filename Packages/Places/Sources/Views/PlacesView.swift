@@ -8,9 +8,10 @@ public struct PlacesView: View {
     @State private var viewModel: PlacesViewModel
 
     public init(
-            placesService: any PlacesServiceProtocol,
-            sportsService: any SportsServiceProtocol,
-            authState: AuthState
+        placesService: any PlacesServiceProtocol,
+        sportsService: any SportsServiceProtocol,
+        authState: AuthState,
+        sportPreferenceStorage: any SportPreferenceStorageProtocol
     ) {
         let repository = PlacesRepository(service: placesService, sportsService: sportsService)
         let presenter = SpotRowPresenter()
@@ -18,19 +19,23 @@ public struct PlacesView: View {
         _viewModel = State(
             wrappedValue: PlacesViewModel(
                 repository: repository,
-                presenter: presenter
+                presenter: presenter,
+                sportPreferenceStorage: sportPreferenceStorage
             )
         )
     }
 
     public var body: some View {
         VStack(spacing: 0) {
+            DSScreenHeader(title: PlacesStrings.rootNavigationTitle.localized)
             headerSection
             sportChips
             tagChips
             contentSection
         }
-        .task { viewModel.loadOnAppear() }
+        .background(theme.colors.backgroundSecondary)
+        .task { await viewModel.loadOnAppear() }
+        .onAppear { Task { await viewModel.syncSportPreference() } }
         .errorAlert(state: viewModel.state) { viewModel.refresh() }
     }
 
@@ -70,14 +75,14 @@ public struct PlacesView: View {
                                 .fill(
                                     viewModel.displayMode == mode
                                         ? theme.colors.primary
-                                        : theme.colors.surfaceTertiary
+                                        : Color.clear
                                 )
                         )
                 }
                 .buttonStyle(.plain)
             }
         }
-        .background(Capsule().fill(theme.colors.surfaceTertiary))
+        .background(Capsule().fill(theme.colors.background))
     }
 
     @ViewBuilder
@@ -108,7 +113,7 @@ public struct PlacesView: View {
 
     @ViewBuilder
     private var tagChips: some View {
-        if !viewModel.availableTags.isEmpty {
+        if viewModel.selectedSport != nil, !viewModel.availableTags.isEmpty {
             chipRow {
                 ForEach(viewModel.availableTags) { tag in
                     DSChip(
@@ -121,6 +126,7 @@ public struct PlacesView: View {
                     }
                 }
             }
+            .transition(.opacity.combined(with: .move(edge: .top)))
         }
     }
 

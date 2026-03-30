@@ -33,15 +33,17 @@ public enum AuthAPI {
         .post(
             "/auth/logout",
             body: LogoutRequest(refreshToken: refreshToken),
+            keys: .camelCase,
             auth: .bearerToken
         )
     }
-    
+
     /// Refresh access token
     public static func refresh(refreshToken: String) -> Endpoint<AuthResponse> {
         .post(
             "/auth/refresh",
             body: RefreshRequest(refreshToken: refreshToken),
+            keys: .camelCase,
             auth: .none
         )
     }

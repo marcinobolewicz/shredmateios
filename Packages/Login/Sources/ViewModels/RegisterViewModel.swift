@@ -13,16 +13,18 @@ public final class RegisterViewModel {
     public var email = ""
     public var password = ""
     public var confirmPassword = ""
+    public var termsAccepted = false
     public var isLoading = false
     public var errorMessage: String?
-    
+
     public var isFormValid: Bool {
         !name.isEmpty &&
         !email.isEmpty &&
         email.isValidEmail() &&
         !password.isEmpty &&
         password.count >= 8 &&
-        password == confirmPassword
+        password == confirmPassword &&
+        termsAccepted
     }
     
     public var passwordMismatch: Bool {

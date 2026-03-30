@@ -57,6 +57,12 @@ enum PlacesStrings: String {
     case slotBookConfirm = "places.slot_book_confirm"
     case slotActionErrorTitle = "places.slot_action_error_title"
 
+    // MARK: - Mentors Search
+    case mentorsSearchTitle = "places.mentors_search_title"
+    case mentorsSearchDescription = "places.mentors_search_description"
+    case mentorsAllSports = "places.mentors_all_sports"
+    case mentorsAllSpots = "places.mentors_all_spots"
+
     // MARK: - Check-In
     case checkInButton = "places.check_in_button"
     case checkOutButton = "places.check_out_button"
@@ -66,6 +72,13 @@ enum PlacesStrings: String {
     case roleMentor = "places.role_mentor"
     case cancelButton = "places.cancel_button"
     case checkInErrorTitle = "places.check_in_error_title"
+    case checkedInTitle = "places.checked_in_title"
+    case checkedInRoleFormat = "places.checked_in_role_format"
+    case changeRoleButton = "places.change_role_button"
+    case joinSpotTitle = "places.join_spot_title"
+    case joinSpotDescription = "places.join_spot_description"
+    case ridersCountFormat = "places.riders_count_format"
+    case mentorsCountFormat = "places.mentors_count_format"
     case checkedInAsFormat = "places.checked_in_as_format"
     case checkedInElsewhereFormat = "places.checked_in_elsewhere_format"
     case failedCheckInFormat = "places.failed_check_in_format"
@@ -89,5 +102,17 @@ enum PlacesStrings: String {
 
     static func failedCheckOut(_ error: String) -> String {
         String(format: NSLocalizedString(PlacesStrings.failedCheckOutFormat.rawValue, bundle: .module, comment: ""), error)
+    }
+
+    static func checkedInRole(_ role: String) -> String {
+        String(format: NSLocalizedString(PlacesStrings.checkedInRoleFormat.rawValue, bundle: .module, comment: ""), role)
+    }
+
+    static func ridersCount(_ count: Int) -> String {
+        String(format: NSLocalizedString(PlacesStrings.ridersCountFormat.rawValue, bundle: .module, comment: ""), count)
+    }
+
+    static func mentorsCount(_ count: Int) -> String {
+        String(format: NSLocalizedString(PlacesStrings.mentorsCountFormat.rawValue, bundle: .module, comment: ""), count)
     }
 }

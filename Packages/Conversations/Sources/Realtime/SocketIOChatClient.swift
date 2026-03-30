@@ -89,7 +89,6 @@ public final class SocketIOChatClient: ChatRealtimeProviding, @unchecked Sendabl
 
     public func connect(token: String) {
         lock.withLock { _currentToken = token }
-        buildStream()
 
         socketQueue.async { [weak self] in
             self?.performConnect(token: token)
@@ -113,7 +112,6 @@ public final class SocketIOChatClient: ChatRealtimeProviding, @unchecked Sendabl
 
         if tokenChanged || !connected {
             logger.info("Reconnect needed — tokenChanged: \(tokenChanged), connected: \(connected)")
-            buildStream()
             socketQueue.async { [weak self] in
                 self?.performDisconnect()
                 self?.performConnect(token: newToken)

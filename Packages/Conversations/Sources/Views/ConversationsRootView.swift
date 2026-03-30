@@ -10,6 +10,7 @@ import Theme
 import Networking
 
 public struct ConversationsRootView: View {
+    @Environment(AppTheme.self) private var theme
     @Bindable var router: ConversationsRouter
     private let viewModel: ConversationsListViewModel
     private let repository: ChatRepository
@@ -31,21 +32,27 @@ public struct ConversationsRootView: View {
 
     public var body: some View {
         NavigationStack(path: $router.path) {
-            ConversationsListView(viewModel: viewModel)
-                .navigationTitle(ConversationsStrings.rootNavigationTitle.localized)
-                .toolbar {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button {
-                            router.presentNewConversation()
-                        } label: {
-                            Image(systemName: "plus")
-                        }
+            VStack(spacing: 0) {
+                HStack {
+                    DSScreenHeader(title: ConversationsStrings.rootNavigationTitle.localized)
+                    Spacer()
+                    Button {
+                        router.presentNewConversation()
+                    } label: {
+                        Image(systemName: "plus")
+                            .font(.title3)
                     }
+                    .padding(.trailing, theme.spacing.md)
                 }
-                .conversationsDestinations(
-                    repository: repository,
-                    currentUserId: currentUserId
-                )
+                ConversationsListView(viewModel: viewModel)
+                    .padding(.vertical, theme.spacing.md)
+            }
+            .background(theme.colors.backgroundSecondary)
+            .navigationBarHidden(true)
+            .conversationsDestinations(
+                repository: repository,
+                currentUserId: currentUserId
+            )
         }
         .environment(router)
         .onChange(of: router.pendingRoute) { _, route in

@@ -21,6 +21,7 @@
 "register.create_account_button" = "Załóż konto";
 "register.already_have_account" = "Masz już konto?";
 "register.sign_in_button" = "Zaloguj się";
+"register.consent_markdown" = "Rejestrując się, wyrażasz zgodę na przetwarzanie danych osobowych zgodnie z [**Polityką Prywatności**](https://shredmate.pl/privacy) oraz potwierdzasz, że zapoznałeś się z [**Regulaminem**](https://shredmate.pl/terms) i akceptujesz jego postanowienia.";
 
 /* Forgot Password View */
 "forgot_password.navigation_title" = "Reset hasła";

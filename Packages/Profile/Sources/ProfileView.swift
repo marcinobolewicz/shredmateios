@@ -8,16 +8,20 @@
 import SwiftUI
 import Networking
 import Common
+import Theme
+
+
 
 enum ProfileRoute: Hashable {
     case editRider
     case myBookings
     case mySlots
     case generateSlots
+    case contact
 }
 
 public struct ProfileView: View {
-
+    @Environment(AppTheme.self) private var theme
     @State private var viewModel: ProfileViewModel
     @State private var showDeleteConfirmation = false
 
@@ -36,10 +40,12 @@ public struct ProfileView: View {
                         .listRowSeparator(.hidden)
                     accountSection
                         .listRowSeparator(.hidden)
+                    supportSection
+                        .listRowSeparator(.hidden)
                 }
             }
             .scrollContentBackground(.hidden)
-            .background(Color(.systemGroupedBackground))
+            .background(theme.colors.backgroundSecondary)
             .navigationTitle(ProfileStrings.navigationTitle.localized)
             .navigationBarTitleDisplayMode(.inline)
             .navigationDestination(for: ProfileRoute.self) { route in
@@ -56,6 +62,8 @@ public struct ProfileView: View {
                         placesService: viewModel.placesService,
                         riderSports: viewModel.riderSports
                     )
+                case .contact:
+                    ContactView()
                 }
             }
             .navigationDestination(for: UUID.self) { riderId in
@@ -151,6 +159,28 @@ public struct ProfileView: View {
                     Label(ProfileStrings.generateSlotsTitle.localized, systemImage: "calendar.badge.plus")
                 }
             }
+        }
+    }
+
+    // MARK: - Support & Legal
+
+    private var supportSection: some View {
+        Section(ProfileStrings.sectionSupport.localized) {
+            NavigationLink(value: ProfileRoute.contact) {
+                Label(ProfileStrings.contactTitle.localized, systemImage: "envelope")
+            }
+
+            DSLinkButton(
+                ProfileStrings.termsTitle.localized,
+                systemImage: "doc.text",
+                url: URL(string: "https://shredmate.pl/terms")!
+            )
+
+            DSLinkButton(
+                ProfileStrings.privacyTitle.localized,
+                systemImage: "hand.raised",
+                url: URL(string: "https://shredmate.pl/privacy")!
+            )
         }
     }
 

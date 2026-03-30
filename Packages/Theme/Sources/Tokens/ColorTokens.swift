@@ -30,6 +30,7 @@ public struct ColorTokens: Sendable {
     // MARK: - Surface
 
     public let background: Color
+    public let backgroundSecondary: Color
     public let surface: Color
     public let surfaceSecondary: Color
     public let surfaceTertiary: Color
@@ -60,6 +61,7 @@ public struct ColorTokens: Sendable {
         warning: Color,
         warningForeground: Color,
         background: Color,
+        backgroundSecondary: Color,
         surface: Color,
         surfaceSecondary: Color,
         surfaceTertiary: Color,
@@ -81,6 +83,7 @@ public struct ColorTokens: Sendable {
         self.warning = warning
         self.warningForeground = warningForeground
         self.background = background
+        self.backgroundSecondary = backgroundSecondary
         self.surface = surface
         self.surfaceSecondary = surfaceSecondary
         self.surfaceTertiary = surfaceTertiary

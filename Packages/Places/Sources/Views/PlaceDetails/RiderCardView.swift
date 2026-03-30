@@ -85,9 +85,14 @@ public struct RiderCardView: View {
             .padding(.top, theme.spacing.md)
             .padding(.bottom, theme.spacing.lg)
         }
-        .background(theme.colors.background)
+        .background(theme.colors.backgroundSecondary)
         .navigationTitle(viewData.displayName)
         .navigationBarTitleDisplayMode(.inline)
+        .refreshable {
+            async let follow: Void = viewModel.loadOnAppear()
+            async let slots: Void = slotsViewModel?.refresh() ?? ()
+            _ = await (follow, slots)
+        }
         .task { await viewModel.loadOnAppear() }
         .task { await slotsViewModel?.loadSlots() }
     }

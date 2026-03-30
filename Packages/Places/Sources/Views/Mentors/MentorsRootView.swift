@@ -1,19 +1,10 @@
-//
-//  PlacesRootView.swift
-//  ShredMate
-//
-//  Created by Marcin Obolewicz on 31/01/2026.
-//
-
 import SwiftUI
 import Networking
-import Foundation
-import Theme
 
-public struct PlacesRootView: View {
-    @Environment(AuthState.self) private var authState
-    private let placesService: PlacesServiceProtocol
+public struct MentorsRootView: View {
+    private let mentorsService: MentorsServiceProtocol
     private let sportsService: SportsServiceProtocol
+    private let placesService: PlacesServiceProtocol
     private let riderService: RiderServiceProtocol
     private let mentorSlotsService: MentorSlotsServiceProtocol
     private let sportPreferenceStorage: any SportPreferenceStorageProtocol
@@ -21,15 +12,17 @@ public struct PlacesRootView: View {
     @State private var router = PlacesRouter()
 
     public init(
-        placesService: PlacesServiceProtocol,
+        mentorsService: MentorsServiceProtocol,
         sportsService: SportsServiceProtocol,
+        placesService: PlacesServiceProtocol,
         riderService: RiderServiceProtocol,
         mentorSlotsService: MentorSlotsServiceProtocol,
         sportPreferenceStorage: any SportPreferenceStorageProtocol,
         onOpenChat: @escaping (_ userId: UUID, _ displayName: String) -> Void = { _, _ in }
     ) {
-        self.placesService = placesService
+        self.mentorsService = mentorsService
         self.sportsService = sportsService
+        self.placesService = placesService
         self.riderService = riderService
         self.mentorSlotsService = mentorSlotsService
         self.sportPreferenceStorage = sportPreferenceStorage
@@ -40,13 +33,12 @@ public struct PlacesRootView: View {
         @Bindable var router = router
 
         NavigationStack(path: $router.path) {
-            PlacesView(
-                placesService: placesService,
+            MentorsView(
+                mentorsService: mentorsService,
                 sportsService: sportsService,
-                authState: authState,
+                placesService: placesService,
                 sportPreferenceStorage: sportPreferenceStorage
             )
-            .navigationBarHidden(true)
             .placesDestinations(
                 placesService: placesService,
                 riderService: riderService,
@@ -58,4 +50,3 @@ public struct PlacesRootView: View {
         .environment(router)
     }
 }
-

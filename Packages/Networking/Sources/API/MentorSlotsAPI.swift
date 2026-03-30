@@ -50,7 +50,7 @@ public enum MentorSlotsAPI {
     }
 
     public static func generateSlots(request: GenerateSlotsRequest) -> Endpoint<GenerateSlotsResponse> {
-        .post("/mentor-slots/generate", body: request, auth: .bearerToken)
+        .post("/mentor-slots/generate", body: request, keys: .camelCase, auth: .bearerToken)
     }
 }
 

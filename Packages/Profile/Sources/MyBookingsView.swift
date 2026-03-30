@@ -108,7 +108,7 @@ struct MyBookingsView: View {
         }
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
-        .background(theme.colors.background)
+        .background(theme.colors.backgroundSecondary)
     }
 
     private func slotSummary(_ slot: MentorSlot) -> String {

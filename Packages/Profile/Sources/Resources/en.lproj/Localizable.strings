@@ -129,6 +129,15 @@
 "profile.skill_level_intermediate" = "Intermediate";
 "profile.skill_level_pro" = "Pro";
 
+/* Support & Legal */
+"profile.section_support" = "Support & Legal";
+"profile.contact_title" = "Contact Us";
+"profile.contact_description" = "Have a question, suggestion, or found a bug? We'd love to hear from you.";
+"profile.contact_email_label" = "Email";
+"profile.contact_website_label" = "Website";
+"profile.terms_title" = "Terms of Service";
+"profile.privacy_title" = "Privacy Policy";
+
 /* Check-In */
 "profile.section_check_in" = "Current Check-In";
 "profile.checked_in_as_format" = "Checked in as %@";
