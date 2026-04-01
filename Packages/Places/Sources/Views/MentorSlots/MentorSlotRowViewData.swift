@@ -2,6 +2,7 @@ import Foundation
 
 public struct MentorSlotRowViewData: Identifiable, Equatable, Sendable {
     public let id: String
+    public let startTime: String
     public let timeRange: String
     public let duration: String
     public let price: String
@@ -11,6 +12,7 @@ public struct MentorSlotRowViewData: Identifiable, Equatable, Sendable {
 
     public init(
         id: String,
+        startTime: String,
         timeRange: String,
         duration: String,
         price: String,
@@ -19,6 +21,7 @@ public struct MentorSlotRowViewData: Identifiable, Equatable, Sendable {
         dayHeader: String
     ) {
         self.id = id
+        self.startTime = startTime
         self.timeRange = timeRange
         self.duration = duration
         self.price = price

@@ -51,6 +51,8 @@
 "places.slot_delete_confirm" = "Usuń";
 "places.slot_book_title" = "Zarezerwować sesję?";
 "places.slot_book_confirm" = "Zarezerwuj";
+"places.slot_book_too_soon_title" = "Nie można zarezerwować";
+"places.slot_book_too_soon_message" = "Sesję można zarezerwować najwcześniej 30 minut przed rozpoczęciem.";
 "places.slot_action_error_title" = "Błąd";
 
 /* Profil ridera */

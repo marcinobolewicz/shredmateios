@@ -1,5 +1,6 @@
 import SwiftUI
 import Theme
+import Common
 
 public struct MentorSlotsSection: View {
     @Environment(AppTheme.self) private var theme
@@ -46,6 +47,14 @@ public struct MentorSlotsSection: View {
             }
         } message: { slot in
             Text("\(slot.dayHeader)\n\(slot.timeRange) · \(slot.duration)\n\(slot.price)")
+        }
+        .alert(
+            PlacesStrings.slotBookTooSoonTitle.localized,
+            isPresented: $viewModel.showBookingTooSoon
+        ) {
+            Button("OK") { viewModel.dismissAction() }
+        } message: {
+            Text(PlacesStrings.slotBookTooSoonMessage.localized)
         }
         .alert(
             PlacesStrings.slotActionErrorTitle.localized,

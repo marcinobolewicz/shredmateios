@@ -111,7 +111,7 @@ private struct MyPostRow: View {
                     .dsTextStyle(.body)
             }
 
-            Text(post.createdAt.relativeFormatted)
+            Text(DateFormatting.shared.relativeTime(from: post.createdAt))
                 .dsTextStyle(.caption)
                 .frame(maxWidth: .infinity, alignment: .trailing)
         }
@@ -119,13 +119,3 @@ private struct MyPostRow: View {
     }
 }
 
-// MARK: - Date Formatting
-
-private extension String {
-    var relativeFormatted: String {
-        guard let date = ISO8601DateFormatter().date(from: self) else { return self }
-        let formatter = RelativeDateTimeFormatter()
-        formatter.unitsStyle = .short
-        return formatter.localizedString(for: date, relativeTo: .now)
-    }
-}

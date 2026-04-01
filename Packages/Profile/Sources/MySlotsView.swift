@@ -136,8 +136,9 @@ struct MySlotsView: View {
     }
 
     private func slotSummary(_ slot: MentorSlot) -> String {
-        let day = slot.startTime.dayFormatted
-        let time = "\(slot.startTime.timeFormatted)–\(slot.endTime.timeFormatted)"
+        let fmt = DateFormatting.shared
+        let day = fmt.dayHeader(from: slot.startTime)
+        let time = "\(fmt.localizedTime(from: slot.startTime))–\(fmt.localizedTime(from: slot.endTime))"
         return "\(day)\n\(time) · \(slot.duration) min"
     }
 }
@@ -152,7 +153,7 @@ private struct MentorSlotRow: View {
     var body: some View {
         VStack(alignment: .leading, spacing: theme.spacing.xs) {
             HStack(spacing: theme.spacing.xs) {
-                Text("\(slot.startTime.timeFormatted)–\(slot.endTime.timeFormatted)")
+                Text("\(DateFormatting.shared.localizedTime(from: slot.startTime))–\(DateFormatting.shared.localizedTime(from: slot.endTime))")
                     .dsTextStyle(.heading)
                 Spacer()
                 statusBadge
@@ -234,31 +235,3 @@ private struct MentorSlotRow: View {
     }
 }
 
-// MARK: - Date Formatting
-
-private extension String {
-    var dayFormatted: String {
-        guard let date = isoDate else { return self }
-        let formatter = DateFormatter()
-        formatter.locale = Locale.current
-        formatter.setLocalizedDateFormatFromTemplate("EEEEddMMMM")
-        return formatter.string(from: date).localizedCapitalized
-    }
-
-    var timeFormatted: String {
-        guard let date = isoDate else { return "--:--" }
-        let formatter = DateFormatter()
-        formatter.locale = Locale.current
-        formatter.dateStyle = .none
-        formatter.timeStyle = .short
-        return formatter.string(from: date)
-    }
-
-    private var isoDate: Date? {
-        let parser = ISO8601DateFormatter()
-        parser.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        if let date = parser.date(from: self) { return date }
-        parser.formatOptions = [.withInternetDateTime]
-        return parser.date(from: self)
-    }
-}

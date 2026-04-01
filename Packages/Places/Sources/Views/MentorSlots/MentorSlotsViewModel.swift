@@ -1,5 +1,6 @@
 import Foundation
 import Networking
+import Common
 
 @MainActor
 @Observable
@@ -15,6 +16,7 @@ public final class MentorSlotsViewModel {
     var selectedSlot: MentorSlotRowViewData?
     var showDeleteConfirmation = false
     var showBookConfirmation = false
+    var showBookingTooSoon = false
 
     let isOwner: Bool
 
@@ -46,9 +48,10 @@ public final class MentorSlotsViewModel {
 
     private func fetchSlots() async {
         do {
-            let now = ISO8601DateFormatter().string(from: Date())
-            let twoWeeks = ISO8601DateFormatter().string(
-                from: Date(timeIntervalSinceNow: 14 * 24 * 60 * 60)
+            let fmt = DateFormatting.shared
+            let now = fmt.formatISO8601(Date())
+            let twoWeeks = fmt.formatISO8601(
+                Date(timeIntervalSinceNow: 14 * 24 * 60 * 60)
             )
             let response = try await service.fetchSlots(
                 mentorRiderId: mentorRiderId,
@@ -72,7 +75,13 @@ public final class MentorSlotsViewModel {
         if isOwner {
             showDeleteConfirmation = true
         } else {
-            showBookConfirmation = true
+            let start = DateFormatting.shared.parseISO8601(slot.startTime) ?? .distantPast
+            let minutesLeft = start.timeIntervalSince(Date()) / 60
+            if minutesLeft < 30 {
+                showBookingTooSoon = true
+            } else {
+                showBookConfirmation = true
+            }
         }
     }
 
@@ -104,5 +113,6 @@ public final class MentorSlotsViewModel {
         selectedSlot = nil
         showDeleteConfirmation = false
         showBookConfirmation = false
+        showBookingTooSoon = false
     }
 }
