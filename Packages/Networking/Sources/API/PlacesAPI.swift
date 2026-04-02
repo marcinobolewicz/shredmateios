@@ -51,7 +51,7 @@ public enum PlacesAPI {
         )
     }
 
-    public static func myMembership(placeId: UUID) -> Endpoint<PlaceMembership> {
+    public static func myMembership(placeId: UUID) -> Endpoint<[PlaceMembership]> {
         .get("/places/\(placeId.uuidString.lowercased())/my-membership", auth: .bearerToken)
     }
 }

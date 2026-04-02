@@ -21,6 +21,34 @@ public struct PlaceDto: Decodable, Equatable, Sendable, Identifiable, Hashable {
     public let mentorsCount: Int?
     public let ridersCount: Int?
 
+    public init(
+        id: UUID,
+        name: String,
+        description: String? = nil,
+        avatarUrl: URL? = nil,
+        location: GeoPointDto? = nil,
+        createdByUserId: UUID? = nil,
+        createdAt: Date = Date(),
+        updatedAt: Date = Date(),
+        sports: [PlaceSportDto]? = nil,
+        tags: [PlaceTagDto]? = nil,
+        mentorsCount: Int? = nil,
+        ridersCount: Int? = nil
+    ) {
+        self.id = id
+        self.name = name
+        self.description = description
+        self.avatarUrl = avatarUrl
+        self.location = location
+        self.createdByUserId = createdByUserId
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+        self.sports = sports
+        self.tags = tags
+        self.mentorsCount = mentorsCount
+        self.ridersCount = ridersCount
+    }
+
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
     }

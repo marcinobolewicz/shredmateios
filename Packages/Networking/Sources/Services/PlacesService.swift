@@ -12,7 +12,7 @@ public protocol PlacesServiceProtocol: Sendable {
     func fetchPlaceRiders(placeId: UUID, sportSlug: String?, sportId: UUID?) async throws -> [PlaceRiderPresence]
     func joinPlace(placeId: UUID, sportId: UUID, role: PlaceRiderRole, rating: Int?) async throws -> PlaceJoinResponse
     func leavePlace(placeId: UUID, sportId: UUID) async throws
-    func myMembership(placeId: UUID) async throws -> PlaceMembership
+    func myMembership(placeId: UUID) async throws -> PlaceMembership?
 }
 
 public final class PlacesService: PlacesServiceProtocol, Sendable {
@@ -40,7 +40,7 @@ public final class PlacesService: PlacesServiceProtocol, Sendable {
         _ = try await client.send(PlacesAPI.leavePlace(placeId: placeId, sportId: sportId))
     }
 
-    public func myMembership(placeId: UUID) async throws -> PlaceMembership {
-        try await client.send(PlacesAPI.myMembership(placeId: placeId))
+    public func myMembership(placeId: UUID) async throws -> PlaceMembership? {
+        try await client.send(PlacesAPI.myMembership(placeId: placeId)).first
     }
 }

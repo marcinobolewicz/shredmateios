@@ -119,10 +119,15 @@ final class PlaceDetailsViewModel {
         defer { isCheckingMembership = false }
 
         do {
-            let membership = try await placesService.myMembership(placeId: placeId)
-            hasJoined = true
-            joinedRole = membership.role
-            membershipSportId = membership.sportId
+            if let membership = try await placesService.myMembership(placeId: placeId) {
+                hasJoined = true
+                joinedRole = membership.role
+                membershipSportId = membership.sportId
+            } else {
+                hasJoined = false
+                joinedRole = nil
+                membershipSportId = nil
+            }
         } catch {
             hasJoined = false
             joinedRole = nil
