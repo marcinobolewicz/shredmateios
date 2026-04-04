@@ -32,30 +32,16 @@ struct PlacesListView: View {
             } else {
                 ScrollView {
                     LazyVStack(spacing: 0) {
-                        ForEach(viewModel.rows) { row in
+                        ForEach(Array(viewModel.rows.enumerated()), id: \.element.id) { index, row in
                             Button {
-                                let detailData = PlaceDetailsViewData(
-                                    id: row.id,
-                                    name: row.title,
-                                    description: row.description,
-                                    sportTags: row.sportTags,
-                                    placeTags: row.placeTags,
-                                    sportIds: row.sportIds,
-                                    sportSlugs: row.sportSlugs,
-                                    ridersCount: row.ridersCount,
-                                    mentorsCount: row.mentorsCount,
-                                    avatar: row.avatar,
-                                    latitude: row.latitude,
-                                    longitude: row.longitude
-                                )
-                                router.navigate(to: .placeDetails(detailData))
+                                router.navigate(to: .placeDetails(row.placeDetailsData))
                             } label: {
                                 SpotRow(viewData: row)
                                     .padding(.horizontal, theme.spacing.md)
                             }
                             .buttonStyle(.plain)
 
-                            if row.id != viewModel.rows.last?.id {
+                            if index < viewModel.rows.count - 1 {
                                 Divider()
                             }
                         }

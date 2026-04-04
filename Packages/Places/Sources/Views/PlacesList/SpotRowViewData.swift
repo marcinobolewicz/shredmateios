@@ -28,4 +28,21 @@ struct SpotRowViewData: Identifiable, Equatable, Sendable {
         let letters = parts.prefix(2).compactMap(\.first)
         return String(letters).uppercased()
     }
+
+    var placeDetailsData: PlaceDetailsViewData {
+        PlaceDetailsViewData(
+            id: id,
+            name: title,
+            description: description,
+            sportTags: sportTags,
+            placeTags: placeTags,
+            sportIds: sportIds,
+            sportSlugs: sportSlugs,
+            ridersCount: ridersCount,
+            mentorsCount: mentorsCount,
+            avatar: avatar,
+            latitude: latitude,
+            longitude: longitude
+        )
+    }
 }

@@ -11,7 +11,6 @@ import Foundation
 import Theme
 
 public struct PlacesRootView: View {
-    @Environment(AuthState.self) private var authState
     private let placesService: PlacesServiceProtocol
     private let sportsService: SportsServiceProtocol
     private let riderService: RiderServiceProtocol
@@ -43,7 +42,6 @@ public struct PlacesRootView: View {
             PlacesView(
                 placesService: placesService,
                 sportsService: sportsService,
-                authState: authState,
                 sportPreferenceStorage: sportPreferenceStorage
             )
             .navigationBarHidden(true)
