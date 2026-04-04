@@ -9,14 +9,6 @@ struct SlideView: View {
 
     var body: some View {
         ZStack {
-            // MARK: Background
-            Image(slide.imageName)
-                .resizable()
-                .scaledToFill()
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .clipped()
-                .ignoresSafeArea()
-
             // MARK: Scrim
             LinearGradient(
                 colors: [.black.opacity(0.15), .black.opacity(0.60)],
@@ -48,6 +40,7 @@ struct SlideView: View {
             .padding(.horizontal, 24)
             .safeAreaPadding()
         }
+        .dsImageBackground(slide.imageName)
         .ignoresSafeArea()
     }
 
