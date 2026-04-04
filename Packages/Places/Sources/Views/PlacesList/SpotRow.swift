@@ -59,7 +59,7 @@ struct SpotRow: View {
         if !viewData.placeTags.isEmpty {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: theme.spacing.xs) {
-                    ForEach(Array(viewData.placeTags.enumerated()), id: \.element) { index, tag in
+                    ForEach(Array(viewData.placeTags.enumerated()), id: \.offset) { index, tag in
                         PlaceTagPill(text: tag, index: index)
                     }
                 }

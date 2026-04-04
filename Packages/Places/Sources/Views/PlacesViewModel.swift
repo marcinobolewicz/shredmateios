@@ -97,8 +97,10 @@ public final class PlacesViewModel {
 
         let sportSlug = selectedSport?.slug
 
-        loadTask = Task {
+        loadTask = Task { [weak self] in
             do {
+                guard let self else { throw CancellationError() }
+                
                 let places = try await repository.fetchPlaces(for: sportSlug)
                 try Task.checkCancellation()
 
@@ -107,9 +109,9 @@ public final class PlacesViewModel {
                 applyFilters()
                 state = .loaded
             } catch is CancellationError {
-                state = .idle
+                self?.state = .idle
             } catch {
-                state = .failed(.from(error))
+                self?.state = .failed(.from(error))
             }
         }
     }
