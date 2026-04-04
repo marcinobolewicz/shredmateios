@@ -40,6 +40,10 @@
 "places.mentors_all_sports" = "All sports";
 "places.mentors_all_spots" = "All spots";
 
+/* Mentor Stats */
+"places.mentor_sessions_format" = "%d sessions";
+"places.mentor_recommendations_format" = "%d recommendations";
+
 /* Mentor Slots */
 "places.mentor_slots_title" = "Available sessions";
 "places.mentor_slots_empty" = "No available sessions";
@@ -47,6 +51,8 @@
 "places.slot_delete_confirm" = "Delete";
 "places.slot_book_title" = "Book session?";
 "places.slot_book_confirm" = "Book";
+"places.slot_book_too_soon_title" = "Cannot book";
+"places.slot_book_too_soon_message" = "Sessions can only be booked at least 30 minutes before start time.";
 "places.slot_action_error_title" = "Error";
 
 /* Rider Card */

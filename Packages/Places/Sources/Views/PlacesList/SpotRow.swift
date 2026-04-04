@@ -15,9 +15,15 @@ struct SpotRow: View {
     @Environment(AppTheme.self) private var theme
     let viewData: SpotRowViewData
 
+    private enum Layout {
+        static let avatarSize: CGFloat = 56
+        static let chevronSize: CGFloat = 32
+        static let chevronIconSize: CGFloat = 11
+    }
+
     var body: some View {
         HStack(alignment: .center, spacing: theme.spacing.sm) {
-            AvatarView(avatar: viewData.avatar, initials: viewData.initials, size: 56)
+            AvatarView(avatar: viewData.avatar, initials: viewData.initials, size: Layout.avatarSize)
                 .fixedSize()
 
             VStack(alignment: .leading, spacing: theme.spacing.xxs) {
@@ -29,7 +35,7 @@ struct SpotRow: View {
                     Text(viewData.description)
                         .dsTextStyle(.subheadline)
                         .lineLimit(1)
-                        .padding(.trailing, 36)
+                        .padding(.trailing, Layout.chevronSize + Constants.Spacing.xxs)
                 }
 
                 tagsRow
@@ -65,11 +71,11 @@ struct SpotRow: View {
         ZStack {
             Circle()
                 .fill(theme.colors.background)
-                .frame(width: 32, height: 32)
-                .shadow(color: .black.opacity(0.08), radius: 4, x: 0, y: 1)
+                .frame(width: Layout.chevronSize, height: Layout.chevronSize)
+                .shadow(color: .black.opacity(0.08), radius: Constants.Spacing.xxs, x: 0, y: 1)
 
             Image(systemName: "chevron.right")
-                .font(.system(size: 11, weight: .semibold))
+                .font(.system(size: Layout.chevronIconSize, weight: .semibold))
                 .foregroundStyle(theme.colors.textTertiary)
         }
     }
@@ -83,10 +89,9 @@ private struct StatText: View {
     let value: Int
 
     var body: some View {
-        HStack(spacing: theme.spacing.xxs + 2) {
+        HStack(spacing: theme.spacing.xs) {
             Text(label)
-                .font(.subheadline)
-                .foregroundStyle(theme.colors.textSecondary)
+                .dsTextStyle(.subheadline)
             Text("\(value)")
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(theme.colors.textPrimary)

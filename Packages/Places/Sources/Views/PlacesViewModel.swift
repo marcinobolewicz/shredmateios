@@ -21,21 +21,22 @@ enum PlacesDisplayMode: String, CaseIterable, Identifiable {
 public final class PlacesViewModel {
 
     private(set) var rows: [SpotRowViewData] = []
-    var sports: [PlaceSport] = []
-    var selectedSport: PlaceSport? = nil
+    private(set) var sports: [PlaceSport] = []
+    private(set) var selectedSport: PlaceSport? = nil
     var displayMode: PlacesDisplayMode = .list
     var searchText: String = ""
     private(set) var state: LoadState = .idle
 
     private(set) var availableTags: [PlaceTag] = []
-    var selectedTagIds: Set<UUID> = []
+    private(set) var selectedTagIds: Set<UUID> = []
 
-    let repository: any PlacesRepositoryProtocol
+    private let repository: any PlacesRepositoryProtocol
     private let presenter: SpotRowPresenter
     private let sportPreferenceStorage: any SportPreferenceStorageProtocol
 
     private var allPlaces: [Place] = []
     private var loadTask: Task<Void, Never>?
+    private var searchTask: Task<Void, Never>?
 
     init(
         repository: any PlacesRepositoryProtocol,
@@ -97,22 +98,20 @@ public final class PlacesViewModel {
         let sportSlug = selectedSport?.slug
 
         loadTask = Task { [weak self] in
-            guard let self else { return }
-
             do {
+                guard let self else { throw CancellationError() }
+                
                 let places = try await repository.fetchPlaces(for: sportSlug)
                 try Task.checkCancellation()
 
-                self.allPlaces = places
-                withAnimation(.easeInOut) {
-                    self.availableTags = Self.extractTags(from: places)
-                }
-                self.applyFilters()
-                self.state = .loaded
+                allPlaces = places
+                availableTags = Self.extractTags(from: places)
+                applyFilters()
+                state = .loaded
             } catch is CancellationError {
-                self.state = .idle
+                self?.state = .idle
             } catch {
-                self.state = .failed(.from(error))
+                self?.state = .failed(.from(error))
             }
         }
     }
@@ -132,6 +131,15 @@ public final class PlacesViewModel {
             selectedTagIds.insert(tagId)
         }
         applyFilters()
+    }
+
+    func searchTextChanged() {
+        searchTask?.cancel()
+        searchTask = Task {
+            try? await Task.sleep(for: .milliseconds(300))
+            guard !Task.isCancelled else { return }
+            applyFilters()
+        }
     }
 
     func applyFilters() {

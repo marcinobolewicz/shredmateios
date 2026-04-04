@@ -7,33 +7,36 @@ struct PlacesMapView: View {
     @Environment(PlacesRouter.self) private var router
     @Bindable var viewModel: PlacesViewModel
     private let presenter = PlacesMapPresenter()
-    
-    @State private var region = PlacesMapPresenter().defaultRegion
-    @State private var selectedPinId: UUID?
 
-    private var pins: [PlaceMapPinViewData] {
-        presenter.mapPins(from: viewModel.rows)
-    }
+    @State private var position: MapCameraPosition = .automatic
+    @State private var selectedPinId: UUID?
+    @State private var pins: [PlaceMapPinViewData] = []
     
     var body: some View {
-        Map(coordinateRegion: $region, annotationItems: pins) { pin in
-            MapAnnotation(coordinate: pin.coordinate, anchorPoint: CGPoint(x: 0.5, y: 1.0)) {
-                mapPinAnnotation(pin)
+        Map(position: $position) {
+            ForEach(pins) { pin in
+                Annotation(pin.title, coordinate: pin.coordinate, anchor: .bottom) {
+                    mapPinAnnotation(pin)
+                }
+                .annotationTitles(.hidden)
             }
         }
-        .gesture(
-            TapGesture().onEnded {
+        .onTapGesture {
+            withAnimation(.snappy(duration: Constants.Animation.chipDuration)) {
                 selectedPinId = nil
-            },
-            including: .gesture
-        )
-        .onAppear {
-            syncRegion()
+            }
         }
-        .onChange(of: viewModel.rows) { _, _ in
-            syncRegion()
-            if let selectedPinId, !pins.contains(where: { $0.id == selectedPinId }) {
+        .onChange(of: viewModel.rows, initial: true) { _, newRows in
+            let newPins = presenter.mapPins(from: newRows)
+            pins = newPins
+
+            if let selectedPinId, !newPins.contains(where: { $0.id == selectedPinId }) {
                 self.selectedPinId = nil
+            }
+
+            let region = presenter.region(for: newPins, fallback: presenter.defaultRegion)
+            withAnimation(.snappy(duration: 0.25)) {
+                position = .region(region)
             }
         }
     }
@@ -45,17 +48,17 @@ struct PlacesMapView: View {
             }
 
             Button {
-                withAnimation(.snappy(duration: 0.2)) {
+                withAnimation(.snappy(duration: Constants.Animation.chipDuration)) {
                     selectedPinId = (selectedPinId == pin.id) ? nil : pin.id
                 }
             } label: {
                 Image(systemName: "mappin.and.ellipse.circle.fill")
-                    .font(.system(size: 32))
+                    .font(.system(size: Constants.Spacing.xl))
                     .foregroundStyle(theme.colors.primary)
                     .background(
                         Circle()
                             .fill(.white)
-                            .padding(4)
+                            .padding(Constants.Spacing.xxs)
                     )
             }
             .buttonStyle(.plain)
@@ -79,19 +82,12 @@ struct PlacesMapView: View {
             .padding(.horizontal, theme.spacing.sm)
             .padding(.vertical, theme.spacing.xs)
             .background(theme.colors.surface)
-            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: theme.radius.md, style: .continuous))
             .overlay(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                RoundedRectangle(cornerRadius: theme.radius.md, style: .continuous)
                     .stroke(theme.colors.border.opacity(0.35), lineWidth: 1)
             )
         }
         .buttonStyle(.plain)
-    }
-
-    private func syncRegion() {
-        let newRegion = presenter.region(for: pins, fallback: presenter.defaultRegion)
-        withAnimation(.snappy(duration: 0.25)) {
-            region = newRegion
-        }
     }
 }

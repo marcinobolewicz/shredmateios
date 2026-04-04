@@ -10,16 +10,13 @@ public struct PlacesView: View {
     public init(
         placesService: any PlacesServiceProtocol,
         sportsService: any SportsServiceProtocol,
-        authState: AuthState,
         sportPreferenceStorage: any SportPreferenceStorageProtocol
     ) {
         let repository = PlacesRepository(service: placesService, sportsService: sportsService)
-        let presenter = SpotRowPresenter()
 
         _viewModel = State(
             wrappedValue: PlacesViewModel(
                 repository: repository,
-                presenter: presenter,
                 sportPreferenceStorage: sportPreferenceStorage
             )
         )
@@ -35,7 +32,7 @@ public struct PlacesView: View {
         }
         .background(theme.colors.backgroundSecondary)
         .task { await viewModel.loadOnAppear() }
-        .onAppear { Task { await viewModel.syncSportPreference() } }
+        .task { await viewModel.syncSportPreference() }
         .errorAlert(state: viewModel.state) { viewModel.refresh() }
     }
 
@@ -44,7 +41,7 @@ public struct PlacesView: View {
             displayModePicker
             DSSearchBar(PlacesStrings.searchPlaceholder.localized, text: $viewModel.searchText)
                 .onChange(of: viewModel.searchText) { _, _ in
-                    viewModel.applyFilters()
+                    viewModel.searchTextChanged()
                 }
         }
         .padding(.horizontal, theme.spacing.md)
@@ -78,6 +75,7 @@ public struct PlacesView: View {
                                         : Color.clear
                                 )
                         )
+                        .contentShape(Capsule())
                 }
                 .buttonStyle(.plain)
             }
@@ -90,9 +88,11 @@ public struct PlacesView: View {
         switch viewModel.displayMode {
         case .list:
             PlacesListView(viewModel: viewModel)
+                .transition(.opacity)
         case .map:
             PlacesMapView(viewModel: viewModel)
                 .ignoresSafeArea(edges: .bottom)
+                .transition(.opacity)
         }
     }
 

@@ -44,13 +44,14 @@ final class MySlotsViewModel {
     // MARK: - Computed
 
     var dayGroups: [MySlotDayGroup] {
+        let fmt = DateFormatting.shared
         let filtered = filteredSlots
-        let grouped = Dictionary(grouping: filtered) { dayKey($0.startTime) }
+        let grouped = Dictionary(grouping: filtered) { fmt.dayKey(from: $0.startTime) }
         return grouped.keys.sorted().compactMap { key in
             guard let slots = grouped[key] else { return nil }
             return MySlotDayGroup(
                 id: key,
-                dayHeader: formatDayHeader(key),
+                dayHeader: fmt.formatDayHeader(dateString: key),
                 slots: slots.sorted { $0.startTime < $1.startTime }
             )
         }
@@ -112,18 +113,4 @@ final class MySlotsViewModel {
         }
     }
 
-    private func dayKey(_ isoString: String) -> String {
-        String(isoString.prefix(10))
-    }
-
-    private func formatDayHeader(_ dateString: String) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd"
-        formatter.locale = Locale.current
-        guard let date = formatter.date(from: dateString) else { return dateString }
-        let display = DateFormatter()
-        display.locale = Locale.current
-        display.setLocalizedDateFormatFromTemplate("EEEEddMMMM")
-        return display.string(from: date).localizedCapitalized
-    }
 }

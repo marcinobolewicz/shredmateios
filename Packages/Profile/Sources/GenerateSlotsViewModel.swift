@@ -23,21 +23,19 @@ enum DateRangePreset: String, CaseIterable, Identifiable {
         let weekday = cal.component(.weekday, from: today)
         let daysToMonday = weekday == 1 ? -6 : (2 - weekday)
         let thisMonday = cal.date(byAdding: .day, value: daysToMonday, to: cal.startOfDay(for: today))!
-
-        let fmt = DateFormatter()
-        fmt.dateFormat = "yyyy-MM-dd"
+        let fmt = DateFormatting.shared
 
         switch self {
         case .thisWeek:
             let sunday = cal.date(byAdding: .day, value: 6, to: thisMonday)!
-            return (fmt.string(from: thisMonday), fmt.string(from: sunday))
+            return (fmt.formatDateOnly(thisMonday), fmt.formatDateOnly(sunday))
         case .nextWeek:
             let nextMon = cal.date(byAdding: .day, value: 7, to: thisMonday)!
             let nextSun = cal.date(byAdding: .day, value: 13, to: thisMonday)!
-            return (fmt.string(from: nextMon), fmt.string(from: nextSun))
+            return (fmt.formatDateOnly(nextMon), fmt.formatDateOnly(nextSun))
         case .thisAndNext:
             let nextSun = cal.date(byAdding: .day, value: 13, to: thisMonday)!
-            return (fmt.string(from: thisMonday), fmt.string(from: nextSun))
+            return (fmt.formatDateOnly(thisMonday), fmt.formatDateOnly(nextSun))
         }
     }
 }
@@ -157,8 +155,8 @@ final class GenerateSlotsViewModel {
             return
         }
 
-        let fromStr = formatTime(timeFrom)
-        let toStr = formatTime(timeTo)
+        let fromStr = DateFormatting.shared.formatTimeComponents(timeFrom)
+        let toStr = DateFormatting.shared.formatTimeComponents(timeTo)
         guard fromStr < toStr else {
             validationError = ProfileStrings.generateValidationTime.localized
             return
@@ -194,9 +192,4 @@ final class GenerateSlotsViewModel {
         }
     }
 
-    // MARK: - Private
-
-    private func formatTime(_ components: DateComponents) -> String {
-        String(format: "%02d:%02d", components.hour ?? 0, components.minute ?? 0)
-    }
 }

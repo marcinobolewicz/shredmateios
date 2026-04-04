@@ -209,7 +209,7 @@ private struct ActivityPostRow: View {
                 Text(caption).dsTextStyle(.body)
             }
             
-            Text(post.createdAt.formattedTimestamp)
+            Text(DateFormatting.shared.timestamp(from: post.createdAt))
                 .dsTextStyle(.caption)
                 .foregroundStyle(theme.colors.textSecondary)
                 .frame(maxWidth: .infinity, alignment: .trailing)
@@ -219,23 +219,3 @@ private struct ActivityPostRow: View {
     }
 }
 
-// MARK: - Date Formatting
-
-private extension String {
-    var formattedTimestamp: String {
-        let parser = ISO8601DateFormatter()
-        parser.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        guard let date = parser.date(from: self) else { return self }
-
-        let relative = RelativeDateTimeFormatter()
-        relative.unitsStyle = .short
-
-        let absolute = DateFormatter()
-        absolute.locale = .current
-        absolute.doesRelativeDateFormatting = true
-        absolute.dateStyle = .medium
-        absolute.timeStyle = .short
-
-        return "\(relative.localizedString(for: date, relativeTo: .now)) · \(absolute.string(from: date))"
-    }
-}

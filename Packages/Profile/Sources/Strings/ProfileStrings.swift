@@ -101,6 +101,8 @@ enum ProfileStrings: String {
     case bookingRecommend = "profile.booking_recommend"
     case bookingNoRecommend = "profile.booking_no_recommend"
     case bookingRecommended = "profile.booking_recommended"
+    case bookingSessionNotStartedTitle = "profile.booking_session_not_started_title"
+    case bookingSessionNotStartedMessage = "profile.booking_session_not_started_message"
 
     // MARK: - My Slots (Mentor)
     case sectionMySlots = "profile.section_my_slots"

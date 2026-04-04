@@ -3,6 +3,7 @@ import Networking
 import Login
 import Common
 import Conversations
+import Onboarding
 #if DEBUG
 import PulseUI
 #endif
@@ -38,6 +39,13 @@ public struct RootView: View {
                     onLoginSuccess: { router.showUser() }
                 )
 
+            case .onboarding:
+                OnboardingView {
+                    OnboardingStorage.markCompleted()
+                    authState.clearNewRegistration()
+                    router.showUser()
+                }
+
             case .user:
                 UserTabView(dependencies: dependencies)
             }
@@ -58,7 +66,11 @@ public struct RootView: View {
             router.flow = authState.isLoggedIn ? .user : .guest
         }
         .onChange(of: authState.isLoggedIn, initial: true) { _, isLoggedIn in
-            router.flow = isLoggedIn ? .user : .guest
+            if isLoggedIn && authState.isNewRegistration && !OnboardingStorage.isCompleted {
+                router.showOnboarding()
+            } else {
+                router.flow = isLoggedIn ? .user : .guest
+            }
 
             if isLoggedIn {
                 Task {

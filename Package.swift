@@ -19,6 +19,7 @@ let package = Package(
         .library(name: "Conversations", targets: ["Conversations"]),
         .library(name: "Feed", targets: ["Feed"]),
         .library(name: "MediaPicker", targets: ["MediaPicker"]),
+        .library(name: "Onboarding", targets: ["Onboarding"]),
         .library(name: "Theme", targets: ["Theme"])
     ],
     dependencies: [
@@ -155,11 +156,25 @@ let package = Package(
             path: "Packages/Feed/Tests"
         ),
 
+        // Onboarding Package
+        .target(
+            name: "Onboarding",
+            path: "Packages/Onboarding/Sources",
+            swiftSettings: [
+                .enableUpcomingFeature("StrictConcurrency")
+            ]
+        ),
+        .testTarget(
+            name: "OnboardingTests",
+            dependencies: ["Onboarding"],
+            path: "Packages/Onboarding/Tests"
+        ),
+
         // App Package
         .target(
             name: "App",
             dependencies: [
-                "Core", "Networking", "Auth", "Login", "Profile", "Places", "Conversations", "Feed", "Theme",
+                "Core", "Networking", "Auth", "Login", "Profile", "Places", "Conversations", "Feed", "Onboarding", "Theme",
                 .product(name: "FirebaseCrashlytics", package: "firebase-ios-sdk"),
                 .product(name: "FirebaseMessaging", package: "firebase-ios-sdk"),
                 .product(name: "Pulse", package: "Pulse"),

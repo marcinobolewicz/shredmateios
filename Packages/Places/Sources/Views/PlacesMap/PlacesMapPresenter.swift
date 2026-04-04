@@ -33,20 +33,7 @@ struct PlacesMapPresenter {
                 coordinate: CLLocationCoordinate2D(latitude: latitude, longitude: longitude),
                 title: row.title,
                 description: infoText,
-                placeDetailsData: PlaceDetailsViewData(
-                    id: row.id,
-                    name: row.title,
-                    description: row.description,
-                    sportTags: row.sportTags,
-                    placeTags: row.placeTags,
-                    sportIds: row.sportIds,
-                    sportSlugs: row.sportSlugs,
-                    ridersCount: row.ridersCount,
-                    mentorsCount: row.mentorsCount,
-                    avatar: row.avatar,
-                    latitude: latitude,
-                    longitude: longitude
-                )
+                placeDetailsData: row.placeDetailsData
             )
         }
     }

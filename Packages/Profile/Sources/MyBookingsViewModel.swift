@@ -13,6 +13,7 @@ final class MyBookingsViewModel {
     var selectedSlot: MentorSlot?
     var showCancelConfirmation = false
     var showCompleteConfirmation = false
+    var showSessionNotStarted = false
 
     private let service: MentorSlotsServiceProtocol
 
@@ -34,10 +35,14 @@ final class MyBookingsViewModel {
     func action(for slot: MentorSlot) -> BookingAction? {
         switch slot.status {
         case .booked:
-            let start = ISO8601DateFormatter().date(from: slot.startTime) ?? .distantPast
+            let start = DateFormatting.shared.parseISO8601(slot.startTime) ?? .distantPast
             if start > Date() {
                 let hoursLeft = start.timeIntervalSince(Date()) / 3600
-                return hoursLeft >= 2 ? .cancel : .tooLateToCancel
+                if hoursLeft >= 2 {
+                    return .cancel
+                } else {
+                    return .tooLateToCancel
+                }
             } else {
                 return .complete
             }
@@ -54,6 +59,12 @@ final class MyBookingsViewModel {
     }
 
     func completeTapped(_ slot: MentorSlot) {
+        let start = DateFormatting.shared.parseISO8601(slot.startTime) ?? .distantFuture
+        guard start <= Date() else {
+            selectedSlot = slot
+            showSessionNotStarted = true
+            return
+        }
         selectedSlot = slot
         showCompleteConfirmation = true
     }
@@ -84,6 +95,7 @@ final class MyBookingsViewModel {
         selectedSlot = nil
         showCancelConfirmation = false
         showCompleteConfirmation = false
+        showSessionNotStarted = false
     }
 
     // MARK: - Private

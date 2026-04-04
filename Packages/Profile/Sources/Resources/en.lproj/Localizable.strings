@@ -81,6 +81,8 @@
 "profile.booking_recommend" = "Recommend mentor";
 "profile.booking_no_recommend" = "No recommendation";
 "profile.booking_recommended" = "Recommended";
+"profile.booking_session_not_started_title" = "Session not started yet";
+"profile.booking_session_not_started_message" = "You can confirm the session only after the start time has passed.";
 
 /* My Posts */
 "profile.delete_post" = "Delete post";

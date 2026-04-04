@@ -81,6 +81,8 @@
 "profile.booking_recommend" = "Polecam mentora";
 "profile.booking_no_recommend" = "Bez rekomendacji";
 "profile.booking_recommended" = "Polecono";
+"profile.booking_session_not_started_title" = "Sesja jeszcze się nie rozpoczęła";
+"profile.booking_session_not_started_message" = "Sesję można potwierdzić dopiero po upływie godziny rozpoczęcia.";
 
 /* Moje posty */
 "profile.delete_post" = "Usuń post";

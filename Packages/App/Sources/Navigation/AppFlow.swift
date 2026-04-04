@@ -11,6 +11,7 @@ import Login
 enum RootFlow: Equatable {
     case guest
     case auth(AuthEntryPoint = .login)
+    case onboarding
     case user
 }
 
@@ -18,9 +19,10 @@ enum RootFlow: Equatable {
 @Observable
 final class RootRouter {
     var flow: RootFlow = .guest
-    
+
     func showGuest() { flow = .guest }
     func showAuth(_ entry: AuthEntryPoint = .login) { flow = .auth(entry) }
+    func showOnboarding() { flow = .onboarding }
     func showUser() { flow = .user }
 }
 

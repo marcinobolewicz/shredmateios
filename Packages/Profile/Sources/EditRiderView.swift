@@ -136,38 +136,81 @@ struct EditRiderView: View {
 
     private var locationSection: some View {
         Section(ProfileStrings.sectionBaseLocation.localized) {
-            Button {
-                showLocationPicker = true
-            } label: {
-                HStack {
-                    VStack(alignment: .leading, spacing: 4) {
-                        if !viewModel.locationName.isEmpty {
-                            Text(viewModel.locationName)
-                                .foregroundStyle(.primary)
-                            if !viewModel.latitudeText.isEmpty {
-                                Text("\(viewModel.latitudeText), \(viewModel.longitudeText)")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                            }
-                        } else if !viewModel.latitudeText.isEmpty {
-                            Text("\(viewModel.latitudeText), \(viewModel.longitudeText)")
-                                .foregroundStyle(.primary)
-                        } else {
-                            Text(ProfileStrings.noLocationSet.localized)
-                                .foregroundStyle(.secondary)
-                        }
+            if hasLocation {
+                locationMapPreview
+            } else {
+                noLocationPlaceholder
+            }
+        }
+    }
+
+    private var hasLocation: Bool {
+        Double(viewModel.latitudeText) != nil && Double(viewModel.longitudeText) != nil
+    }
+
+    private var locationCoordinate: CLLocationCoordinate2D? {
+        guard let lat = Double(viewModel.latitudeText),
+              let lng = Double(viewModel.longitudeText) else { return nil }
+        return CLLocationCoordinate2D(latitude: lat, longitude: lng)
+    }
+
+    private var locationMapPreview: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            if !viewModel.locationName.isEmpty {
+                Text(viewModel.locationName)
+                    .font(.subheadline.weight(.medium))
+                    .padding(.horizontal, 16)
+                    .padding(.top, 12)
+                    .padding(.bottom, 8)
+            }
+
+            if let coordinate = locationCoordinate {
+                Map(position: .constant(.region(MKCoordinateRegion(
+                    center: coordinate,
+                    span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
+                ))), interactionModes: []) {
+                    Marker(viewModel.locationName, coordinate: coordinate)
+                        .tint(.red)
+                }
+                .frame(height: 180)
+                .overlay(alignment: .bottomTrailing) {
+                    Button {
+                        showLocationPicker = true
+                    } label: {
+                        Label(ProfileStrings.pickOnMap.localized, systemImage: "pencil")
+                            .font(.subheadline.weight(.semibold))
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 8)
+                            .background(.ultraThinMaterial)
+                            .clipShape(Capsule())
                     }
-                    Spacer()
-                    if viewModel.isSaving {
-                        ProgressView().controlSize(.small)
-                    } else {
-                        Image(systemName: "map")
-                            .foregroundStyle(.secondary)
-                    }
+                    .buttonStyle(.plain)
+                    .padding(12)
                 }
             }
-            .buttonStyle(.plain)
         }
+        .listRowInsets(EdgeInsets())
+    }
+
+    private var noLocationPlaceholder: some View {
+        Button {
+            showLocationPicker = true
+        } label: {
+            HStack {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(ProfileStrings.noLocationSet.localized)
+                        .foregroundStyle(.secondary)
+                }
+                Spacer()
+                if viewModel.isSaving {
+                    ProgressView().controlSize(.small)
+                } else {
+                    Image(systemName: "map")
+                        .foregroundStyle(.secondary)
+                }
+            }
+        }
+        .buttonStyle(.plain)
     }
 
     // MARK: - Sports

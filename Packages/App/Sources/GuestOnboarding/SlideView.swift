@@ -9,14 +9,6 @@ struct SlideView: View {
 
     var body: some View {
         ZStack {
-            // MARK: Background
-            Image(slide.imageName)
-                .resizable()
-                .scaledToFill()
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .clipped()
-                .ignoresSafeArea()
-
             // MARK: Scrim
             LinearGradient(
                 colors: [.black.opacity(0.15), .black.opacity(0.60)],
@@ -32,7 +24,7 @@ struct SlideView: View {
                 }
 
                 if slide.contentAlignment == .top || slide.contentAlignment == .bottom {
-                    Spacer().frame(height: UIScreen.main.bounds.height / 9)
+                    Spacer().frame(height: UIScreen.main.bounds.height / 6)
                 }
 
                 contentCard
@@ -42,12 +34,13 @@ struct SlideView: View {
                 }
 
                 if slide.contentAlignment == .top || slide.contentAlignment == .bottom {
-                    Spacer().frame(height: UIScreen.main.bounds.height / 9)
+                    Spacer().frame(height: UIScreen.main.bounds.height / 6)
                 }
             }
             .padding(.horizontal, 24)
             .safeAreaPadding()
         }
+        .dsImageBackground(slide.imageName)
         .ignoresSafeArea()
     }
 

@@ -97,8 +97,19 @@ public struct GenerateSlotsResponse: Decodable, Sendable {
     public let skipped: Int
     public let skippedSlots: [SkippedSlot]
 
+    public init(generated: Int, skipped: Int, skippedSlots: [SkippedSlot] = []) {
+        self.generated = generated
+        self.skipped = skipped
+        self.skippedSlots = skippedSlots
+    }
+
     public struct SkippedSlot: Decodable, Sendable {
         public let startTime: String
         public let endTime: String
+
+        public init(startTime: String, endTime: String) {
+            self.startTime = startTime
+            self.endTime = endTime
+        }
     }
 }
