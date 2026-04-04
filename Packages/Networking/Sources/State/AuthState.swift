@@ -16,7 +16,8 @@ public final class AuthState {
     public private(set) var isLoading = false
     public private(set) var error: AuthError?
     public var sessionExpired = false
-    
+    public private(set) var isNewRegistration = false
+
     public var isLoggedIn: Bool { user != nil }
     
     // MARK: - Dependencies
@@ -119,13 +120,14 @@ public final class AuthState {
     public func register(email: String, password: String, name: String) async {
         isLoading = true
         error = nil
-        
+
         do {
             let response = try await authService.register(
                 email: email,
                 password: password,
                 name: name
             )
+            isNewRegistration = true
             user = response.user
             await fetchRiderProfile()
             await pushDeviceService?.registerCurrentTokenIfPossible()
@@ -190,6 +192,10 @@ public final class AuthState {
     
     public func clearError() {
         error = nil
+    }
+
+    public func clearNewRegistration() {
+        isNewRegistration = false
     }
     
     // MARK: - Token Access (for Socket.IO etc.)
