@@ -24,7 +24,7 @@ struct PlacesMapView: View {
             },
             including: .gesture
         )
-        .onChange(of: viewModel.rows) { _, newRows in
+        .onChange(of: viewModel.rows, initial: true) { _, newRows in
             let newPins = presenter.mapPins(from: newRows)
             pins = newPins
 

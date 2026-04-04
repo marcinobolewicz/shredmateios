@@ -85,15 +85,14 @@ public struct PlacesView: View {
 
     @ViewBuilder
     private var contentSection: some View {
-        ZStack {
+        switch viewModel.displayMode {
+        case .list:
             PlacesListView(viewModel: viewModel)
-                .opacity(viewModel.displayMode == .list ? 1 : 0)
-                .allowsHitTesting(viewModel.displayMode == .list)
-
+                .transition(.opacity)
+        case .map:
             PlacesMapView(viewModel: viewModel)
-                .opacity(viewModel.displayMode == .map ? 1 : 0)
-                .allowsHitTesting(viewModel.displayMode == .map)
                 .ignoresSafeArea(edges: .bottom)
+                .transition(.opacity)
         }
     }
 
