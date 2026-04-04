@@ -7,23 +7,25 @@ struct PlacesMapView: View {
     @Environment(PlacesRouter.self) private var router
     @Bindable var viewModel: PlacesViewModel
     private let presenter = PlacesMapPresenter()
-    
-    @State private var region = PlacesMapPresenter().defaultRegion
+
+    @State private var position: MapCameraPosition = .automatic
     @State private var selectedPinId: UUID?
     @State private var pins: [PlaceMapPinViewData] = []
     
     var body: some View {
-        Map(coordinateRegion: $region, annotationItems: pins) { pin in
-            MapAnnotation(coordinate: pin.coordinate, anchorPoint: CGPoint(x: 0.5, y: 1.0)) {
-                mapPinAnnotation(pin)
+        Map(position: $position) {
+            ForEach(pins) { pin in
+                Annotation(pin.title, coordinate: pin.coordinate, anchor: .bottom) {
+                    mapPinAnnotation(pin)
+                }
+                .annotationTitles(.hidden)
             }
         }
-        .gesture(
-            TapGesture().onEnded {
+        .onTapGesture {
+            withAnimation(.snappy(duration: Constants.Animation.chipDuration)) {
                 selectedPinId = nil
-            },
-            including: .gesture
-        )
+            }
+        }
         .onChange(of: viewModel.rows, initial: true) { _, newRows in
             let newPins = presenter.mapPins(from: newRows)
             pins = newPins
@@ -32,9 +34,9 @@ struct PlacesMapView: View {
                 self.selectedPinId = nil
             }
 
-            let newRegion = presenter.region(for: newPins, fallback: presenter.defaultRegion)
+            let region = presenter.region(for: newPins, fallback: presenter.defaultRegion)
             withAnimation(.snappy(duration: 0.25)) {
-                region = newRegion
+                position = .region(region)
             }
         }
     }
