@@ -9,6 +9,7 @@ import SwiftUI
 import Login
 
 enum RootFlow: Equatable {
+    case loading
     case guest
     case auth(AuthEntryPoint = .login)
     case onboarding
@@ -18,11 +19,10 @@ enum RootFlow: Equatable {
 @MainActor
 @Observable
 final class RootRouter {
-    var flow: RootFlow = .guest
+    var flow: RootFlow = .loading
 
     func showGuest() { flow = .guest }
     func showAuth(_ entry: AuthEntryPoint = .login) { flow = .auth(entry) }
     func showOnboarding() { flow = .onboarding }
     func showUser() { flow = .user }
 }
-

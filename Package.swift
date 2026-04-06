@@ -159,7 +159,11 @@ let package = Package(
         // Onboarding Package
         .target(
             name: "Onboarding",
+            dependencies: ["Theme"],
             path: "Packages/Onboarding/Sources",
+            resources: [
+                .process("Resources")
+            ],
             swiftSettings: [
                 .enableUpcomingFeature("StrictConcurrency")
             ]

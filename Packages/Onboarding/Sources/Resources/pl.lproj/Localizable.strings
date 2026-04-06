@@ -1,0 +1,17 @@
+/* Welcome Screen */
+"welcome.title" = "Witaj w ShredMate";
+"welcome.subtitle" = "Znajdź mentora, ekipę i wolne sloty na wake lub snow — szybciej niż przez DM-y i chaos na grupkach.";
+
+"welcome.highlight.sessions" = "Jedno miejsce do umawiania sesji, lekcji i wspólnych ride’ów.";
+"welcome.highlight.audience" = "Dla riderów, mentorów i ludzi, którzy po prostu chcą wejść do ekipy.";
+"welcome.highlight.personalization" = "Po rejestracji dopasujemy sport, rolę i pierwsze rekomendacje.";
+
+"welcome.feature.mentor" = "Znajdź mentora";
+"welcome.feature.crew" = "Dołącz do ekipy";
+"welcome.feature.slots" = "Rezerwuj sloty";
+
+"welcome.action.sign_up" = "Załóż konto";
+"welcome.action.sign_in" = "Mam już konto";
+"welcome.action.later" = "Później";
+
+"welcome.accessibility.logo" = "Logo ShredMate";

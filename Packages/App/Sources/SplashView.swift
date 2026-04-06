@@ -1,25 +1,31 @@
 import SwiftUI
+import Theme
 
+/// Boot-time splash rendered before the auth session has been restored.
+///
+/// Visually mirrors the native iOS launch screen (`UILaunchScreen` in
+/// `Info.plist`) so the handover from the launch image to the first SwiftUI
+/// frame is seamless: same brand primary background, same outline mark,
+/// same centred layout. That eliminates the guest-to-user "blink" that
+/// used to happen while `AuthState.restoreSession()` was in flight.
 struct SplashView: View {
+
+    @Environment(AppTheme.self) private var theme
+
     var body: some View {
         ZStack {
-            Image("slide_0")
-                .resizable()
-                .scaledToFill()
+            theme.colors.primary
                 .ignoresSafeArea()
 
-            LinearGradient(
-                colors: [.black.opacity(0.15), .black.opacity(0.55)],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .ignoresSafeArea()
-
-            Image("logo")
+            Image("slide_0", bundle: .main)
                 .resizable()
                 .scaledToFit()
-                .frame(width: 120)
-                .shadow(color: .black.opacity(0.4), radius: 8, x: 0, y: 4)
+                .ignoresSafeArea()
         }
+        .transition(.opacity)
     }
+
+    // MARK: - Layout
+
+    private static let logoSize: CGFloat = 120
 }
