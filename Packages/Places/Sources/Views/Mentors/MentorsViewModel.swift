@@ -59,26 +59,28 @@ final class MentorsViewModel {
     // MARK: - Loading
 
     func loadInitial() async {
-        async let sportsResult = sportsService.fetchSports()
-        async let placesResult = placesService.fetchPlaces(sportSlug: nil)
+        sports = (try? await sportsService.fetchSports()) ?? []
+
+        // Apply saved preference before loading mentors to avoid double-fetch
+        // and AsyncImage cancellation from list re-render.
+        if selectedSportId == nil {
+            let savedSlug = await sportPreferenceStorage.savedSportSlug()
+            if let savedSlug, let match = sports.first(where: { $0.slug == savedSlug }) {
+                isSyncingSport = true
+                selectedSportId = match.id
+                isSyncingSport = false
+            }
+        }
+
+        async let placesResult = placesService.fetchPlaces(sportSlug: selectedSportSlug)
         async let mentorsResult = fetchPage(1)
 
-        sports = (try? await sportsResult) ?? []
         places = (try? await placesResult) ?? []
         await mentorsResult
-        await applySavedSportPreference()
         didLoadInitial = true
     }
 
     private var didLoadInitial = false
-
-    private func applySavedSportPreference() async {
-        guard selectedSportId == nil else { return }
-        let savedSlug = await sportPreferenceStorage.savedSportSlug()
-        guard let savedSlug,
-              let match = sports.first(where: { $0.slug == savedSlug }) else { return }
-        selectedSportId = match.id
-    }
 
     func syncSportPreference() async {
         guard didLoadInitial, !sports.isEmpty else { return }

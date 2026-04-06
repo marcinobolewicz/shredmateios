@@ -4,6 +4,7 @@ import Networking
 
 struct MentorsView: View {
     @Environment(AppTheme.self) private var theme
+    @Environment(PlacesRouter.self) private var router
     @State private var viewModel: MentorsViewModel
     @State private var appearCount = 0
 
@@ -95,7 +96,9 @@ struct MentorsView: View {
                 emptyState
             } else {
                 ForEach(viewModel.mentors) { mentor in
-                    NavigationLink(value: riderCardData(for: mentor)) {
+                    Button {
+                        router.navigate(to: riderCardData(for: mentor))
+                    } label: {
                         MentorRow(mentor: mentor)
                             .padding(.horizontal, theme.spacing.md)
                     }
