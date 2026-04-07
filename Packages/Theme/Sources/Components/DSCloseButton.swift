@@ -7,11 +7,9 @@ import SwiftUI
 
 /// Circular X button used to dismiss modal screens (welcome, auth flow, etc.).
 ///
-/// Renders the SF Symbol `xmark.circle.fill` in palette mode so the glyph
-/// and the disc background can be tinted independently. Defaults pair a
-/// dark glyph with a fully opaque white disc — visible on any background,
-/// photographic or solid — but both layers can be overridden via init for
-/// other contexts.
+/// Uses a frosted-glass disc (matching the `dsFrostedCard` content boxes)
+/// with an `xmark` glyph tinted to match the card text color. Both layers
+/// are visible in light and dark mode.
 ///
 /// Usage:
 /// ```swift
@@ -23,39 +21,30 @@ public struct DSCloseButton: View {
 
     private let accessibilityLabel: String
     private let foreground: KeyPath<ColorTokens, Color>
-    private let background: KeyPath<ColorTokens, Color>
-    private let foregroundOpacity: Double
-    private let backgroundOpacity: Double
     private let action: () -> Void
 
     public init(
         accessibilityLabel: String,
-        foreground: KeyPath<ColorTokens, Color> = \.textPrimary,
-        background: KeyPath<ColorTokens, Color> = \.primaryForeground,
-        foregroundOpacity: Double = 1,
-        backgroundOpacity: Double = 1,
+        foreground: KeyPath<ColorTokens, Color> = \.primaryForeground,
         action: @escaping () -> Void
     ) {
         self.accessibilityLabel = accessibilityLabel
         self.foreground = foreground
-        self.background = background
-        self.foregroundOpacity = foregroundOpacity
-        self.backgroundOpacity = backgroundOpacity
         self.action = action
     }
 
     public var body: some View {
         Button(action: action) {
-            Image(systemName: "xmark.circle.fill")
-                .resizable()
-                .scaledToFit()
-                .symbolRenderingMode(.palette)
-                .foregroundStyle(
-                    theme.colors[keyPath: foreground].opacity(foregroundOpacity),
-                    theme.colors[keyPath: background].opacity(backgroundOpacity)
-                )
-                .frame(width: Self.size, height: Self.size)
-                .contentShape(Circle())
+            ZStack {
+                Circle()
+                    .fill(.ultraThinMaterial)
+                    .overlay(Circle().fill(Color.black.opacity(Self.darkOverlayOpacity)))
+                Image(systemName: "xmark")
+                    .font(.system(size: Self.iconSize, weight: .bold))
+                    .foregroundStyle(theme.colors[keyPath: foreground])
+            }
+            .frame(width: Self.size, height: Self.size)
+            .contentShape(Circle())
         }
         .accessibilityLabel(accessibilityLabel)
     }
@@ -63,4 +52,6 @@ public struct DSCloseButton: View {
     // MARK: - Layout
 
     private static let size: CGFloat = 40
+    private static let iconSize: CGFloat = 14
+    private static let darkOverlayOpacity: Double = 0.35
 }

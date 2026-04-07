@@ -129,9 +129,9 @@ public struct RootView: View {
         guard !authState.isLoggedIn else { return }
         router.flow = .guest
         // welcome initiao flow 
-//        if !OnboardingStorage.isWelcomeShown {
+        if !OnboardingStorage.isWelcomeShown {
             showWelcome = true
-//        }
+        }
     }
 
     // MARK: - Welcome Flow
