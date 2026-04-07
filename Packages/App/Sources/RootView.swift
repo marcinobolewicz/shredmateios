@@ -14,6 +14,7 @@ public struct RootView: View {
     @Environment(FollowRepository.self) private var followRepository
     @State private var router = RootRouter()
     @State private var showWelcome = false
+    @State private var sportsCount: Int = 0
     #if DEBUG
     @State private var showPulseConsole = false
     #endif
@@ -40,15 +41,15 @@ public struct RootView: View {
                 AuthFlowView(
                     entry: entry,
                     onClose: { router.showGuest() },
-                    onLoginSuccess: { router.showUser() }
+                    onLoginSuccess: routeAfterLogin
                 )
 
             case .onboarding:
-                OnboardingView {
-                    OnboardingStorage.markCompleted()
-                    authState.clearNewRegistration()
-                    router.showUser()
-                }
+                OnboardingView(
+                    sportsCount: sportsCount,
+                    onClose: completeOnboarding,
+                    onComplete: completeOnboarding
+                )
 
             case .user:
                 UserTabView(dependencies: dependencies)
@@ -69,23 +70,20 @@ public struct RootView: View {
         }
         #endif
         .task {
-            async let _ = dependencies.sportsService.fetchSports()
+            async let sportsTask: Void = loadSportsCount()
             await authState.restoreSession()
             await bootstrapInitialFlow()
+            await sportsTask
         }
         .onChange(of: authState.isLoggedIn) { _, isLoggedIn in
-            if isLoggedIn && authState.isNewRegistration && !OnboardingStorage.isCompleted {
-                router.showOnboarding()
-            } else {
-                router.flow = isLoggedIn ? .user : .guest
-            }
-
             if isLoggedIn {
+                routeAfterLogin()
                 Task {
                     await connectChat()
                     await PushNotificationsBridge.requestAuthorizationAfterLogin()
                 }
             } else {
+                router.flow = .guest
                 disconnectChat()
                 followRepository.reset()
             }
@@ -128,10 +126,45 @@ public struct RootView: View {
     private func bootstrapInitialFlow() async {
         guard !authState.isLoggedIn else { return }
         router.flow = .guest
-        // welcome initiao flow 
+        
         if !OnboardingStorage.isWelcomeShown {
             showWelcome = true
         }
+    }
+
+    // MARK: - Post-login routing
+
+    /// Single source of truth for routing after a successful login or
+    /// registration. Both `AuthFlowView.onLoginSuccess` and the global
+    /// `onChange(of: authState.isLoggedIn)` funnel through here so the
+    /// onboarding branch can never be lost to a callback ordering race.
+    private func routeAfterLogin() {
+        guard authState.isLoggedIn else { return }
+        
+        if authState.isNewRegistration && !OnboardingStorage.isCompleted {
+            router.showOnboarding()
+        } else {
+            router.showUser()
+        }
+    }
+
+    // MARK: - Onboarding
+
+    /// Marks onboarding as completed, clears the freshly-registered flag and
+    /// drops the user into the main app. Used as both the close and the
+    /// done callback while the flow is still a placeholder; once the steps
+    /// gain real persistence the close path will branch.
+    private func completeOnboarding() {
+        OnboardingStorage.markCompleted()
+        authState.clearNewRegistration()
+        router.showUser()
+    }
+
+    /// Pre-loads the sports catalog so the onboarding flow can pick the
+    /// single-sport vs. multi-sport variant of step one without blocking.
+    private func loadSportsCount() async {
+        guard let sports = try? await dependencies.sportsService.fetchSports() else { return }
+        sportsCount = sports.count
     }
 
     // MARK: - Welcome Flow

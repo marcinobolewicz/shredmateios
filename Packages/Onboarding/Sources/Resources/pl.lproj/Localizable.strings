@@ -11,3 +11,28 @@
 
 "welcome.accessibility.logo" = "Logo ShredMate";
 "welcome.accessibility.close" = "Zamknij";
+
+/* Onboarding Flow */
+"onboarding.action.continue" = "Dalej";
+"onboarding.action.done" = "Gotowe";
+
+"onboarding.accessibility.close" = "Zamknij onboarding";
+"onboarding.accessibility.progress" = "Krok %d z %d";
+"onboarding.progress.label" = "Krok %d z %d";
+
+/* Onboarding — single-sport flow */
+"onboarding.single_sport.info.title" = "Zaczynamy od wakeboardu";
+"onboarding.single_sport.info.description" = "Na start ShredMate skupia się na wakeboardzie. Pokażemy Ci wakeparki, ludzi do wspólnych sesji i miejsce do dzielenia się umiejętnościami wake. Z czasem dojdą kolejne zajawki.";
+"onboarding.single_sport.info.bullet.parks" = "wakeparki i spoty do jazdy";
+"onboarding.single_sport.info.bullet.sessions" = "wspólne sesje, ekipa i mentorzy";
+"onboarding.single_sport.info.bullet.more" = "kolejne sporty wkrótce";
+
+"onboarding.single_sport.rider_type.title" = "Kim jesteś na wodzie?";
+"onboarding.single_sport.rider_type.description" = "Powiedz nam, jak chcesz korzystać z ShredMate. Tryb zmienisz w każdej chwili.";
+
+/* Onboarding — multi-sport flow */
+"onboarding.multi_sport.pick_sports.title" = "Wybierz sporty";
+"onboarding.multi_sport.pick_sports.description" = "Zaznacz dyscypliny, które uprawiasz. Dzięki temu trafniej dobierzemy feed i propozycje.";
+
+"onboarding.multi_sport.rider_type.title" = "Kim jesteś?";
+"onboarding.multi_sport.rider_type.description" = "Powiedz nam, jak chcesz korzystać z ShredMate. Tryb zmienisz w każdej chwili.";
