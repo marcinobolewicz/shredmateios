@@ -2,13 +2,9 @@
 "welcome.title" = "Welcome to ShredMate";
 "welcome.subtitle" = "Find a mentor, a crew and open slots for wake or snow — faster than chasing DMs and chat groups.";
 
-"welcome.highlight.sessions" = "One place to book sessions, lessons and group rides.";
-"welcome.highlight.audience" = "For riders, mentors and anyone who just wants to join a crew.";
-"welcome.highlight.personalization" = "After sign up we tailor your sport, role and first picks.";
-
-"welcome.feature.mentor" = "Find a mentor";
-"welcome.feature.crew" = "Join a crew";
-"welcome.feature.slots" = "Book slots";
+"welcome.highlight.sessions" = "Sessions, lessons and group rides in one place.";
+"welcome.highlight.audience" = "For riders, mentors and anyone joining a crew.";
+"welcome.highlight.personalization" = "After sign up we tailor your sport and first picks.";
 
 "welcome.action.sign_up" = "Create account";
 "welcome.action.sign_in" = "I already have an account";

@@ -14,14 +14,14 @@ struct SplashView: View {
 
     var body: some View {
         ZStack {
-            theme.colors.primary
-                .ignoresSafeArea()
+            ProgressView()
 
-            Image("slide_0", bundle: .main)
+            Image("", bundle: .main)
                 .resizable()
                 .scaledToFit()
                 .ignoresSafeArea()
         }
+        .dsImageBackground("slide_0")
         .transition(.opacity)
     }
 

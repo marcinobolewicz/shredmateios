@@ -10,9 +10,13 @@ import Theme
 
 /// First-run welcome screen.
 ///
-/// Shown once per install before any authentication. A single screen —
-/// not a paged tour — presenting the product promise and three entry
-/// points: sign up, sign in, or skip for now.
+/// Shown once per install before any authentication. A single screen — not
+/// a paged tour — presenting the product promise and three entry points:
+/// sign up, sign in, or skip for now.
+///
+/// Visually consistent with `SlideView` (guest onboarding pages):
+/// full-bleed photo background, dark scrim for legibility, brand logo at
+/// the top and a frosted glass card with the call to action.
 ///
 /// The view is intentionally stateless: all content is sourced from the
 /// `Onboarding` localisation bundle and theme tokens, and the caller is
@@ -27,23 +31,40 @@ public struct WelcomeView: View {
     }
 
     public var body: some View {
-        GeometryReader { proxy in
-            ScrollView(showsIndicators: false) {
-                VStack(spacing: theme.spacing.xl) {
-                    WelcomeBrandHeader()
-                    WelcomeHighlightList(highlights: WelcomeContent.highlights)
-                    WelcomeFeaturePills(features: WelcomeContent.features)
-                    Spacer(minLength: theme.spacing.md)
-                    WelcomeActionsView(onAction: onAction)
-                }
-                .padding(.horizontal, theme.spacing.lg)
-                .padding(.top, theme.spacing.xl)
-                .padding(.bottom, theme.spacing.lg)
-                .frame(minHeight: proxy.size.height, alignment: .top)
-            }
+        ZStack {
+            scrim
+            content
         }
-        .welcomeBackground()
+        .dsImageBackground(Self.backgroundAssetName)
+        .ignoresSafeArea()
     }
+
+    // MARK: - Subviews
+
+    private var scrim: some View {
+        LinearGradient(
+            colors: [.black.opacity(0.15), .black.opacity(0.6)],
+            startPoint: .top,
+            endPoint: .bottom
+        )
+        .ignoresSafeArea()
+    }
+
+    private var content: some View {
+        VStack(spacing: 0) {
+            WelcomeBrandLogo()
+                .padding(.top, theme.spacing.xxl)
+            Spacer()
+            WelcomeCard(onAction: onAction)
+            Spacer()
+        }
+        .padding(.horizontal, theme.spacing.lg)
+        .safeAreaPadding()
+    }
+
+    // MARK: - Constants
+
+    private static let backgroundAssetName = "slide_1"
 }
 
 // MARK: - Preview

@@ -19,10 +19,6 @@ enum OnboardingStrings: String {
     case welcomeHighlightAudience = "welcome.highlight.audience"
     case welcomeHighlightPersonalization = "welcome.highlight.personalization"
 
-    case welcomeFeatureMentor = "welcome.feature.mentor"
-    case welcomeFeatureCrew = "welcome.feature.crew"
-    case welcomeFeatureSlots = "welcome.feature.slots"
-
     case welcomeActionSignUp = "welcome.action.sign_up"
     case welcomeActionSignIn = "welcome.action.sign_in"
     case welcomeActionLater = "welcome.action.later"

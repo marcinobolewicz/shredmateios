@@ -128,6 +128,7 @@ public struct RootView: View {
     private func bootstrapInitialFlow() async {
         guard !authState.isLoggedIn else { return }
         router.flow = .guest
+        // welcome initiao flow 
         if !OnboardingStorage.isWelcomeShown {
             showWelcome = true
         }

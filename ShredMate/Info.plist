@@ -46,8 +46,6 @@
 	</array>
 	<key>UILaunchScreen</key>
 	<dict>
-		<key>UIColorName</key>
-		<string>LaunchBackground</string>
 		<key>UIImageName</key>
 		<string>slide_0</string>
 		<key>UIImageRespectsSafeAreaInsets</key>
