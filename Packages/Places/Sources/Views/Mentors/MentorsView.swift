@@ -46,22 +46,25 @@ struct MentorsView: View {
 
     // MARK: - Sport Chips
 
+    @ViewBuilder
     private var sportChips: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: theme.spacing.xs) {
-                ForEach(viewModel.sports) { sport in
-                    DSChip(
-                        title: sport.name,
-                        isSelected: viewModel.selectedSportId == sport.id
-                    ) {
-                        withAnimation(.snappy(duration: Constants.Animation.chipDuration)) {
-                            viewModel.toggleSport(sport.id)
+        if viewModel.shouldShowSportFilter {
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: theme.spacing.xs) {
+                    ForEach(viewModel.sports) { sport in
+                        DSChip(
+                            title: sport.name,
+                            isSelected: viewModel.selectedSportId == sport.id
+                        ) {
+                            withAnimation(.snappy(duration: Constants.Animation.chipDuration)) {
+                                viewModel.toggleSport(sport.id)
+                            }
                         }
                     }
                 }
+                .padding(.horizontal, theme.spacing.md)
+                .padding(.vertical, theme.spacing.xs)
             }
-            .padding(.horizontal, theme.spacing.md)
-            .padding(.vertical, theme.spacing.xs)
         }
     }
 

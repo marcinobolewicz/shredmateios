@@ -10,6 +10,8 @@ final class MentorsViewModel {
     private(set) var mentors: [MentorListItem] = []
     private(set) var isLoading = false
     private(set) var hasMorePages = true
+    
+    var shouldShowSportFilter: Bool { sports.count > 1 }
 
     var selectedSportId: UUID? {
         didSet {
@@ -70,6 +72,13 @@ final class MentorsViewModel {
                 selectedSportId = match.id
                 isSyncingSport = false
             }
+        }
+
+        // If only a single sport is available, always keep it selected.
+        if sports.count == 1, let only = sports.first, selectedSportId != only.id {
+            isSyncingSport = true
+            selectedSportId = only.id
+            isSyncingSport = false
         }
 
         async let placesResult = placesService.fetchPlaces(sportSlug: selectedSportSlug)
