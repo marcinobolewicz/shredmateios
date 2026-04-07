@@ -9,8 +9,6 @@ struct MentorRow: View {
 
     private enum Layout {
         static let avatarSize: CGFloat = 56
-        static let chevronSize: CGFloat = 32
-        static let chevronIconSize: CGFloat = 11
     }
 
     var body: some View {
@@ -37,24 +35,13 @@ struct MentorRow: View {
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         .overlay(alignment: .trailing) {
-            chevronCircle
+            ChevronCircleView()
         }
         .padding(.vertical, theme.spacing.sm)
         .contentShape(Rectangle())
     }
 
-    private var chevronCircle: some View {
-        ZStack {
-            Circle()
-                .fill(theme.colors.background)
-                .frame(width: Layout.chevronSize, height: Layout.chevronSize)
-                .shadow(color: .black.opacity(0.08), radius: Constants.Spacing.xxs, x: 0, y: 1)
 
-            Image(systemName: "chevron.right")
-                .font(.system(size: Layout.chevronIconSize, weight: .semibold))
-                .foregroundStyle(theme.colors.textTertiary)
-        }
-    }
 
     // MARK: - Helpers
 

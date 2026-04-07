@@ -92,7 +92,11 @@ public struct RegisterView: View {
                 DSErrorLabel(RegisterStrings.passwordMismatch.localized)
             }
 
-            DSHintLabel(RegisterStrings.passwordHint.localized)
+            DSHintLabel(
+                RegisterStrings.passwordHint.localized,
+                color: \.primaryForeground,
+                opacity: Self.hintOpacity
+            )
         }
     }
 
@@ -117,4 +121,8 @@ public struct RegisterView: View {
             .buttonStyle(.dsGhost)
         }
     }
+
+    // MARK: - Tuning
+
+    private static let hintOpacity: Double = 0.75
 }

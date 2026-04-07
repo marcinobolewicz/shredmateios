@@ -43,10 +43,10 @@ struct PlacesListView: View {
 
                             if index < viewModel.rows.count - 1 {
                                 Divider()
+                                    .padding(.horizontal, theme.spacing.md)
                             }
                         }
                     }
-                    .dsCard()
                 }
             }
 
