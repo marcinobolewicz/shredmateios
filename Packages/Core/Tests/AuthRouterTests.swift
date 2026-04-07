@@ -3,54 +3,41 @@ import XCTest
 
 @MainActor
 final class AuthRouterTests: XCTestCase {
-    
+
     private var router: AuthRouter!
-    
+
     override func setUp() async throws {
         router = AuthRouter()
     }
-    
-    func testInitialPathIsEmpty() {
-        XCTAssertTrue(router.path.isEmpty)
+
+    func testInitialRouteIsLogin() {
+        XCTAssertEqual(router.current, .login)
     }
-    
-    func testNavigateAppendsRoute() {
+
+    func testInitialRouteCanBeOverridden() {
+        let preset = AuthRouter(initial: .register)
+
+        XCTAssertEqual(preset.current, .register)
+    }
+
+    func testNavigateUpdatesCurrent() {
         router.navigate(to: .register)
-        
-        XCTAssertEqual(router.path.count, 1)
-        XCTAssertEqual(router.path.first, .register)
+
+        XCTAssertEqual(router.current, .register)
     }
-    
-    func testNavigateMultipleRoutes() {
-        router.navigate(to: .register)
-        router.navigate(to: .forgotPassword)
-        
-        XCTAssertEqual(router.path.count, 2)
-        XCTAssertEqual(router.path, [.register, .forgotPassword])
-    }
-    
-    func testPopRemovesLastRoute() {
+
+    func testNavigateOverwritesPrevious() {
         router.navigate(to: .register)
         router.navigate(to: .forgotPassword)
-        
-        router.pop()
-        
-        XCTAssertEqual(router.path.count, 1)
-        XCTAssertEqual(router.path.first, .register)
+
+        XCTAssertEqual(router.current, .forgotPassword)
     }
-    
-    func testPopOnEmptyPathDoesNothing() {
-        router.pop()
-        
-        XCTAssertTrue(router.path.isEmpty)
-    }
-    
-    func testPopToRootClearsPath() {
-        router.navigate(to: .register)
+
+    func testResetReturnsToLogin() {
         router.navigate(to: .forgotPassword)
-        
-        router.popToRoot()
-        
-        XCTAssertTrue(router.path.isEmpty)
+
+        router.reset()
+
+        XCTAssertEqual(router.current, .login)
     }
 }

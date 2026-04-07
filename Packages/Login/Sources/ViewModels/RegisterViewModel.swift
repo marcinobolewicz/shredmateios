@@ -61,7 +61,7 @@ public final class RegisterViewModel {
     }
     
     public func navigateBack() {
-        router?.pop()
+        router?.reset()
     }
     
     public func clearError() {

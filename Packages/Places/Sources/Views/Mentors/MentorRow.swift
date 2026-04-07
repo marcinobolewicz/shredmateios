@@ -7,9 +7,15 @@ struct MentorRow: View {
     @Environment(AppTheme.self) private var theme
     let mentor: MentorListItem
 
+    private enum Layout {
+        static let avatarSize: CGFloat = 56
+        static let chevronSize: CGFloat = 32
+        static let chevronIconSize: CGFloat = 11
+    }
+
     var body: some View {
         HStack(spacing: theme.spacing.sm) {
-            AvatarView(url: avatarURL, initials: initials, size: 44)
+            AvatarView(url: avatarURL, initials: initials, size: Layout.avatarSize)
 
             VStack(alignment: .leading, spacing: theme.spacing.xxs) {
                 Text(mentor.displayName ?? PlacesStrings.spotSubtitlePlaceholder.localized)
@@ -22,16 +28,32 @@ struct MentorRow: View {
                         .foregroundStyle(theme.colors.textSecondary)
                         .lineLimit(1)
                 }
-            }
 
-            Spacer(minLength: 0)
+                MentorStatsView(
+                    sessionCount: mentor.sessionCount,
+                    recommendationCount: mentor.recommendationCount
+                )
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .overlay(alignment: .trailing) {
+            chevronCircle
+        }
+        .padding(.vertical, theme.spacing.sm)
+        .contentShape(Rectangle())
+    }
+
+    private var chevronCircle: some View {
+        ZStack {
+            Circle()
+                .fill(theme.colors.background)
+                .frame(width: Layout.chevronSize, height: Layout.chevronSize)
+                .shadow(color: .black.opacity(0.08), radius: Constants.Spacing.xxs, x: 0, y: 1)
 
             Image(systemName: "chevron.right")
-                .font(.caption2.weight(.semibold))
+                .font(.system(size: Layout.chevronIconSize, weight: .semibold))
                 .foregroundStyle(theme.colors.textTertiary)
         }
-        .padding(.vertical, theme.spacing.xs)
-        .contentShape(Rectangle())
     }
 
     // MARK: - Helpers

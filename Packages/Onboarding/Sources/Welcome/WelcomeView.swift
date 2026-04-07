@@ -33,7 +33,7 @@ public struct WelcomeView: View {
     public var body: some View {
         content
             .dsScrimBackground(Self.backgroundAssetName)
-            .overlay(alignment: .topTrailing) { closeButton }
+            .overlay(alignment: .topLeading) { closeButton }
     }
 
     // MARK: - Subviews
@@ -56,7 +56,7 @@ public struct WelcomeView: View {
             action: { onAction(.later) }
         )
         .padding(.top, theme.spacing.md)
-        .padding(.trailing, theme.spacing.md)
+        .padding(.leading, theme.spacing.md)
         .safeAreaPadding()
     }
 

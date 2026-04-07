@@ -106,6 +106,7 @@ struct MentorsView: View {
 
                     if mentor.id != viewModel.mentors.last?.id {
                         Divider()
+                            .padding(.horizontal, theme.spacing.md)
                     }
                 }
 
@@ -117,7 +118,6 @@ struct MentorsView: View {
                 }
             }
         }
-        .dsCard()
     }
 
     private var emptyState: some View {

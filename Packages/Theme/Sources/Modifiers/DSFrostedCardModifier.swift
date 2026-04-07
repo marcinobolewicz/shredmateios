@@ -5,11 +5,13 @@
 
 import SwiftUI
 
-/// Wraps content in a frosted glass card with rounded corners.
+/// Wraps content in a frosted glass card with a dark tint and rounded corners.
 ///
-/// Pairs `.ultraThinMaterial` with the theme's extra-large radius and
-/// `theme.spacing.lg` padding so the same treatment appears wherever a card
-/// is overlaid on a photographic background (welcome, auth flow).
+/// `.ultraThinMaterial` alone is too bright in light mode for white text to
+/// read on photographic backgrounds, so we layer a translucent black fill
+/// on top of the material. The result is a consistently darkened frosted
+/// surface across light and dark mode, where the brand foreground white is
+/// always legible.
 ///
 /// Usage:
 /// ```swift
@@ -24,16 +26,25 @@ private struct DSFrostedCardModifier: ViewModifier {
         content
             .padding(theme.spacing.lg)
             .frame(maxWidth: .infinity)
-            .background(
-                .ultraThinMaterial,
-                in: RoundedRectangle(cornerRadius: theme.radius.xl, style: .continuous)
-            )
+            .background {
+                ZStack {
+                    shape.fill(.ultraThinMaterial)
+                    shape.fill(Color.black.opacity(Self.darkOverlayOpacity))
+                }
+            }
     }
+
+    private var shape: RoundedRectangle {
+        RoundedRectangle(cornerRadius: theme.radius.xl, style: .continuous)
+    }
+
+    private static let darkOverlayOpacity: Double = 0.35
 }
 
 extension View {
 
-    /// Applies frosted glass card styling: padded content over `.ultraThinMaterial`.
+    /// Applies dark frosted glass card styling: padded content over a dimmed
+    /// `.ultraThinMaterial`, clipped to the theme's extra-large radius.
     public func dsFrostedCard() -> some View {
         modifier(DSFrostedCardModifier())
     }

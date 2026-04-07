@@ -53,16 +53,14 @@ final class LoginViewModelTests: XCTestCase {
     
     func testNavigateToRegister() {
         viewModel.navigateToRegister()
-        
-        XCTAssertEqual(mockRouter.path.count, 1)
-        XCTAssertEqual(mockRouter.path.first, .register)
+
+        XCTAssertEqual(mockRouter.current, .register)
     }
-    
+
     func testNavigateToForgotPassword() {
         viewModel.navigateToForgotPassword()
-        
-        XCTAssertEqual(mockRouter.path.count, 1)
-        XCTAssertEqual(mockRouter.path.first, .forgotPassword)
+
+        XCTAssertEqual(mockRouter.current, .forgotPassword)
     }
 }
 
@@ -118,10 +116,10 @@ final class RegisterViewModelTests: XCTestCase {
     
     func testNavigateBack() {
         mockRouter.navigate(to: .register)
-        
+
         viewModel.navigateBack()
-        
-        XCTAssertTrue(mockRouter.path.isEmpty)
+
+        XCTAssertEqual(mockRouter.current, .login)
     }
 }
 
@@ -161,10 +159,10 @@ final class ForgotPasswordViewModelTests: XCTestCase {
     
     func testNavigateBack() {
         mockRouter.navigate(to: .forgotPassword)
-        
+
         viewModel.navigateBack()
-        
-        XCTAssertTrue(mockRouter.path.isEmpty)
+
+        XCTAssertEqual(mockRouter.current, .login)
     }
 }
 

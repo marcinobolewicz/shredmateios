@@ -54,7 +54,7 @@ public final class ForgotPasswordViewModel {
     }
     
     public func navigateBack() {
-        router?.pop()
+        router?.reset()
     }
     
     public func clearError() {
