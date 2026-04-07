@@ -3,7 +3,11 @@ import Core
 import Theme
 import Common
 
-/// Login view with navigation to Register and ForgotPassword
+/// Login view with navigation to Register and ForgotPassword.
+///
+/// Visually consistent with the welcome screen: a single frosted glass card
+/// floating over the shared auth photo background. The background, scrim and
+/// close button are owned by `AuthFlowView` so they persist across pushes.
 public struct LoginView: View {
 
     @Environment(AppTheme.self) private var theme
@@ -14,17 +18,19 @@ public struct LoginView: View {
     }
 
     public var body: some View {
-        ScrollView {
-            VStack(spacing: theme.spacing.lg) {
-                headerSection
+        AuthScreenLayout {
+            VStack(spacing: theme.spacing.md) {
+                AuthCardHeader(
+                    title: LoginStrings.navigationTitle.localized,
+                    subtitle: LoginStrings.subtitle.localized
+                )
                 formSection
+                    .padding(.top, theme.spacing.xs)
                 actionsSection
+                    .padding(.top, theme.spacing.xs)
                 navigationLinks
             }
-            .padding(theme.spacing.md)
         }
-        .navigationTitle(LoginStrings.navigationTitle.localized)
-        .navigationBarTitleDisplayMode(.large)
         .alert(CommonStrings.errorTitle.localized, isPresented: .init(
             get: { viewModel.errorMessage != nil },
             set: { if !$0 { viewModel.clearError() } }
@@ -36,27 +42,6 @@ public struct LoginView: View {
     }
 
     // MARK: - Sections
-
-    private var headerSection: some View {
-        VStack(spacing: theme.spacing.xs) {
-            Image("shredmate-logo", bundle: .main)
-                .resizable()
-                .scaledToFit()
-                .frame(width: 100, height: 100)
-                .padding(theme.spacing.lg)
-                .background(
-                    Circle()
-                        .fill(.black)
-                )
-
-            Text(LoginStrings.appName.localized)
-                .dsTextStyle(.largeTitle)
-
-            Text(LoginStrings.subtitle.localized)
-                .dsTextStyle(.subheadline)
-        }
-        .padding(.vertical, theme.spacing.lg)
-    }
 
     private var formSection: some View {
         VStack(spacing: theme.spacing.md) {
@@ -82,7 +67,7 @@ public struct LoginView: View {
     }
 
     private var navigationLinks: some View {
-        VStack(spacing: theme.spacing.md) {
+        VStack(spacing: theme.spacing.sm) {
             Button(LoginStrings.forgotPasswordButton.localized) {
                 viewModel.navigateToForgotPassword()
             }
@@ -90,7 +75,7 @@ public struct LoginView: View {
 
             HStack(spacing: theme.spacing.xxs) {
                 Text(LoginStrings.noAccountPrompt.localized)
-                    .dsTextStyle(.subheadline)
+                    .dsTextStyle(.subheadline, color: \.primaryForeground)
 
                 Button(LoginStrings.signUpButton.localized) {
                     viewModel.navigateToRegister()
@@ -98,7 +83,5 @@ public struct LoginView: View {
                 .buttonStyle(.dsGhost)
             }
         }
-        .padding(.top, theme.spacing.xs)
     }
 }
-

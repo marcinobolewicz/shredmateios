@@ -27,12 +27,7 @@ struct WelcomeCard: View {
             WelcomeActionsView(onAction: onAction)
                 .padding(.top, theme.spacing.xs)
         }
-        .padding(theme.spacing.lg)
-        .frame(maxWidth: .infinity)
-        .background(
-            .ultraThinMaterial,
-            in: RoundedRectangle(cornerRadius: theme.radius.xl, style: .continuous)
-        )
+        .dsFrostedCard()
     }
 
     // MARK: - Subviews

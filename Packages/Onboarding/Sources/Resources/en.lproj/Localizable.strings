@@ -8,6 +8,6 @@
 
 "welcome.action.sign_up" = "Create account";
 "welcome.action.sign_in" = "I already have an account";
-"welcome.action.later" = "Later";
 
 "welcome.accessibility.logo" = "ShredMate logo";
+"welcome.accessibility.close" = "Close";

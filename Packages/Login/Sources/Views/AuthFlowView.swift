@@ -1,6 +1,7 @@
 import SwiftUI
 import Core
 import Networking
+import Theme
 
 public enum AuthEntryPoint: Equatable {
     case login
@@ -10,6 +11,7 @@ public enum AuthEntryPoint: Equatable {
 
 public struct AuthFlowView: View {
     @Environment(AuthState.self) private var authState
+    @Environment(AppTheme.self) private var theme
     @State private var router: AuthRouter
     private let entry: AuthEntryPoint
     private let onClose: () -> Void
@@ -33,21 +35,26 @@ public struct AuthFlowView: View {
                 .navigationDestination(for: AuthRoute.self) { route in
                     destinationView(for: route)
                 }
-                .toolbar {
-                    ToolbarItem(placement: .topBarLeading) {
-                        Button {
-                            onClose()
-                        } label: {
-                            Image(systemName: "xmark")
-                        }
-                        .accessibilityLabel(AuthFlowStrings.closeAccessibilityLabel.localized)
-                    }
-                }
+                .toolbar(.hidden, for: .navigationBar)
         }
+        .dsScrimBackground(Self.backgroundAssetName)
+        .overlay(alignment: .topTrailing) { closeButton }
         .onChange(of: authState.isLoggedIn) { _, loggedIn in
             if loggedIn { onLoginSuccess() }
         }
     }
+
+    private var closeButton: some View {
+        DSCloseButton(
+            accessibilityLabel: AuthFlowStrings.closeAccessibilityLabel.localized,
+            action: onClose
+        )
+        .padding(.top, theme.spacing.md)
+        .padding(.trailing, theme.spacing.md)
+        .safeAreaPadding()
+    }
+
+    private static let backgroundAssetName = "slide_1"
 
     @ViewBuilder
     private func startView() -> some View {

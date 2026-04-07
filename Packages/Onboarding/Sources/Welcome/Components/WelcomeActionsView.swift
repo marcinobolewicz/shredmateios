@@ -10,8 +10,8 @@ import Theme
 
 /// Action block at the bottom of the welcome screen.
 ///
-/// Three clearly ranked options: create account (primary), sign in
-/// (secondary), or skip for now (ghost).
+/// Two clearly ranked options: create account (primary) or sign in
+/// (secondary). Dismissal is handled by the close button overlay.
 struct WelcomeActionsView: View {
 
     @Environment(AppTheme.self) private var theme
@@ -28,12 +28,6 @@ struct WelcomeActionsView: View {
                 onAction(.signIn)
             }
             .buttonStyle(.dsSecondary)
-
-            Button(OnboardingStrings.welcomeActionLater.localized) {
-                onAction(.later)
-            }
-            .buttonStyle(.dsGhost)
-            .padding(.top, theme.spacing.xxs)
         }
     }
 }

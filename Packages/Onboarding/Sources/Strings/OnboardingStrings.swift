@@ -21,9 +21,9 @@ enum OnboardingStrings: String {
 
     case welcomeActionSignUp = "welcome.action.sign_up"
     case welcomeActionSignIn = "welcome.action.sign_in"
-    case welcomeActionLater = "welcome.action.later"
 
     case welcomeLogoAccessibility = "welcome.accessibility.logo"
+    case welcomeCloseAccessibility = "welcome.accessibility.close"
 
     var localized: String {
         NSLocalizedString(rawValue, bundle: .module, comment: "")

@@ -31,24 +31,12 @@ public struct WelcomeView: View {
     }
 
     public var body: some View {
-        ZStack {
-            scrim
-            content
-        }
-        .dsImageBackground(Self.backgroundAssetName)
-        .ignoresSafeArea()
+        content
+            .dsScrimBackground(Self.backgroundAssetName)
+            .overlay(alignment: .topTrailing) { closeButton }
     }
 
     // MARK: - Subviews
-
-    private var scrim: some View {
-        LinearGradient(
-            colors: [.black.opacity(0.15), .black.opacity(0.6)],
-            startPoint: .top,
-            endPoint: .bottom
-        )
-        .ignoresSafeArea()
-    }
 
     private var content: some View {
         VStack(spacing: 0) {
@@ -59,6 +47,16 @@ public struct WelcomeView: View {
             Spacer()
         }
         .padding(.horizontal, theme.spacing.lg)
+        .safeAreaPadding()
+    }
+
+    private var closeButton: some View {
+        DSCloseButton(
+            accessibilityLabel: OnboardingStrings.welcomeCloseAccessibility.localized,
+            action: { onAction(.later) }
+        )
+        .padding(.top, theme.spacing.md)
+        .padding(.trailing, theme.spacing.md)
         .safeAreaPadding()
     }
 
