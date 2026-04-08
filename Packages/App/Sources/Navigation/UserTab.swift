@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  UserTab.swift
 //  ShredMate
 //
 //  Created by Marcin Obolewicz on 30/01/2026.
@@ -24,24 +24,20 @@ enum UserTab: Hashable {
 
 struct UserTabView: View {
     @Environment(AppTheme.self) private var theme
+    @Environment(AppRouter.self) private var router
     let dependencies: AppDependencies
-    let initialProfileRoute: ProfileRoute?
-    @State private var selectedTab: UserTab
-    @State private var conversationsRouter = ConversationsRouter()
-
-    init(
-        dependencies: AppDependencies,
-        initialTab: UserTab = .home,
-        initialProfileRoute: ProfileRoute? = nil
-    ) {
-        self.dependencies = dependencies
-        self.initialProfileRoute = initialProfileRoute
-        self._selectedTab = State(initialValue: initialTab)
-    }
 
     var body: some View {
-        TabView(selection: $selectedTab) {
-            FeedView(feedService: dependencies.feedService, placesService: dependencies.placesService, riderService: dependencies.riderService, mentorSlotsService: dependencies.mentorSlotsService, sportPreferenceStorage: dependencies.sportPreferenceStorage, onOpenChat: openChat)
+        @Bindable var router = router
+        TabView(selection: $router.selectedTab) {
+            FeedView(
+                feedService: dependencies.feedService,
+                placesService: dependencies.placesService,
+                riderService: dependencies.riderService,
+                mentorSlotsService: dependencies.mentorSlotsService,
+                sportPreferenceStorage: dependencies.sportPreferenceStorage,
+                onOpenChat: openChat
+            )
             .tabItem { Label(AppStrings.userTabHome.localized, systemImage: "house") }
             .tag(UserTab.home)
 
@@ -69,7 +65,7 @@ struct UserTabView: View {
             .tag(UserTab.mentors)
 
             ConversationsView(
-                router: conversationsRouter,
+                router: router.conversations,
                 repository: dependencies.chatRepository,
                 riderService: dependencies.riderService,
                 currentUserId: dependencies.authState.user?.id ?? ""
@@ -86,7 +82,7 @@ struct UserTabView: View {
                     mentorSlotsService: dependencies.mentorSlotsService,
                     authState: dependencies.authState
                 ),
-                initialRoute: initialProfileRoute
+                path: $router.profilePath
             )
             .tabItem { Label(AppStrings.userTabProfile.localized, systemImage: "person") }
             .tag(UserTab.profile)
@@ -100,13 +96,11 @@ struct UserTabView: View {
                 let conversation = try await dependencies.chatRepository.openOrCreateConversation(
                     otherUserId: userId.uuidString.lowercased()
                 )
-                conversationsRouter.openChat(
-                    conversationId: conversation.id,
-                    participantName: displayName
+                router.handle(
+                    .conversation(id: conversation.id, participantName: displayName)
                 )
-                selectedTab = .messages
             } catch {
-                // Chat creation failed silently — conversation tab not switched
+                // Chat creation failed silently — conversation tab not switched.
             }
         }
     }

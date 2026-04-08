@@ -24,12 +24,11 @@ public struct ProfileView: View {
     @Environment(AppTheme.self) private var theme
     @State private var viewModel: ProfileViewModel
     @State private var showDeleteConfirmation = false
-    @State private var path: [ProfileRoute] = []
-    private let initialRoute: ProfileRoute?
+    @Binding private var path: [ProfileRoute]
 
-    public init(viewModel: ProfileViewModel, initialRoute: ProfileRoute? = nil) {
+    public init(viewModel: ProfileViewModel, path: Binding<[ProfileRoute]>) {
         self._viewModel = State(initialValue: viewModel)
-        self.initialRoute = initialRoute
+        self._path = path
     }
 
     public var body: some View {
@@ -76,7 +75,6 @@ public struct ProfileView: View {
             }
         }
         .task {
-            applyInitialRouteIfNeeded()
             await viewModel.loadProfile()
         }
         .profileAlerts(viewModel: viewModel)
@@ -92,13 +90,6 @@ public struct ProfileView: View {
         } message: {
             Text(ProfileStrings.deleteAccountDialogMessage.localized)
         }
-    }
-
-    // MARK: - Deep linking
-
-    private func applyInitialRouteIfNeeded() {
-        guard let initialRoute, path.isEmpty else { return }
-        path = [initialRoute]
     }
 
     // MARK: - Header

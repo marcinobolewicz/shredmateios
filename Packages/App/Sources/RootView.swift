@@ -136,10 +136,10 @@ public struct RootView: View {
     private func bootstrapInitialFlow() async {
         guard !authState.isLoggedIn else { return }
         router.flow = .guest
-        // welcome initiao flow 
-//        if !OnboardingStorage.isWelcomeShown {
+        // welcome initial flow
+        if !OnboardingStorage.isWelcomeShown {
             showWelcome = true
-//        }
+        }
     }
 
     // MARK: - Post-login routing
@@ -151,11 +151,11 @@ public struct RootView: View {
     private func routeAfterLogin() {
         guard authState.isLoggedIn else { return }
         
-//        if authState.isNewRegistration && !OnboardingStorage.isCompleted {
+        if authState.isNewRegistration && !OnboardingStorage.isCompleted {
             router.showOnboarding()
-//        } else {
-//            router.showUser()
-//        }
+        } else {
+            router.showUser()
+        }
     }
 
     // MARK: - Onboarding
