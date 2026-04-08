@@ -12,13 +12,13 @@
 "app.home_sign_out" = "Wyloguj";
 
 "app.guest_slide1_title"    = "Znajdź instruktora / mentora";
-"app.guest_slide1_subtitle" = "Umów się z doświadczonym riderem na lekcję i rozwijaj skille szybciej.";
-"app.guest_slide1_cta"      = "Znajdź instruktora";
+"app.guest_slide1_subtitle" = "Mentorzy są polecani przez społeczność, więc łatwo znajdziesz dobrego — dopasowanego do Twojego sportu i konkretnego spotu. Zaloguj się, żeby zobaczyć rekomendacje.";
+"app.guest_slide1_cta"      = "Zaloguj się";
 
-"app.guest_slide2_title"    = "Znajdź ziomala do shredowania";
-"app.guest_slide2_subtitle" = "Połącz się z kimś na Twój poziom i uderzajcie na stok razem.";
-"app.guest_slide2_cta"      = "Poznaj riderów";
+"app.guest_slide2_title"    = "Znajdź towarzyszy jazdy w pobliżu";
+"app.guest_slide2_subtitle" = "Obserwuj innych, sprawdzaj kto melduje się na pobliskich spotach i umawiajcie się na wspólne zjazdy. Zaloguj się, żeby dołączyć do społeczności.";
+"app.guest_slide2_cta"      = "Zaloguj się";
 
-"app.guest_slide3_title"    = "Kompanów na stoku & ustawki";
-"app.guest_slide3_subtitle" = "Twórz spotkania, zapraszaj ekipę i ogarniaj logistykę w jednej apce.";
-"app.guest_slide3_cta"      = "Zobacz spotkania";
+"app.guest_slide3_title"    = "Odkryj spoty i riderów w pobliżu";
+"app.guest_slide3_subtitle" = "Śledź aktywność riderów na stoku, eksploruj spoty i bookuj sloty u lokalnych riderów.";
+"app.guest_slide3_cta"      = "Eksploruj spoty";

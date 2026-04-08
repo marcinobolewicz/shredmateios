@@ -12,13 +12,13 @@
 "app.home_sign_out" = "Sign Out";
 
 "app.guest_slide1_title"    = "Find an Instructor / Mentor";
-"app.guest_slide1_subtitle" = "Book a session with an experienced rider and develop your skills faster.";
-"app.guest_slide1_cta"      = "Find an Instructor";
+"app.guest_slide1_subtitle" = "Mentors are recommended by the community, so you'll easily find a good one — matched to your sport and specific spot. Log in to see recommendations.";
+"app.guest_slide1_cta"      = "Log In";
 
-"app.guest_slide2_title"    = "Find a Riding Buddy";
-"app.guest_slide2_subtitle" = "Connect with someone at your level and hit the slopes together.";
-"app.guest_slide2_cta"      = "Meet Riders";
+"app.guest_slide2_title"    = "Find Riding Buddies Nearby";
+"app.guest_slide2_subtitle" = "Follow others, check who's checking in at nearby spots and arrange group rides. Log in to join the community.";
+"app.guest_slide2_cta"      = "Log In";
 
-"app.guest_slide3_title"    = "Slope Companions & Sessions";
-"app.guest_slide3_subtitle" = "Create meetups, invite your crew and manage everything in one app.";
-"app.guest_slide3_cta"      = "See Sessions";
+"app.guest_slide3_title"    = "Discover Spots and Riders Nearby";
+"app.guest_slide3_subtitle" = "Track rider activity on the slopes, explore spots and book slots with local riders.";
+"app.guest_slide3_cta"      = "Explore Spots";

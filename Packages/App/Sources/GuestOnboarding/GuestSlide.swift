@@ -13,6 +13,7 @@ struct GuestSlide: Identifiable {
     let subtitle: String
     let ctaTitle: String
     var contentAlignment: SlideContentAlignment = .center
+    var targetTab: GuestTab = .login
 }
 
 extension GuestSlide {
@@ -40,7 +41,8 @@ extension GuestSlide {
             title: AppStrings.guestSlide3Title.localized,
             subtitle: AppStrings.guestSlide3Subtitle.localized,
             ctaTitle: AppStrings.guestSlide3Cta.localized,
-            contentAlignment: .bottom
+            contentAlignment: .bottom,
+            targetTab: .explore
         )
     ]
 }

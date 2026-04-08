@@ -26,8 +26,9 @@ struct GuestTabView: View {
 
     var body: some View {
         TabView(selection: $selectedTab) {
-            GuestWelcomeView(
-            )
+            GuestWelcomeView(onSlideCTATap: { slide in
+                selectedTab = slide.targetTab
+            })
             .tabItem {
                 Label(AppStrings.guestTabHome.localized, systemImage: "house")
             }
