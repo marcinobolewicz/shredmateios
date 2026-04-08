@@ -99,6 +99,9 @@ final class GenerateSlotsViewModel {
         self.mentorSlotsService = mentorSlotsService
         self.placesService = placesService
         self.mentorSports = riderSports.filter(\.isMentor).compactMap(\.sport)
+        if mentorSports.count == 1 {
+            selectedSport = mentorSports.first
+        }
     }
 
     // MARK: - Data Loading
