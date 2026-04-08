@@ -39,7 +39,8 @@ struct GuestTabView: View {
                 sportsService: dependencies.sportsService,
                 riderService: dependencies.riderService,
                 mentorSlotsService: dependencies.mentorSlotsService,
-                sportPreferenceStorage: dependencies.sportPreferenceStorage
+                sportPreferenceStorage: dependencies.sportPreferenceStorage,
+                onRequestLogin: onLoginTap
             )
             .tabItem {
                 Label(AppStrings.guestTabExplore.localized, systemImage: "map")

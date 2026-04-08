@@ -34,6 +34,11 @@
 "places.details_mentors_empty_description" = "Mentors available at this spot will appear here.";
 "places.map_details_button" = "Details";
 
+/* Guest Gate */
+"places.details_guest_gate_title" = "Riders only area";
+"places.details_guest_gate_description" = "Sign in to see who's riding here, browse mentors and explore the spot on the map.";
+"places.details_guest_gate_sign_in" = "Sign in";
+
 /* Mentors Search */
 "places.mentors_search_title" = "Find a mentor";
 "places.mentors_search_description" = "Browse instructors, filter by sport and spot, book a session.";
