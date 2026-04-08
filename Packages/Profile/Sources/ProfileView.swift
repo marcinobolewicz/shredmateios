@@ -12,7 +12,7 @@ import Theme
 
 
 
-enum ProfileRoute: Hashable {
+public enum ProfileRoute: Hashable, Sendable {
     case editRider
     case myBookings
     case mySlots
@@ -24,13 +24,16 @@ public struct ProfileView: View {
     @Environment(AppTheme.self) private var theme
     @State private var viewModel: ProfileViewModel
     @State private var showDeleteConfirmation = false
+    @State private var path: [ProfileRoute] = []
+    private let initialRoute: ProfileRoute?
 
-    public init(viewModel: ProfileViewModel) {
+    public init(viewModel: ProfileViewModel, initialRoute: ProfileRoute? = nil) {
         self._viewModel = State(initialValue: viewModel)
+        self.initialRoute = initialRoute
     }
 
     public var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             VStack(spacing: 0) {
                 DSScreenHeader(title: ProfileStrings.navigationTitle.localized)
                 Form {
@@ -73,6 +76,7 @@ public struct ProfileView: View {
             }
         }
         .task {
+            applyInitialRouteIfNeeded()
             await viewModel.loadProfile()
         }
         .profileAlerts(viewModel: viewModel)
@@ -88,6 +92,13 @@ public struct ProfileView: View {
         } message: {
             Text(ProfileStrings.deleteAccountDialogMessage.localized)
         }
+    }
+
+    // MARK: - Deep linking
+
+    private func applyInitialRouteIfNeeded() {
+        guard let initialRoute, path.isEmpty else { return }
+        path = [initialRoute]
     }
 
     // MARK: - Header

@@ -159,7 +159,7 @@ let package = Package(
         // Onboarding Package
         .target(
             name: "Onboarding",
-            dependencies: ["Theme"],
+            dependencies: ["Theme", "Networking"],
             path: "Packages/Onboarding/Sources",
             resources: [
                 .process("Resources")

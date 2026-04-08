@@ -17,7 +17,7 @@ struct MultiSportOnboardingFlowView: View {
     @Environment(AppTheme.self) private var theme
 
     let onClose: () -> Void
-    let onComplete: () -> Void
+    let onComplete: (OnboardingDestination) -> Void
 
     @State private var step: MultiSportOnboardingStep = .pickSports
 
@@ -40,7 +40,7 @@ struct MultiSportOnboardingFlowView: View {
         case .pickSports:
             MultiSportPickSportsView(onContinue: { advance(to: .riderType) })
         case .riderType:
-            MultiSportRiderTypeView(onDone: onComplete)
+            MultiSportRiderTypeView(onDone: { onComplete(.explorePlaces) })
         }
     }
 
@@ -59,6 +59,6 @@ struct MultiSportOnboardingFlowView: View {
 // MARK: - Preview
 
 #Preview {
-    MultiSportOnboardingFlowView(onClose: {}, onComplete: {})
+    MultiSportOnboardingFlowView(onClose: {}, onComplete: { _ in })
         .environment(AppTheme.default)
 }

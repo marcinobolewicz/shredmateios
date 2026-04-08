@@ -14,6 +14,7 @@ enum SingleSportOnboardingStep: Int, CaseIterable, Sendable {
 
     case sportInfo
     case riderType
+    case success
 
     var index: Int { rawValue + 1 }
 

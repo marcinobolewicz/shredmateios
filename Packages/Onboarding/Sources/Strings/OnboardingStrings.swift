@@ -48,6 +48,23 @@ enum OnboardingStrings: String {
     case singleSportRiderTypeMentorDescription = "onboarding.single_sport.rider_type.mentor.description"
     case singleSportRiderTypeFootnote = "onboarding.single_sport.rider_type.footnote"
 
+    case singleSportSuccessRiderTitle = "onboarding.single_sport.success.rider.title"
+    case singleSportSuccessRiderDescription = "onboarding.single_sport.success.rider.description"
+    case singleSportSuccessRiderBulletOne = "onboarding.single_sport.success.rider.bullet.one"
+    case singleSportSuccessRiderBulletTwo = "onboarding.single_sport.success.rider.bullet.two"
+    case singleSportSuccessRiderBulletThree = "onboarding.single_sport.success.rider.bullet.three"
+
+    case singleSportSuccessMentorTitle = "onboarding.single_sport.success.mentor.title"
+    case singleSportSuccessMentorDescription = "onboarding.single_sport.success.mentor.description"
+    case singleSportSuccessMentorBulletOne = "onboarding.single_sport.success.mentor.bullet.one"
+    case singleSportSuccessMentorBulletTwo = "onboarding.single_sport.success.mentor.bullet.two"
+    case singleSportSuccessMentorBulletThree = "onboarding.single_sport.success.mentor.bullet.three"
+
+    case singleSportSuccessActionEditProfile = "onboarding.single_sport.success.action.edit_profile"
+    case singleSportSuccessActionExplorePlaces = "onboarding.single_sport.success.action.explore_places"
+    case singleSportSuccessActionFindMentor = "onboarding.single_sport.success.action.find_mentor"
+    case singleSportSuccessActionAddSlots = "onboarding.single_sport.success.action.add_slots"
+
     // Onboarding — multi-sport flow (placeholder copy until design lands)
     case multiSportPickSportsTitle = "onboarding.multi_sport.pick_sports.title"
     case multiSportPickSportsDescription = "onboarding.multi_sport.pick_sports.description"

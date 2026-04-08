@@ -35,6 +35,23 @@
 "onboarding.single_sport.rider_type.mentor.description" = "You help others, run sessions and share open slots.";
 "onboarding.single_sport.rider_type.footnote" = "This is just a starting setting — you can change it later.";
 
+"onboarding.single_sport.success.rider.title" = "You picked the rider profile";
+"onboarding.single_sport.success.rider.description" = "All set — ShredMate will tailor your experience around riding.";
+"onboarding.single_sport.success.rider.bullet.one" = "find wake parks and spots near you";
+"onboarding.single_sport.success.rider.bullet.two" = "book a session with a mentor or crew";
+"onboarding.single_sport.success.rider.bullet.three" = "share your progress in your feed";
+
+"onboarding.single_sport.success.mentor.title" = "You picked the mentor profile";
+"onboarding.single_sport.success.mentor.description" = "Great — help others get into wakeboarding, we'll handle the rest.";
+"onboarding.single_sport.success.mentor.bullet.one" = "share your open slots for booking";
+"onboarding.single_sport.success.mentor.bullet.two" = "run sessions and lessons";
+"onboarding.single_sport.success.mentor.bullet.three" = "grow your visibility in the community";
+
+"onboarding.single_sport.success.action.edit_profile" = "Edit profile";
+"onboarding.single_sport.success.action.explore_places" = "Explore places";
+"onboarding.single_sport.success.action.find_mentor" = "Find a mentor";
+"onboarding.single_sport.success.action.add_slots" = "Add slots";
+
 /* Onboarding — multi-sport flow */
 "onboarding.multi_sport.pick_sports.title" = "Pick your sports";
 "onboarding.multi_sport.pick_sports.description" = "Choose the disciplines you ride. We'll use them to shape your feed and recommendations.";

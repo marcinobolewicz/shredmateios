@@ -4,22 +4,25 @@
 //
 
 import SwiftUI
+import Networking
 import Theme
 
 /// Multi-step container for the single-sport onboarding (today: wakeboard).
 ///
-/// Owns the current step and the navigation between steps; rendering of
-/// the chrome (background, top bar, spacing) is delegated to
+/// Owns the current step, the picked role and the rider-sport upserts;
+/// rendering of the chrome (background, top bar, spacing) is delegated to
 /// `OnboardingFlowScaffold` so this view stays focused on the variant
 /// specific step graph.
 struct SingleSportOnboardingFlowView: View {
 
     @Environment(AppTheme.self) private var theme
 
+    let viewModel: SingleSportOnboardingViewModel
     let onClose: () -> Void
-    let onComplete: () -> Void
+    let onComplete: (OnboardingDestination) -> Void
 
     @State private var step: SingleSportOnboardingStep = .sportInfo
+    @State private var selectedRole: OnboardingRiderRole = .rider
 
     var body: some View {
         OnboardingFlowScaffold(
@@ -39,12 +42,23 @@ struct SingleSportOnboardingFlowView: View {
         switch step {
         case .sportInfo:
             SingleSportInfoView(onContinue: { advance(to: .riderType) })
+                .task { await viewModel.registerAsRider() }
         case .riderType:
-            SingleSportRiderTypeView(onSelect: { _ in onComplete() })
+            SingleSportRiderTypeView(onSelect: handleRoleSelected)
+        case .success:
+            SingleSportSuccessView(role: selectedRole, onPick: onComplete)
         }
     }
 
-    // MARK: - Navigation
+    // MARK: - Step transitions
+
+    private func handleRoleSelected(_ role: OnboardingRiderRole) {
+        selectedRole = role
+        if role == .mentor {
+            Task { await viewModel.registerAsMentor() }
+        }
+        advance(to: .success)
+    }
 
     private func advance(to next: SingleSportOnboardingStep) {
         step = next
@@ -54,11 +68,4 @@ struct SingleSportOnboardingFlowView: View {
 
     private static let backgroundAssetName = "slide_0"
     private static let transitionDuration: Double = 0.25
-}
-
-// MARK: - Preview
-
-#Preview {
-    SingleSportOnboardingFlowView(onClose: {}, onComplete: {})
-        .environment(AppTheme.default)
 }

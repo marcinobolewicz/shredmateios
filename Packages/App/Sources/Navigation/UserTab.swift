@@ -25,8 +25,19 @@ enum UserTab: Hashable {
 struct UserTabView: View {
     @Environment(AppTheme.self) private var theme
     let dependencies: AppDependencies
-    @State private var selectedTab: UserTab = .home
+    let initialProfileRoute: ProfileRoute?
+    @State private var selectedTab: UserTab
     @State private var conversationsRouter = ConversationsRouter()
+
+    init(
+        dependencies: AppDependencies,
+        initialTab: UserTab = .home,
+        initialProfileRoute: ProfileRoute? = nil
+    ) {
+        self.dependencies = dependencies
+        self.initialProfileRoute = initialProfileRoute
+        self._selectedTab = State(initialValue: initialTab)
+    }
 
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -74,7 +85,8 @@ struct UserTabView: View {
                     feedService: dependencies.feedService,
                     mentorSlotsService: dependencies.mentorSlotsService,
                     authState: dependencies.authState
-                )
+                ),
+                initialRoute: initialProfileRoute
             )
             .tabItem { Label(AppStrings.userTabProfile.localized, systemImage: "person") }
             .tag(UserTab.profile)
