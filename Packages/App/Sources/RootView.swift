@@ -59,9 +59,7 @@ public struct RootView: View {
 
             case .user:
                 UserTabView(
-                    dependencies: dependencies,
-                    initialTab: pendingUserTab,
-                    initialProfileRoute: pendingProfileRoute
+                    dependencies: dependencies
                 )
             }
 
