@@ -15,6 +15,23 @@ import Theme
 /// Steps render their own content via the `content` slot, keeping each
 /// step view a thin shell over its data — copy lives in the localisation
 /// bundle, layout lives here.
+extension OnboardingStepCard where Content == EmptyView {
+    init(
+        title: String,
+        description: String,
+        actionTitle: String? = nil,
+        onAction: (() -> Void)? = nil
+    ) {
+        self.init(
+            title: title,
+            description: description,
+            actionTitle: actionTitle,
+            onAction: onAction,
+            content: { EmptyView() }
+        )
+    }
+}
+
 struct OnboardingStepCard<Content: View>: View {
 
     @Environment(AppTheme.self) private var theme
@@ -30,7 +47,7 @@ struct OnboardingStepCard<Content: View>: View {
         description: String,
         actionTitle: String? = nil,
         onAction: (() -> Void)? = nil,
-        @ViewBuilder content: @escaping () -> Content = { EmptyView() }
+        @ViewBuilder content: @escaping () -> Content
     ) {
         self.title = title
         self.description = description
