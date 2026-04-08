@@ -144,6 +144,25 @@ final class GenerateSlotsViewModel {
         set { timeTo = Calendar.current.dateComponents([.hour, .minute], from: newValue) }
     }
 
+    /// Converts local time components to a UTC `"HH:mm"` string.
+    private func localTimeToUTC(_ components: DateComponents) -> String {
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        guard let localDate = calendar.date(
+            bySettingHour: components.hour ?? 0,
+            minute: components.minute ?? 0,
+            second: 0,
+            of: today
+        ) else {
+            return DateFormatting.shared.formatTimeComponents(components)
+        }
+        var utcCalendar = Calendar(identifier: .gregorian)
+        utcCalendar.timeZone = TimeZone(identifier: "UTC")!
+        let utcHour = utcCalendar.component(.hour, from: localDate)
+        let utcMinute = utcCalendar.component(.minute, from: localDate)
+        return String(format: "%02d:%02d", utcHour, utcMinute)
+    }
+
     // MARK: - Submit
 
     func generate() async {
@@ -171,14 +190,16 @@ final class GenerateSlotsViewModel {
             return
         }
 
+        let utcFrom = localTimeToUTC(timeFrom)
+        let utcTo = localTimeToUTC(timeTo)
         let range = datePreset.dateRange()
 
         let request = GenerateSlotsRequest(
             sportId: sport.id.uuidString.lowercased(),
             placeId: selectedPlace?.id.uuidString.lowercased(),
             weekdays: Array(selectedWeekdays).sorted(),
-            timeFrom: fromStr,
-            timeTo: toStr,
+            timeFrom: utcFrom,
+            timeTo: utcTo,
             duration: duration.rawValue,
             price: priceValue * 100,
             startDate: range.start,
