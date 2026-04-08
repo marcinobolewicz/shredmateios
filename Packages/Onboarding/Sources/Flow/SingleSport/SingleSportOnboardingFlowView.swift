@@ -40,7 +40,7 @@ struct SingleSportOnboardingFlowView: View {
         case .sportInfo:
             SingleSportInfoView(onContinue: { advance(to: .riderType) })
         case .riderType:
-            SingleSportRiderTypeView(onDone: onComplete)
+            SingleSportRiderTypeView(onSelect: { _ in onComplete() })
         }
     }
 

@@ -42,6 +42,11 @@ enum OnboardingStrings: String {
 
     case singleSportRiderTypeTitle = "onboarding.single_sport.rider_type.title"
     case singleSportRiderTypeDescription = "onboarding.single_sport.rider_type.description"
+    case singleSportRiderTypeRiderTitle = "onboarding.single_sport.rider_type.rider.title"
+    case singleSportRiderTypeRiderDescription = "onboarding.single_sport.rider_type.rider.description"
+    case singleSportRiderTypeMentorTitle = "onboarding.single_sport.rider_type.mentor.title"
+    case singleSportRiderTypeMentorDescription = "onboarding.single_sport.rider_type.mentor.description"
+    case singleSportRiderTypeFootnote = "onboarding.single_sport.rider_type.footnote"
 
     // Onboarding — multi-sport flow (placeholder copy until design lands)
     case multiSportPickSportsTitle = "onboarding.multi_sport.pick_sports.title"

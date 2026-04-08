@@ -27,8 +27,13 @@
 "onboarding.single_sport.info.bullet.sessions" = "wspólne sesje, ekipa i mentorzy";
 "onboarding.single_sport.info.bullet.more" = "kolejne sporty wkrótce";
 
-"onboarding.single_sport.rider_type.title" = "Kim jesteś na wodzie?";
-"onboarding.single_sport.rider_type.description" = "Powiedz nam, jak chcesz korzystać z ShredMate. Tryb zmienisz w każdej chwili.";
+"onboarding.single_sport.rider_type.title" = "Kim jesteś?";
+"onboarding.single_sport.rider_type.description" = "Wybierz, jak chcesz korzystać ze ShredMate. Później zawsze możesz to zmienić.";
+"onboarding.single_sport.rider_type.rider.title" = "Rider";
+"onboarding.single_sport.rider_type.rider.description" = "Szukasz osób do jazdy, sesji i wsparcia w progresie.";
+"onboarding.single_sport.rider_type.mentor.title" = "Mentor";
+"onboarding.single_sport.rider_type.mentor.description" = "Pomagasz innym, prowadzisz sesje i udostępniasz terminy.";
+"onboarding.single_sport.rider_type.footnote" = "To tylko ustawienie startowe — później możesz je zmienić.";
 
 /* Onboarding — multi-sport flow */
 "onboarding.multi_sport.pick_sports.title" = "Wybierz sporty";

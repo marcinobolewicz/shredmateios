@@ -21,15 +21,15 @@ struct OnboardingStepCard<Content: View>: View {
 
     let title: String
     let description: String
-    let actionTitle: String
-    let onAction: () -> Void
+    let actionTitle: String?
+    let onAction: (() -> Void)?
     @ViewBuilder let content: () -> Content
 
     init(
         title: String,
         description: String,
-        actionTitle: String,
-        onAction: @escaping () -> Void,
+        actionTitle: String? = nil,
+        onAction: (() -> Void)? = nil,
         @ViewBuilder content: @escaping () -> Content = { EmptyView() }
     ) {
         self.title = title
@@ -45,8 +45,10 @@ struct OnboardingStepCard<Content: View>: View {
             descriptionLabel
             content()
                 .padding(.top, theme.spacing.xs)
-            actionButton
-                .padding(.top, theme.spacing.sm)
+            if let actionTitle, let onAction {
+                actionButton(title: actionTitle, action: onAction)
+                    .padding(.top, theme.spacing.sm)
+            }
         }
         .frame(maxWidth: .infinity)
         .dsFrostedCard()
@@ -72,8 +74,8 @@ struct OnboardingStepCard<Content: View>: View {
             .fixedSize(horizontal: false, vertical: true)
     }
 
-    private var actionButton: some View {
-        Button(actionTitle, action: onAction)
+    private func actionButton(title: String, action: @escaping () -> Void) -> some View {
+        Button(title, action: action)
             .buttonStyle(.dsPrimary)
     }
 

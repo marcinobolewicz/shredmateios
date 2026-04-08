@@ -74,17 +74,17 @@ public struct PlaceDetailsViewData: Equatable, Hashable, Sendable {
 // MARK: - View
 
 public struct PlaceDetailsView: View {
+    enum DetailTab: String, CaseIterable, Identifiable {
+        case mentors, riders, map
+        var id: String { rawValue }
+    }
+    
     @Environment(AppTheme.self) private var theme
     @Environment(AuthState.self) private var authState
     let viewData: PlaceDetailsViewData
 
-    @State private var selectedTab: DetailTab = .riders
+    @State private var selectedTab: DetailTab = .mentors
     @State private var viewModel: PlaceDetailsViewModel
-
-    enum DetailTab: String, CaseIterable, Identifiable {
-        case riders, mentors, map
-        var id: String { rawValue }
-    }
 
     public init(
         viewData: PlaceDetailsViewData,
