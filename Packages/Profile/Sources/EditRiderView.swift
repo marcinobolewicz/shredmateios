@@ -263,12 +263,14 @@ private struct SportRow: View {
     var body: some View {
         DisclosureGroup(isExpanded: $isExpanded) {
             VStack(alignment: .leading, spacing: 12) {
-                Picker(ProfileStrings.levelPickerTitle.localized, selection: $selectedLevel) {
-                    ForEach(SkillLevel.allCases, id: \.self) { level in
-                        Text(level.localizedName).tag(level)
-                    }
-                }
-                .pickerStyle(.segmented)
+                
+//                no picker for now
+//                Picker(ProfileStrings.levelPickerTitle.localized, selection: $selectedLevel) {
+//                    ForEach(SkillLevel.allCases, id: \.self) { level in
+//                        Text(level.localizedName).tag(level)
+//                    }
+//                }
+//                .pickerStyle(.segmented)
 
                 Toggle(ProfileStrings.availableAsMentorToggle.localized, isOn: $isMentor)
 
