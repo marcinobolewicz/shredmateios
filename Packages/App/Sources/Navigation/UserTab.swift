@@ -72,6 +72,7 @@ struct UserTabView: View {
             )
             .tabItem { Label(AppStrings.userTabChat.localized, systemImage: "message") }
             .tag(UserTab.messages)
+            .badge(unreadConversationsBadge)
 
             ProfileView(
                 viewModel: ProfileViewModel(
@@ -88,6 +89,14 @@ struct UserTabView: View {
             .tag(UserTab.profile)
         }
         .tint(theme.colors.primary)
+    }
+
+    // MARK: - Badge
+
+    private var unreadConversationsBadge: Text? {
+        let count = dependencies.chatRepository.unreadConversationsCount
+        guard count > 0 else { return nil }
+        return Text(count > 9 ? "9+" : "\(count)")
     }
 
     private func openChat(userId: UUID, displayName: String) {

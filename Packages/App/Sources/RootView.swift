@@ -116,6 +116,7 @@ public struct RootView: View {
         await dependencies.chatLifecycleManager.onAuthenticated()
         dependencies.chatEventHandler.setCurrentUserId(authState.user?.id)
         dependencies.chatEventHandler.startListening()
+        await dependencies.chatRepository.loadConversations(refresh: true)
     }
 
     private func disconnectChat() {

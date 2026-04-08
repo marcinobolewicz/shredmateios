@@ -61,6 +61,11 @@ public final class ChatRepository {
         conversations.reduce(0) { $0 + $1.unreadCount }
     }
 
+    /// Number of conversations that have at least one unread message.
+    public var unreadConversationsCount: Int {
+        conversations.count { $0.unreadCount > 0 }
+    }
+
     // MARK: - Dependencies
 
     private let chatService: ChatServiceProtocol
