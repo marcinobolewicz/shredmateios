@@ -1,4 +1,5 @@
 import SwiftUI
+import Core
 import Networking
 import Login
 import Common
@@ -14,11 +15,14 @@ public struct RootView: View {
     @Environment(AuthState.self) private var authState
     @Environment(FollowRepository.self) private var followRepository
     @State private var router = RootRouter()
+    @State private var appRouter: AppRouter = {
+        let router = AppRouter()
+        DIContainer.shared.register(AppRouter.self) { router }
+        return router
+    }()
     @State private var showWelcome = false
     @State private var sportsCount: Int = 0
     @State private var primarySportId: String?
-    @State private var pendingUserTab: UserTab = .home
-    @State private var pendingProfileRoute: ProfileRoute?
     #if DEBUG
     @State private var showPulseConsole = false
     #endif
@@ -58,9 +62,7 @@ public struct RootView: View {
                 )
 
             case .user:
-                UserTabView(
-                    dependencies: dependencies
-                )
+                UserTabView(dependencies: dependencies)
             }
 
             if authState.isLoading { LoadingOverlay() }
@@ -105,6 +107,7 @@ public struct RootView: View {
             Text(CommonStrings.sessionExpiredMessage.localized)
         }
         .environment(router)
+        .environment(appRouter)
     }
 
     // MARK: - Chat Lifecycle
@@ -160,32 +163,21 @@ public struct RootView: View {
 
     /// Closes onboarding via the X button. Marks the flow as completed,
     /// clears the freshly-registered flag and lands the user on the
-    /// default tab — same as picking "Explore places" but without an
-    /// explicit destination preference.
+    /// default home tab.
     private func dismissOnboarding() {
-        finishOnboarding(tab: .home, profileRoute: nil)
+        finishOnboarding(deepLink: .home)
     }
 
     /// Routes the user out of onboarding into the right corner of the
     /// main app, based on the CTA they picked on the success step.
     private func completeOnboarding(with destination: OnboardingDestination) {
-        switch destination {
-        case .editProfile:
-            finishOnboarding(tab: .profile, profileRoute: .editRider)
-        case .explorePlaces:
-            finishOnboarding(tab: .spots, profileRoute: nil)
-        case .findMentor:
-            finishOnboarding(tab: .mentors, profileRoute: nil)
-        case .addSlots:
-            finishOnboarding(tab: .profile, profileRoute: .generateSlots)
-        }
+        finishOnboarding(deepLink: destination.deepLink)
     }
 
-    private func finishOnboarding(tab: UserTab, profileRoute: ProfileRoute?) {
+    private func finishOnboarding(deepLink: DeepLink) {
         OnboardingStorage.markCompleted()
         authState.clearNewRegistration()
-        pendingUserTab = tab
-        pendingProfileRoute = profileRoute
+        appRouter.handle(deepLink)
         router.showUser()
     }
 
