@@ -121,9 +121,10 @@ public struct ChatConversation: Codable, Sendable, Identifiable, Equatable {
     public let lastMessageAt: String?
     public let lastMessage: ChatMessage?
     public let otherUser: ChatUser
+    public let unreadCount: Int
 
     private enum CodingKeys: String, CodingKey {
-        case id, updatedAt, lastMessageAt, lastMessage, otherUser
+        case id, updatedAt, lastMessageAt, lastMessage, otherUser, unreadCount
     }
 
     public init(
@@ -131,12 +132,36 @@ public struct ChatConversation: Codable, Sendable, Identifiable, Equatable {
         updatedAt: String,
         lastMessageAt: String? = nil,
         lastMessage: ChatMessage? = nil,
-        otherUser: ChatUser
+        otherUser: ChatUser,
+        unreadCount: Int = 0
     ) {
         self.id = id
         self.updatedAt = updatedAt
         self.lastMessageAt = lastMessageAt
         self.lastMessage = lastMessage
         self.otherUser = otherUser
+        self.unreadCount = unreadCount
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.id = try container.decode(String.self, forKey: .id)
+        self.updatedAt = try container.decode(String.self, forKey: .updatedAt)
+        self.lastMessageAt = try container.decodeIfPresent(String.self, forKey: .lastMessageAt)
+        self.lastMessage = try container.decodeIfPresent(ChatMessage.self, forKey: .lastMessage)
+        self.otherUser = try container.decode(ChatUser.self, forKey: .otherUser)
+        self.unreadCount = try container.decodeIfPresent(Int.self, forKey: .unreadCount) ?? 0
+    }
+
+    /// Returns a copy with the given `unreadCount` override.
+    public func withUnreadCount(_ value: Int) -> ChatConversation {
+        ChatConversation(
+            id: id,
+            updatedAt: updatedAt,
+            lastMessageAt: lastMessageAt,
+            lastMessage: lastMessage,
+            otherUser: otherUser,
+            unreadCount: max(0, value)
+        )
     }
 }

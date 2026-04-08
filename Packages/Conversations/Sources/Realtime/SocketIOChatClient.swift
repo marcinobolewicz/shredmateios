@@ -222,6 +222,13 @@ public final class SocketIOChatClient: ChatRealtimeProviding, @unchecked Sendabl
             }
         }
 
+        socket.on("conversation:read") { [weak self] data, _ in
+            self?.handlePayload(data, as: ConversationReadPayload.self) { payload in
+                logger.debug("👁 conversation:read — id: \(payload.conversationId), reader: \(payload.readerId)")
+                return .conversationRead(payload)
+            }
+        }
+
         socket.on("message:ack") { [weak self] data, _ in
             self?.handlePayload(data, as: MessageAckPayload.self) { payload in
                 logger.debug("✓ message:ack — id: \(payload.messageId)")

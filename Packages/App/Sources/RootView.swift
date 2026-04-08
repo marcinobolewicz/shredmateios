@@ -114,12 +114,14 @@ public struct RootView: View {
 
     private func connectChat() async {
         await dependencies.chatLifecycleManager.onAuthenticated()
+        dependencies.chatEventHandler.setCurrentUserId(authState.user?.id)
         dependencies.chatEventHandler.startListening()
     }
 
     private func disconnectChat() {
         dependencies.chatLifecycleManager.onLogout()
         dependencies.chatEventHandler.stopListening()
+        dependencies.chatEventHandler.setCurrentUserId(nil)
     }
 
     // MARK: - Boot

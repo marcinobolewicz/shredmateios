@@ -33,6 +33,19 @@ public protocol ChatServiceProtocol: Sendable {
 
     /// Sends a text message to the given conversation.
     func sendMessage(conversationId: String, input: SendMessageInput) async throws -> ChatMessage
+
+    /// Marks a conversation as read for the current user.
+    ///
+    /// Idempotent — safe to call multiple times, including when there are no unread messages.
+    ///
+    /// - Returns: Server-side `lastReadAt` ISO-8601 timestamp.
+    @discardableResult
+    func markAsRead(conversationId: String) async throws -> String
+
+    /// Deletes a conversation (cascades to messages and participations).
+    ///
+    /// - Throws: A network error if the caller is not a participant (HTTP 403).
+    func deleteConversation(conversationId: String) async throws
 }
 
 // MARK: - Implementation
@@ -70,6 +83,20 @@ public final class ChatService: ChatServiceProtocol, Sendable {
     public func sendMessage(conversationId: String, input: SendMessageInput) async throws -> ChatMessage {
         try await client.send(
             ChatAPI.sendMessage(conversationId: conversationId, input: input)
+        )
+    }
+
+    @discardableResult
+    public func markAsRead(conversationId: String) async throws -> String {
+        let response = try await client.send(
+            ChatAPI.markAsRead(conversationId: conversationId)
+        )
+        return response.lastReadAt
+    }
+
+    public func deleteConversation(conversationId: String) async throws {
+        _ = try await client.send(
+            ChatAPI.deleteConversation(conversationId: conversationId)
         )
     }
 }

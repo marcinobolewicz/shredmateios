@@ -6,3 +6,8 @@
 "conversations.new_conversation_title" = "New conversation";
 "conversations.search_rider_placeholder" = "Search rider...";
 "conversations.chat_input_placeholder" = "Write a message...";
+"conversations.delete_action_title" = "Delete";
+"conversations.delete_confirm_title" = "Delete conversation?";
+"conversations.delete_confirm_message" = "This will permanently remove the conversation and all its messages. This action cannot be undone.";
+"conversations.delete_confirm_button" = "Delete";
+"conversations.delete_cancel_button" = "Cancel";

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Networking
 import os.log
 
 private let logger = Logger(subsystem: "com.shredmate.chat", category: "EventHandler")
@@ -32,6 +33,12 @@ public final class ChatEventHandler {
 
     private var listenerTask: Task<Void, Never>?
 
+    /// Current user's ID. Required so the handler can distinguish messages from
+    /// the current user (which should not increment `unreadCount` nor trigger
+    /// an auto mark-as-read) from messages received from others.
+    /// Update via ``setCurrentUserId(_:)`` on login / logout.
+    private var currentUserId: String?
+
     /// Callback invoked when a new message arrives via socket.
     /// The App layer sets this to post an in-app notification banner.
     public var onMessageReceived: ((_ senderName: String, _ text: String, _ conversationId: String) -> Void)?
@@ -41,6 +48,13 @@ public final class ChatEventHandler {
     public init(realtimeClient: ChatRealtimeProviding, repository: ChatRepository) {
         self.realtimeClient = realtimeClient
         self.repository = repository
+    }
+
+    // MARK: - User Session
+
+    /// Sets (or clears, via `nil`) the currently signed-in user ID.
+    public func setCurrentUserId(_ userId: String?) {
+        currentUserId = userId
     }
 
     // MARK: - Public API
@@ -83,6 +97,19 @@ public final class ChatEventHandler {
 
         case .messageNew(let payload):
             repository.handleMessageNew(payload)
+
+            // Scenario B: if the chat screen for this conversation is open,
+            // immediately mark it as read so no badge flickers into existence.
+            let isFromMe = payload.senderId == currentUserId
+            let isCurrentlyOpen = repository.currentConversationId == payload.conversationId
+            if !isFromMe && isCurrentlyOpen {
+                Task { [weak repository] in
+                    await repository?.markAsRead(conversationId: payload.conversationId)
+                }
+            }
+
+            // Only surface banners for messages from other users.
+            guard !isFromMe else { return }
             let senderName = repository.conversations
                 .first(where: { $0.id == payload.conversationId })?
                 .otherUser.name
@@ -90,7 +117,10 @@ public final class ChatEventHandler {
             onMessageReceived?(senderName ?? "", preview, payload.conversationId)
 
         case .conversationUpdated(let payload):
-            repository.handleConversationUpdated(payload)
+            repository.handleConversationUpdated(payload, currentUserId: currentUserId ?? "")
+
+        case .conversationRead(let payload):
+            repository.handleConversationRead(payload)
 
         case .messageAck(let payload):
             logger.debug("Message acknowledged: \(payload.messageId)")

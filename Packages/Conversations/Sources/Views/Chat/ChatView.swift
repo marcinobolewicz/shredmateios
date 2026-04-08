@@ -21,6 +21,7 @@ struct ChatView: View {
         .navigationTitle(viewModel.participantName)
         .navigationBarTitleDisplayMode(.inline)
         .task { viewModel.loadOnAppear() }
+        .onDisappear { viewModel.onDisappear() }
     }
 
     private var messagesScrollView: some View {
