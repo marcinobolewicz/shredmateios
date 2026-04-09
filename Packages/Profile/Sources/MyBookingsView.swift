@@ -12,7 +12,11 @@ struct MyBookingsView: View {
     }
 
     var body: some View {
-        content
+        VStack(spacing: 0) {
+            filterPicker
+            content
+        }
+            .background(theme.colors.backgroundSecondary)
             .navigationTitle(ProfileStrings.myBookingsTitle.localized)
             .navigationBarTitleDisplayMode(.inline)
             .task { viewModel.loadOnAppear() }
@@ -66,6 +70,25 @@ struct MyBookingsView: View {
                     }
                 )
             }
+    }
+
+    private var filterPicker: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: theme.spacing.xs) {
+                ForEach(MyBookingFilter.allCases) { filter in
+                    DSChip(
+                        title: filter.label,
+                        isSelected: viewModel.filter == filter
+                    ) {
+                        withAnimation(.snappy(duration: 0.2)) {
+                            viewModel.toggleFilter(filter)
+                        }
+                    }
+                }
+            }
+            .padding(.horizontal, theme.spacing.md)
+            .padding(.vertical, theme.spacing.sm)
+        }
     }
 
     @ViewBuilder
@@ -211,15 +234,9 @@ private struct BookingRow: View {
                 .foregroundStyle(theme.colors.textSecondary)
 
         case .complete:
-            HStack(spacing: theme.spacing.sm) {
-                Button(ProfileStrings.bookingConfirmSession.localized, action: onComplete)
-                    .buttonStyle(.borderedProminent)
-                    .controlSize(.small)
-
-                Button(ProfileStrings.bookingCancelButton.localized, role: .destructive, action: onCancel)
-                    .buttonStyle(.bordered)
-                    .controlSize(.small)
-            }
+            Button(ProfileStrings.bookingConfirmSession.localized, action: onComplete)
+                .buttonStyle(.borderedProminent)
+                .controlSize(.small)
 
         case .completed(let recommendation):
             if recommendation == .recommended {
@@ -244,4 +261,3 @@ private struct BookingRow: View {
         return formatter.string(from: NSNumber(value: value)) ?? "\(value) \(currency)"
     }
 }
-
