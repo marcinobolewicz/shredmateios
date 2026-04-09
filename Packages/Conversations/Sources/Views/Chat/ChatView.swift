@@ -17,7 +17,7 @@ struct ChatView: View {
             messagesScrollView
             ChatInputView(text: $viewModel.inputText, onSend: viewModel.send)
         }
-        .background(theme.colors.background)
+        .background(theme.colors.backgroundSecondary)
         .navigationTitle(viewModel.participantName)
         .navigationBarTitleDisplayMode(.inline)
         .task { viewModel.loadOnAppear() }
