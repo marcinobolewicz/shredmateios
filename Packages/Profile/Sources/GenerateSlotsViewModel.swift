@@ -177,9 +177,12 @@ final class GenerateSlotsViewModel {
             return
         }
 
-        let fromStr = DateFormatting.shared.formatTimeComponents(timeFrom)
-        let toStr = DateFormatting.shared.formatTimeComponents(timeTo)
-        guard fromStr < toStr else {
+        let utcFrom = localTimeToUTC(timeFrom)
+        let utcTo = localTimeToUTC(timeTo)
+        // Validate the same values we send. If local→UTC conversion wraps
+        // across midnight the ordering flips, and a dateless HH:mm range
+        // can't express that — surface it as a validation error.
+        guard utcFrom < utcTo else {
             validationError = ProfileStrings.generateValidationTime.localized
             return
         }
@@ -190,8 +193,6 @@ final class GenerateSlotsViewModel {
             return
         }
 
-        let utcFrom = localTimeToUTC(timeFrom)
-        let utcTo = localTimeToUTC(timeTo)
         let range = datePreset.dateRange()
 
         let request = GenerateSlotsRequest(

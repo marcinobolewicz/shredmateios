@@ -6,6 +6,7 @@
 "conversations.new_conversation_title" = "Nowa konwersacja";
 "conversations.search_rider_placeholder" = "Szukaj ridera...";
 "conversations.chat_input_placeholder" = "Napisz wiadomość...";
+"conversations.chat_open_rider_profile" = "Otwórz profil ridera";
 "conversations.delete_action_title" = "Usuń";
 "conversations.delete_confirm_title" = "Usunąć rozmowę?";
 "conversations.delete_confirm_message" = "Spowoduje to trwałe usunięcie rozmowy i wszystkich wiadomości. Tej operacji nie można cofnąć.";

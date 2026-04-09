@@ -85,3 +85,5 @@
 "places.checked_in_elsewhere_format" = "Już zameldowany w %@";
 "places.failed_check_in_format" = "Nie udało się zameldować: %@";
 "places.failed_check_out_format" = "Nie udało się wymeldować: %@";
+"places.rider_profile_unavailable_title" = "Profil niedostępny";
+"places.rider_profile_unavailable_description" = "Nie udało się wczytać profilu tego ridera.";

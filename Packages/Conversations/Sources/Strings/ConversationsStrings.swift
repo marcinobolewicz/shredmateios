@@ -12,6 +12,7 @@ enum ConversationsStrings: String {
     case searchRiderPlaceholder = "conversations.search_rider_placeholder"
 
     case chatInputPlaceholder = "conversations.chat_input_placeholder"
+    case chatOpenRiderProfile = "conversations.chat_open_rider_profile"
 
     case deleteActionTitle = "conversations.delete_action_title"
     case deleteConfirmTitle = "conversations.delete_confirm_title"

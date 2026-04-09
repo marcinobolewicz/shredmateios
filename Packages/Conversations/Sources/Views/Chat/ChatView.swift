@@ -10,6 +10,7 @@ import Theme
 
 struct ChatView: View {
     @Environment(AppTheme.self) private var theme
+    @Environment(ConversationsRouter.self) private var router
     @State var viewModel: ChatViewModel
 
     var body: some View {
@@ -20,8 +21,26 @@ struct ChatView: View {
         .background(theme.colors.backgroundSecondary)
         .navigationTitle(viewModel.participantName)
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar { riderProfileToolbarItem }
         .task { viewModel.loadOnAppear() }
         .onDisappear { viewModel.onDisappear() }
+    }
+
+    @ToolbarContentBuilder
+    private var riderProfileToolbarItem: some ToolbarContent {
+        if let userId = viewModel.participantUserId {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    router.navigate(to: .riderProfile(
+                        userId: userId,
+                        displayName: viewModel.participantName
+                    ))
+                } label: {
+                    Image(systemName: "person")
+                }
+                .accessibilityLabel(ConversationsStrings.chatOpenRiderProfile.localized)
+            }
+        }
     }
 
     private var messagesScrollView: some View {

@@ -22,6 +22,14 @@ final class ChatViewModel {
     private(set) var anchorMessageId: String?
     var inputText: String = ""
 
+    /// User ID (not Rider ID) of the other conversation participant. Resolved from the
+    /// repository cache populated by the conversations list / open-or-create flows.
+    var participantUserId: UUID? {
+        repository.conversations
+            .first { $0.id == conversationId }
+            .flatMap { UUID(uuidString: $0.otherUser.id) }
+    }
+
     private let repository: ChatRepository
     private let currentUserId: String
     private let dateFormatting = DateFormatting.shared

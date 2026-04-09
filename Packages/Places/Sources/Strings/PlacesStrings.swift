@@ -95,6 +95,9 @@ enum PlacesStrings: String {
     case failedCheckInFormat = "places.failed_check_in_format"
     case failedCheckOutFormat = "places.failed_check_out_format"
 
+    case riderProfileUnavailableTitle = "places.rider_profile_unavailable_title"
+    case riderProfileUnavailableDescription = "places.rider_profile_unavailable_description"
+
     var localized: String {
         NSLocalizedString(rawValue, bundle: .module, comment: "")
     }

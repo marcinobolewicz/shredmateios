@@ -15,11 +15,6 @@ struct SplashView: View {
     var body: some View {
         ZStack {
             ProgressView()
-
-            Image("", bundle: .main)
-                .resizable()
-                .scaledToFit()
-                .ignoresSafeArea()
         }
         .dsImageBackground("slide_0")
         .transition(.opacity)
