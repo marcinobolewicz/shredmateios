@@ -53,11 +53,22 @@ public actor AuthService: AuthServiceProtocol {
     
     public func logout() async throws {
         logger.debug("Logging out")
-        if let tokens = await tokenStorage.loadTokens() {
-            _ = try await client.send(AuthAPI.logout(refreshToken: tokens.refreshToken))
+        let tokens = await tokenStorage.loadTokens()
+        var backendError: Error?
+        if let tokens {
+            do {
+                _ = try await client.send(AuthAPI.logout(refreshToken: tokens.refreshToken))
+            } catch {
+                backendError = error
+            }
         }
+        // Always clear local tokens, even if the backend call failed — the user's
+        // intent is to end the session locally; server-side revocation is best-effort.
         try await tokenStorage.clearAll()
         logger.debug("Logout complete")
+        if let backendError {
+            throw backendError
+        }
     }
     
     public func fetchCurrentUser() async throws -> User {
