@@ -2,34 +2,36 @@ import Foundation
 import Observation
 import SwiftUI
 
-/// Protocol for auth navigation (enables testing with mocks)
+/// Protocol for auth navigation (enables testing with mocks).
 @MainActor
 public protocol AuthRouting: AnyObject {
-    var path: [AuthRoute] { get set }
+    var current: AuthRoute { get set }
     func navigate(to route: AuthRoute)
-    func pop()
-    func popToRoot()
+    func reset()
 }
 
-/// Router for authentication flow using NavigationStack
+/// State-driven router for the authentication flow.
+///
+/// The auth flow is intentionally shallow — login, register, forgot
+/// password — so a state machine is a better fit than a navigation stack:
+/// no back button to manage, no transition coupling, and the close button
+/// can sit on a single container above the switched content.
 @MainActor
 @Observable
 public final class AuthRouter: AuthRouting {
-    
-    public var path: [AuthRoute] = []
-    
-    public init() {}
-    
+
+    public var current: AuthRoute
+
+    public init(initial: AuthRoute = .login) {
+        self.current = initial
+    }
+
     public func navigate(to route: AuthRoute) {
-        path.append(route)
+        current = route
     }
-    
-    public func pop() {
-        guard !path.isEmpty else { return }
-        path.removeLast()
-    }
-    
-    public func popToRoot() {
-        path.removeAll()
+
+    /// Returns the flow to its root entry (login).
+    public func reset() {
+        current = .login
     }
 }

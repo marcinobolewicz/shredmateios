@@ -233,7 +233,7 @@ public final class ProfileViewModel {
         do {
             let updatedSport = try await repository.upsertSport(sportId: sportId, request: request)
             
-            if let index = riderSports.firstIndex(where: { $0.sportId == sportId }) {
+            if let index = riderSports.firstIndex(where: { $0.sportId.caseInsensitiveCompare(sportId) == .orderedSame }) {
                 riderSports[index] = updatedSport
             } else {
                 riderSports.append(updatedSport)
@@ -252,7 +252,7 @@ public final class ProfileViewModel {
         
         do {
             try await repository.removeSport(sportId: sportId)
-            riderSports.removeAll { $0.sportId == sportId }
+            riderSports.removeAll { $0.sportId.caseInsensitiveCompare(sportId) == .orderedSame }
         } catch {
             self.error = ProfileStrings.failedRemoveSport(error.localizedDescription)
         }
@@ -260,12 +260,12 @@ public final class ProfileViewModel {
     
     /// Check if a sport is currently loading
     public func isSportLoading(_ sportId: String) -> Bool {
-        sportLoadingIds.contains(sportId)
+        sportLoadingIds.contains(where: { $0.caseInsensitiveCompare(sportId) == .orderedSame })
     }
     
     /// Get rider's sport by sportId
     public func riderSport(for sportId: String) -> RiderSport? {
-        riderSports.first { $0.sportId == sportId }
+        riderSports.first { $0.sportId.caseInsensitiveCompare(sportId) == .orderedSame }
     }
     
     // MARK: - Delete Account

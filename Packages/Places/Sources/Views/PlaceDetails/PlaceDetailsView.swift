@@ -74,25 +74,28 @@ public struct PlaceDetailsViewData: Equatable, Hashable, Sendable {
 // MARK: - View
 
 public struct PlaceDetailsView: View {
+    enum DetailTab: String, CaseIterable, Identifiable {
+        case mentors, riders, map
+        var id: String { rawValue }
+    }
+    
     @Environment(AppTheme.self) private var theme
     @Environment(AuthState.self) private var authState
     let viewData: PlaceDetailsViewData
+    private let onRequestLogin: (() -> Void)?
 
-    @State private var selectedTab: DetailTab = .riders
+    @State private var selectedTab: DetailTab = .mentors
     @State private var viewModel: PlaceDetailsViewModel
-
-    enum DetailTab: String, CaseIterable, Identifiable {
-        case riders, mentors, map
-        var id: String { rawValue }
-    }
 
     public init(
         viewData: PlaceDetailsViewData,
         placesService: PlacesServiceProtocol,
         authState: AuthState,
-        sportPreferenceStorage: any SportPreferenceStorageProtocol
+        sportPreferenceStorage: any SportPreferenceStorageProtocol,
+        onRequestLogin: (() -> Void)? = nil
     ) {
         self.viewData = viewData
+        self.onRequestLogin = onRequestLogin
         _viewModel = State(
             wrappedValue: PlaceDetailsViewModel(
                 placeId: viewData.id,
@@ -112,9 +115,13 @@ public struct PlaceDetailsView: View {
             VStack(spacing: 0) {
                 heroSection
                 infoSection
-                checkInSection
-                tabSection
-                contentSection
+                if authState.isLoggedIn {
+                    checkInSection
+                    tabSection
+                    contentSection
+                } else {
+                    guestGateSection
+                }
             }
         }
         .ignoresSafeArea(edges: .top)
@@ -123,6 +130,7 @@ public struct PlaceDetailsView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.hidden, for: .navigationBar)
         .task {
+            guard authState.isLoggedIn else { return }
             await viewModel.applySavedSportPreference()
             async let membership: Void = viewModel.checkMembership()
             async let riders: Void = viewModel.loadRiders()
@@ -231,11 +239,19 @@ public struct PlaceDetailsView: View {
         }
     }
 
+    // MARK: - Guest Gate
+
+    private var guestGateSection: some View {
+        PlaceDetailsGuestGate(onSignInTap: onRequestLogin)
+            .padding(.horizontal, theme.spacing.md)
+            .padding(.top, theme.spacing.md)
+    }
+
     // MARK: - Check-In
 
     @ViewBuilder
     private var checkInSection: some View {
-        if authState.isLoggedIn, !viewModel.isCheckingMembership {
+        if !viewModel.isCheckingMembership {
             if viewModel.hasJoined {
                 checkedInStrip
             } else {

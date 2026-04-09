@@ -3,7 +3,10 @@ import Core
 import Theme
 import Common
 
-/// Forgot password view for password reset
+/// Forgot password view for password reset.
+///
+/// Visually consistent with login and register: a single frosted glass card
+/// floating over the shared auth background owned by `AuthFlowView`.
 public struct ForgotPasswordView: View {
 
     @Environment(AppTheme.self) private var theme
@@ -14,23 +17,26 @@ public struct ForgotPasswordView: View {
     }
 
     public var body: some View {
-        ScrollView {
-            VStack(spacing: theme.spacing.lg) {
-                headerSection
+        AuthScreenLayout {
+            VStack(spacing: theme.spacing.md) {
+                AuthCardHeader(
+                    title: ForgotPasswordStrings.headerTitle.localized,
+                    subtitle: ForgotPasswordStrings.headerSubtitle.localized
+                )
 
                 if viewModel.isSuccess {
                     successSection
+                        .padding(.top, theme.spacing.xs)
                 } else {
                     formSection
+                        .padding(.top, theme.spacing.xs)
                     resetButton
+                        .padding(.top, theme.spacing.xs)
                 }
 
                 loginLink
             }
-            .padding(theme.spacing.md)
         }
-        .navigationTitle(ForgotPasswordStrings.navigationTitle.localized)
-        .navigationBarTitleDisplayMode(.large)
         .alert(CommonStrings.errorTitle.localized, isPresented: .init(
             get: { viewModel.errorMessage != nil },
             set: { if !$0 { viewModel.clearError() } }
@@ -42,22 +48,6 @@ public struct ForgotPasswordView: View {
     }
 
     // MARK: - Sections
-
-    private var headerSection: some View {
-        VStack(spacing: theme.spacing.xs) {
-            Image(systemName: "key.fill")
-                .font(.system(size: 50))
-                .foregroundStyle(theme.colors.warning)
-
-            Text(ForgotPasswordStrings.headerTitle.localized)
-                .dsTextStyle(.title2)
-
-            Text(ForgotPasswordStrings.headerSubtitle.localized)
-                .dsTextStyle(.subheadline)
-                .multilineTextAlignment(.center)
-        }
-        .padding(.vertical, theme.spacing.md)
-    }
 
     private var formSection: some View {
         DSTextField(ForgotPasswordStrings.emailPlaceholder.localized, text: $viewModel.email)
@@ -78,19 +68,22 @@ public struct ForgotPasswordView: View {
     }
 
     private var successSection: some View {
-        VStack(spacing: theme.spacing.md) {
+        VStack(spacing: theme.spacing.sm) {
             Image(systemName: "checkmark.circle.fill")
-                .font(.system(size: 60))
-                .foregroundStyle(theme.colors.success)
+                .font(.system(size: Self.successIconSize))
+                .foregroundStyle(theme.colors.success, theme.colors.primaryForeground)
+                .symbolRenderingMode(.palette)
 
             Text(ForgotPasswordStrings.successTitle.localized)
-                .dsTextStyle(.heading)
+                .font(.headline)
+                .foregroundStyle(theme.colors.primaryForeground)
 
             Text(ForgotPasswordStrings.successMessage(email: viewModel.email))
-                .dsTextStyle(.subheadline)
+                .font(.subheadline)
+                .foregroundStyle(theme.colors.primaryForeground.opacity(Self.subtitleOpacity))
                 .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
         }
-        .padding(.vertical, theme.spacing.lg)
     }
 
     private var loginLink: some View {
@@ -98,6 +91,10 @@ public struct ForgotPasswordView: View {
             viewModel.navigateBack()
         }
         .buttonStyle(.dsGhost)
-        .padding(.top, theme.spacing.xs)
     }
+
+    // MARK: - Tuning
+
+    private static let successIconSize: CGFloat = 48
+    private static let subtitleOpacity: Double = 0.85
 }

@@ -13,41 +13,51 @@ struct ConversationRowView: View {
     @Environment(AppTheme.self) private var theme
     let viewData: ConversationRowViewData
 
+    private enum Layout {
+        static let avatarSize: CGFloat = 56
+        static let chevronSize: CGFloat = 32
+    }
+
     var body: some View {
         HStack(spacing: theme.spacing.sm) {
             avatar
-            
+
             VStack(alignment: .leading, spacing: theme.spacing.xxs) {
-                HStack {
-                    Text(viewData.participantName)
-                        .dsTextStyle(.heading)
-                        .lineLimit(1)
-
-                    Spacer()
-
-                    Text(viewData.dateText)
-                        .dsTextStyle(.caption)
-                }
+                Text(viewData.participantName)
+                    .dsTextStyle(.body)
+                    .lineLimit(1)
 
                 HStack {
                     Text(viewData.lastMessage)
-                        .dsTextStyle(.subheadline)
+                        .dsTextStyle(.caption)
+                        .foregroundStyle(theme.colors.textSecondary)
                         .lineLimit(1)
-
-                    Spacer()
 
                     if viewData.unreadCount > 0 {
                         unreadBadge
                     }
                 }
+
+                HStack {
+                    Spacer()
+
+                    Text(viewData.dateText)
+                        .dsTextStyle(.caption)
+                        .foregroundStyle(theme.colors.textSecondary)
+                }
             }
+            .padding(.trailing, Layout.chevronSize + theme.spacing.xs)
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding(.vertical, theme.spacing.xs)
+        .overlay(alignment: .trailing) {
+            ChevronCircleView()
+        }
+        .padding(.vertical, theme.spacing.sm)
         .contentShape(Rectangle())
     }
 
     private var avatar: some View {
-        AvatarView(url: viewData.avatarURL, initials: viewData.avatarInitials)
+        AvatarView(url: viewData.avatarURL, initials: viewData.avatarInitials, size: Layout.avatarSize)
     }
 
     private var unreadBadge: some View {

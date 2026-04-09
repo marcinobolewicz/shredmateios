@@ -4,6 +4,7 @@ import Networking
 
 struct MentorsView: View {
     @Environment(AppTheme.self) private var theme
+    @Environment(PlacesRouter.self) private var router
     @State private var viewModel: MentorsViewModel
     @State private var appearCount = 0
 
@@ -45,22 +46,25 @@ struct MentorsView: View {
 
     // MARK: - Sport Chips
 
+    @ViewBuilder
     private var sportChips: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: theme.spacing.xs) {
-                ForEach(viewModel.sports) { sport in
-                    DSChip(
-                        title: sport.name,
-                        isSelected: viewModel.selectedSportId == sport.id
-                    ) {
-                        withAnimation(.snappy(duration: Constants.Animation.chipDuration)) {
-                            viewModel.toggleSport(sport.id)
+        if viewModel.shouldShowSportFilter {
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: theme.spacing.xs) {
+                    ForEach(viewModel.sports) { sport in
+                        DSChip(
+                            title: sport.name,
+                            isSelected: viewModel.selectedSportId == sport.id
+                        ) {
+                            withAnimation(.snappy(duration: Constants.Animation.chipDuration)) {
+                                viewModel.toggleSport(sport.id)
+                            }
                         }
                     }
                 }
+                .padding(.horizontal, theme.spacing.md)
+                .padding(.vertical, theme.spacing.xs)
             }
-            .padding(.horizontal, theme.spacing.md)
-            .padding(.vertical, theme.spacing.xs)
         }
     }
 
@@ -95,7 +99,9 @@ struct MentorsView: View {
                 emptyState
             } else {
                 ForEach(viewModel.mentors) { mentor in
-                    NavigationLink(value: riderCardData(for: mentor)) {
+                    Button {
+                        router.navigate(to: riderCardData(for: mentor))
+                    } label: {
                         MentorRow(mentor: mentor)
                             .padding(.horizontal, theme.spacing.md)
                     }
@@ -103,6 +109,7 @@ struct MentorsView: View {
 
                     if mentor.id != viewModel.mentors.last?.id {
                         Divider()
+                            .padding(.horizontal, theme.spacing.md)
                     }
                 }
 
@@ -114,7 +121,6 @@ struct MentorsView: View {
                 }
             }
         }
-        .dsCard()
     }
 
     private var emptyState: some View {

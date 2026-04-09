@@ -88,7 +88,10 @@ final class PlaceDetailsViewModel {
         selectedSportSlug = savedSlug
     }
 
+    var isGuest: Bool { !authState.isLoggedIn }
+
     func loadRiders(force: Bool = false) async {
+        guard authState.isLoggedIn else { return }
         guard !isLoadingRiders else { return }
         if !force, !riderEntries.isEmpty, lastLoadedSportSlug == selectedSportSlug { return }
 

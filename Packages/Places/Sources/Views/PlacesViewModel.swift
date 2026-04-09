@@ -25,6 +25,8 @@ public final class PlacesViewModel {
     private(set) var selectedSport: PlaceSport? = nil
     var displayMode: PlacesDisplayMode = .list
     var searchText: String = ""
+    var shouldShowSportFilter: Bool { sports.count > 1 }
+    
     private(set) var state: LoadState = .idle
 
     private(set) var availableTags: [PlaceTag] = []
@@ -59,6 +61,7 @@ public final class PlacesViewModel {
         do {
             sports = try await repository.fetchSports()
             await applySavedSportPreference()
+            autoSelectSingleSportIfNeeded()
         } catch {
             state = .failed(.from(error))
         }
@@ -70,6 +73,11 @@ public final class PlacesViewModel {
         guard let savedSlug,
               let match = sports.first(where: { $0.slug == savedSlug }) else { return }
         selectedSport = match
+    }
+
+    private func autoSelectSingleSportIfNeeded() {
+        guard sports.count == 1, let only = sports.first, selectedSport != only else { return }
+        selectedSport = only
     }
 
     func syncSportPreference() async {

@@ -14,21 +14,29 @@ private struct LegalConsentRow: View {
             Button { isAccepted.toggle() } label: {
                 Image(systemName: isAccepted ? "checkmark.square.fill" : "square")
                     .font(.title3)
-                    .foregroundStyle(isAccepted ? theme.colors.primary : theme.colors.textTertiary)
+                    .foregroundStyle(
+                        isAccepted ? theme.colors.primary : theme.colors.primaryForeground.opacity(Self.unselectedOpacity)
+                    )
             }
             .buttonStyle(.plain)
 
             Text(.init(RegisterStrings.consentMarkdown.localized))
                 .font(.caption)
-                .foregroundStyle(theme.colors.textSecondary)
-                .tint(theme.colors.textPrimary)
+                .foregroundStyle(theme.colors.primaryForeground.opacity(Self.textOpacity))
+                .tint(theme.colors.primaryForeground)
         }
     }
+
+    private static let unselectedOpacity: Double = 0.6
+    private static let textOpacity: Double = 0.85
 }
 
 // MARK: - Register View
 
-/// Register view for new user sign up
+/// Register view for new user sign up.
+///
+/// Visually consistent with login and welcome: a single frosted glass card
+/// floating over the shared auth background owned by `AuthFlowView`.
 public struct RegisterView: View {
 
     @Environment(AppTheme.self) private var theme
@@ -39,18 +47,17 @@ public struct RegisterView: View {
     }
 
     public var body: some View {
-        ScrollView {
-            VStack(spacing: theme.spacing.lg) {
-                headerSection
+        AuthScreenLayout {
+            VStack(spacing: theme.spacing.md) {
+                AuthCardHeader(title: RegisterStrings.headerTitle.localized)
                 formSection
+                    .padding(.top, theme.spacing.xs)
                 LegalConsentRow(isAccepted: $viewModel.termsAccepted)
                 registerButton
+                    .padding(.top, theme.spacing.xs)
                 loginLink
             }
-            .padding(theme.spacing.md)
         }
-        .navigationTitle(RegisterStrings.navigationTitle.localized)
-        .navigationBarTitleDisplayMode(.large)
         .alert(CommonStrings.errorTitle.localized, isPresented: .init(
             get: { viewModel.errorMessage != nil },
             set: { if !$0 { viewModel.clearError() } }
@@ -62,18 +69,6 @@ public struct RegisterView: View {
     }
 
     // MARK: - Sections
-
-    private var headerSection: some View {
-        VStack(spacing: theme.spacing.xs) {
-            Image(systemName: "person.badge.plus")
-                .font(.system(size: 50))
-                .foregroundStyle(theme.colors.primary)
-
-            Text(RegisterStrings.headerTitle.localized)
-                .dsTextStyle(.title2)
-        }
-        .padding(.vertical, theme.spacing.md)
-    }
 
     private var formSection: some View {
         VStack(spacing: theme.spacing.md) {
@@ -97,7 +92,11 @@ public struct RegisterView: View {
                 DSErrorLabel(RegisterStrings.passwordMismatch.localized)
             }
 
-            DSHintLabel(RegisterStrings.passwordHint.localized)
+            DSHintLabel(
+                RegisterStrings.passwordHint.localized,
+                color: \.primaryForeground,
+                opacity: Self.hintOpacity
+            )
         }
     }
 
@@ -114,13 +113,16 @@ public struct RegisterView: View {
     private var loginLink: some View {
         HStack(spacing: theme.spacing.xxs) {
             Text(RegisterStrings.alreadyHaveAccount.localized)
-                .dsTextStyle(.subheadline)
+                .dsTextStyle(.subheadline, color: \.primaryForeground)
 
             Button(RegisterStrings.signInButton.localized) {
                 viewModel.navigateBack()
             }
             .buttonStyle(.dsGhost)
         }
-        .padding(.top, theme.spacing.xs)
     }
+
+    // MARK: - Tuning
+
+    private static let hintOpacity: Double = 0.75
 }

@@ -96,15 +96,18 @@ public struct PlacesView: View {
         }
     }
 
+    @ViewBuilder
     private var sportChips: some View {
-        chipRow {
-            ForEach(viewModel.sports) { sport in
-                DSChip(
-                    title: sport.slug,
-                    isSelected: viewModel.selectedSport == sport
-                ) {
-                    withAnimation(.snappy(duration: Constants.Animation.chipDuration)) {
-                        viewModel.selectSport(sport)
+        if viewModel.shouldShowSportFilter {
+            chipRow {
+                ForEach(viewModel.sports) { sport in
+                    DSChip(
+                        title: sport.slug,
+                        isSelected: viewModel.selectedSport == sport
+                    ) {
+                        withAnimation(.snappy(duration: Constants.Animation.chipDuration)) {
+                            viewModel.selectSport(sport)
+                        }
                     }
                 }
             }

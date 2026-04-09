@@ -34,6 +34,11 @@
 "places.details_mentors_empty_description" = "Mentorzy dostępni w tym spocie pojawią się tutaj.";
 "places.map_details_button" = "Szczegóły";
 
+/* Strefa dla zalogowanych */
+"places.details_guest_gate_title" = "Strefa tylko dla riderów";
+"places.details_guest_gate_description" = "Zaloguj się, aby zobaczyć kto jeździ w tym miejscu, przeglądać mentorów i odkrywać spot na mapie.";
+"places.details_guest_gate_sign_in" = "Zaloguj się";
+
 /* Szukaj mentora */
 "places.mentors_search_title" = "Znajdź mentora";
 "places.mentors_search_description" = "Przeglądaj instruktorów, filtruj po sporcie i spocie, zarezerwuj sesję.";

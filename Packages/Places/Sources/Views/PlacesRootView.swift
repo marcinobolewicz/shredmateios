@@ -17,6 +17,7 @@ public struct PlacesRootView: View {
     private let mentorSlotsService: MentorSlotsServiceProtocol
     private let sportPreferenceStorage: any SportPreferenceStorageProtocol
     private let onOpenChat: (_ userId: UUID, _ displayName: String) -> Void
+    private let onRequestLogin: (() -> Void)?
     @State private var router = PlacesRouter()
 
     public init(
@@ -25,7 +26,8 @@ public struct PlacesRootView: View {
         riderService: RiderServiceProtocol,
         mentorSlotsService: MentorSlotsServiceProtocol,
         sportPreferenceStorage: any SportPreferenceStorageProtocol,
-        onOpenChat: @escaping (_ userId: UUID, _ displayName: String) -> Void = { _, _ in }
+        onOpenChat: @escaping (_ userId: UUID, _ displayName: String) -> Void = { _, _ in },
+        onRequestLogin: (() -> Void)? = nil
     ) {
         self.placesService = placesService
         self.sportsService = sportsService
@@ -33,6 +35,7 @@ public struct PlacesRootView: View {
         self.mentorSlotsService = mentorSlotsService
         self.sportPreferenceStorage = sportPreferenceStorage
         self.onOpenChat = onOpenChat
+        self.onRequestLogin = onRequestLogin
     }
 
     public var body: some View {
@@ -50,7 +53,8 @@ public struct PlacesRootView: View {
                 riderService: riderService,
                 mentorSlotsService: mentorSlotsService,
                 sportPreferenceStorage: sportPreferenceStorage,
-                onOpenChat: onOpenChat
+                onOpenChat: onOpenChat,
+                onRequestLogin: onRequestLogin
             )
         }
         .environment(router)

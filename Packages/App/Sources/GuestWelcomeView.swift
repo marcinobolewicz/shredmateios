@@ -14,15 +14,15 @@ import SwiftUI
 /// (e.g. switch to the login flow).
 public struct GuestWelcomeView: View {
 
-    var onCTATap: (() -> Void)?
+    var onSlideCTATap: ((GuestSlide) -> Void)?
 
-    public init(onCTATap: (() -> Void)? = nil) {
-        self.onCTATap = onCTATap
+    init(onSlideCTATap: ((GuestSlide) -> Void)? = nil) {
+        self.onSlideCTATap = onSlideCTATap
     }
 
     public var body: some View {
         PageView(items: GuestSlide.all) { slide in
-            SlideView(slide: slide, onCTATap: onCTATap)
+            SlideView(slide: slide, onCTATap: { onSlideCTATap?(slide) })
         }
         .toolbarBackground(.hidden, for: .tabBar)
     }

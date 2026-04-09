@@ -2,6 +2,7 @@ import SwiftUI
 import Networking
 import Common
 import MediaPicker
+import Theme
 import UIKit
 import MapKit
 
@@ -83,19 +84,12 @@ struct EditRiderView: View {
 
             Toggle(ProfileStrings.publicProfileToggle.localized, isOn: $viewModel.isPublic)
 
-            Button {
+            DSLoadingButton(
+                ProfileStrings.saveProfileButton.localized,
+                isLoading: viewModel.isSaving
+            ) {
                 Task { await viewModel.saveProfile() }
-            } label: {
-                HStack {
-                    if viewModel.isSaving {
-                        ProgressView()
-                            .controlSize(.small)
-                    }
-                    Text(ProfileStrings.saveProfileButton.localized)
-                }
-                .frame(maxWidth: .infinity)
             }
-            .disabled(viewModel.isSaving)
         }
     }
 
@@ -234,11 +228,6 @@ struct EditRiderView: View {
                                     isMentor: isMentor
                                 )
                             }
-                        },
-                        onRemove: {
-                            Task {
-                                await viewModel.removeSport(sportId: sport.id.uuidString)
-                            }
                         }
                     )
                 }
@@ -254,74 +243,47 @@ private struct SportRow: View {
     let riderSport: RiderSport?
     let isLoading: Bool
     let onUpsert: (SkillLevel, Bool) -> Void
-    let onRemove: () -> Void
 
     @State private var selectedLevel: SkillLevel = .casual
     @State private var isMentor: Bool = false
-    @State private var isExpanded: Bool = false
+
+    private var hasChanges: Bool {
+        let currentMentor = riderSport?.isMentor ?? false
+        return isMentor != currentMentor
+    }
 
     var body: some View {
-        DisclosureGroup(isExpanded: $isExpanded) {
-            VStack(alignment: .leading, spacing: 12) {
-                Picker(ProfileStrings.levelPickerTitle.localized, selection: $selectedLevel) {
-                    ForEach(SkillLevel.allCases, id: \.self) { level in
-                        Text(level.localizedName).tag(level)
-                    }
-                }
-                .pickerStyle(.segmented)
+        HStack {
+            Text(sport.name)
+                .fontWeight(.medium)
 
-                Toggle(ProfileStrings.availableAsMentorToggle.localized, isOn: $isMentor)
+            Spacer()
 
-                HStack {
-                    Button(ProfileStrings.saveButton.localized) {
-                        onUpsert(selectedLevel, isMentor)
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .disabled(isLoading)
-
-                    if riderSport != nil {
-                        Button(ProfileStrings.removeButton.localized, role: .destructive) {
-                            onRemove()
-                        }
-                        .buttonStyle(.bordered)
-                        .disabled(isLoading)
-                    }
-
-                    if isLoading {
-                        ProgressView()
-                            .controlSize(.small)
-                    }
-                }
-            }
-            .padding(.vertical, 8)
-        } label: {
-            HStack {
-                Text(sport.name)
-                    .fontWeight(.medium)
-
-                Spacer()
-
-                if let rs = riderSport {
-                    Text(rs.level.localizedName)
-                        .font(.caption)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(.blue.opacity(0.1))
-                        .foregroundStyle(.blue)
-                        .clipShape(Capsule())
-
-                    if rs.isMentor {
-                        Image(systemName: "star.fill")
-                            .foregroundStyle(.yellow)
-                            .font(.caption)
-                    }
-                }
+            if isLoading {
+                ProgressView()
+                    .controlSize(.small)
             }
         }
-        .onAppear {
-            if let rs = riderSport {
-                selectedLevel = rs.level
-                isMentor = rs.isMentor
+
+        Toggle(ProfileStrings.availableAsMentorToggle.localized, isOn: $isMentor)
+            .onAppear {
+                if let rs = riderSport {
+                    selectedLevel = rs.level
+                    isMentor = rs.isMentor
+                }
+            }
+            .onChange(of: riderSport?.isMentor) { _, newValue in
+                if let newValue {
+                    isMentor = newValue
+                }
+            }
+
+        if hasChanges {
+            DSLoadingButton(
+                ProfileStrings.saveButton.localized,
+                isLoading: isLoading
+            ) {
+                onUpsert(selectedLevel, isMentor)
             }
         }
     }

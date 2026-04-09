@@ -15,6 +15,7 @@ public struct PlacesNavigationDestinations: ViewModifier {
     let mentorSlotsService: MentorSlotsServiceProtocol
     let sportPreferenceStorage: any SportPreferenceStorageProtocol
     let onOpenChat: (_ userId: UUID, _ displayName: String) -> Void
+    let onRequestLogin: (() -> Void)?
     @Environment(AuthState.self) private var authState
     @Environment(FollowRepository.self) private var followRepository
 
@@ -33,7 +34,8 @@ public struct PlacesNavigationDestinations: ViewModifier {
                 viewData: viewData,
                 placesService: placesService,
                 authState: authState,
-                sportPreferenceStorage: sportPreferenceStorage
+                sportPreferenceStorage: sportPreferenceStorage,
+                onRequestLogin: onRequestLogin
             )
         case .riderCard(let viewData):
             RiderDetailLoadingView(
@@ -52,7 +54,8 @@ public extension View {
         riderService: RiderServiceProtocol,
         mentorSlotsService: MentorSlotsServiceProtocol,
         sportPreferenceStorage: any SportPreferenceStorageProtocol,
-        onOpenChat: @escaping (_ userId: UUID, _ displayName: String) -> Void = { _, _ in }
+        onOpenChat: @escaping (_ userId: UUID, _ displayName: String) -> Void = { _, _ in },
+        onRequestLogin: (() -> Void)? = nil
     ) -> some View {
         modifier(
             PlacesNavigationDestinations(
@@ -60,7 +63,8 @@ public extension View {
                 riderService: riderService,
                 mentorSlotsService: mentorSlotsService,
                 sportPreferenceStorage: sportPreferenceStorage,
-                onOpenChat: onOpenChat
+                onOpenChat: onOpenChat,
+                onRequestLogin: onRequestLogin
             )
         )
     }

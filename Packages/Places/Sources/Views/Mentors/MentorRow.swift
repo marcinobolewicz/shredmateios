@@ -7,9 +7,13 @@ struct MentorRow: View {
     @Environment(AppTheme.self) private var theme
     let mentor: MentorListItem
 
+    private enum Layout {
+        static let avatarSize: CGFloat = 56
+    }
+
     var body: some View {
         HStack(spacing: theme.spacing.sm) {
-            AvatarView(url: avatarURL, initials: initials, size: 44)
+            AvatarView(url: avatarURL, initials: initials, size: Layout.avatarSize)
 
             VStack(alignment: .leading, spacing: theme.spacing.xxs) {
                 Text(mentor.displayName ?? PlacesStrings.spotSubtitlePlaceholder.localized)
@@ -22,17 +26,22 @@ struct MentorRow: View {
                         .foregroundStyle(theme.colors.textSecondary)
                         .lineLimit(1)
                 }
+
+                MentorStatsView(
+                    sessionCount: mentor.sessionCount,
+                    recommendationCount: mentor.recommendationCount
+                )
             }
-
-            Spacer(minLength: 0)
-
-            Image(systemName: "chevron.right")
-                .font(.caption2.weight(.semibold))
-                .foregroundStyle(theme.colors.textTertiary)
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding(.vertical, theme.spacing.xs)
+        .overlay(alignment: .trailing) {
+            ChevronCircleView()
+        }
+        .padding(.vertical, theme.spacing.sm)
         .contentShape(Rectangle())
     }
+
+
 
     // MARK: - Helpers
 

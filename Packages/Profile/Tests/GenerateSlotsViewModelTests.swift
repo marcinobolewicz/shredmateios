@@ -153,12 +153,14 @@ final class GenerateSlotsViewModelTests: XCTestCase {
         let sut = makeSUT(riderSports: [TestData.mentorRiderSport, secondMentor])
 
         XCTAssertEqual(sut.mentorSports.count, 2)
+        XCTAssertNil(sut.selectedSport)
     }
 
     func testInit_defaultFormState() {
         let sut = makeSUT()
 
-        XCTAssertNil(sut.selectedSport)
+        // Single mentor sport is auto-selected
+        XCTAssertEqual(sut.selectedSport?.id, TestData.sportId)
         XCTAssertNil(sut.selectedPlace)
         XCTAssertTrue(sut.selectedWeekdays.isEmpty)
         XCTAssertEqual(sut.datePreset, .nextWeek)

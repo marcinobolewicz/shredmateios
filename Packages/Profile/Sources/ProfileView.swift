@@ -12,7 +12,7 @@ import Theme
 
 
 
-enum ProfileRoute: Hashable {
+public enum ProfileRoute: Hashable, Sendable {
     case editRider
     case myBookings
     case mySlots
@@ -24,30 +24,34 @@ public struct ProfileView: View {
     @Environment(AppTheme.self) private var theme
     @State private var viewModel: ProfileViewModel
     @State private var showDeleteConfirmation = false
+    @Binding private var path: [ProfileRoute]
 
-    public init(viewModel: ProfileViewModel) {
+    public init(viewModel: ProfileViewModel, path: Binding<[ProfileRoute]>) {
         self._viewModel = State(initialValue: viewModel)
+        self._path = path
     }
 
     public var body: some View {
-        NavigationStack {
-            Form {
-                if viewModel.isLoading && viewModel.rider == nil {
-                    loadingSection
-                } else {
-                    headerSection
-                    menuSection
-                        .listRowSeparator(.hidden)
-                    accountSection
-                        .listRowSeparator(.hidden)
-                    supportSection
-                        .listRowSeparator(.hidden)
+        NavigationStack(path: $path) {
+            VStack(spacing: 0) {
+                DSScreenHeader(title: ProfileStrings.navigationTitle.localized)
+                Form {
+                    if viewModel.isLoading && viewModel.rider == nil {
+                        loadingSection
+                    } else {
+                        headerSection
+                        menuSection
+                            .listRowSeparator(.hidden)
+                        accountSection
+                            .listRowSeparator(.hidden)
+                        supportSection
+                            .listRowSeparator(.hidden)
+                    }
                 }
+                .scrollContentBackground(.hidden)
             }
-            .scrollContentBackground(.hidden)
             .background(theme.colors.backgroundSecondary)
-            .navigationTitle(ProfileStrings.navigationTitle.localized)
-            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarHidden(true)
             .navigationDestination(for: ProfileRoute.self) { route in
                 switch route {
                 case .editRider:

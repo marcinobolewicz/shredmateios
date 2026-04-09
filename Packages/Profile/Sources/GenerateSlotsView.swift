@@ -23,7 +23,9 @@ struct GenerateSlotsView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: theme.spacing.lg) {
-                sportSection
+                if viewModel.mentorSports.count > 1 {
+                    sportSection
+                }
                 placeSection
                 dateRangeSection
                 weekdaysSection

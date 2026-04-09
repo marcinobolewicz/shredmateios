@@ -57,10 +57,10 @@ struct ConversationsListView: View {
 
                             if row.id != viewModel.rows.last?.id {
                                 Divider()
+                                    .padding(.horizontal, theme.spacing.md)
                             }
                         }
                     }
-                    .dsCard()
                 }
             }
 
