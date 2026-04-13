@@ -16,6 +16,7 @@ public final class AppDependencies {
     public let mentorSlotsService: any MentorSlotsServiceProtocol
     public let mentorsService: any MentorsServiceProtocol
     public let feedService: any FeedServiceProtocol
+    public let stripeService: any StripeServiceProtocol
     public let chatService: any ChatServiceProtocol
     public let chatRealtimeClient: ChatRealtimeProviding
     public let chatRepository: ChatRepository
@@ -34,6 +35,7 @@ public final class AppDependencies {
         mentorSlotsService: any MentorSlotsServiceProtocol,
         mentorsService: any MentorsServiceProtocol,
         feedService: any FeedServiceProtocol,
+        stripeService: any StripeServiceProtocol,
         chatService: any ChatServiceProtocol,
         chatRealtimeClient: ChatRealtimeProviding,
         chatRepository: ChatRepository,
@@ -51,6 +53,7 @@ public final class AppDependencies {
         self.mentorSlotsService = mentorSlotsService
         self.mentorsService = mentorsService
         self.feedService = feedService
+        self.stripeService = stripeService
         self.chatService = chatService
         self.chatRealtimeClient = chatRealtimeClient
         self.chatRepository = chatRepository
@@ -106,6 +109,7 @@ public struct AppSetup {
             mentorSlotsService: services.mentorSlots,
             mentorsService: services.mentors,
             feedService: services.feed,
+            stripeService: services.stripe,
             chatService: chat.service,
             chatRealtimeClient: chat.realtimeClient,
             chatRepository: chat.repository,
@@ -179,6 +183,7 @@ public struct AppSetup {
         let mentorSlots: any MentorSlotsServiceProtocol
         let mentors: any MentorsServiceProtocol
         let feed: any FeedServiceProtocol
+        let stripe: any StripeServiceProtocol
     }
 
     private static func configureServices(httpClient: AuthenticatingHTTPClient) -> Services {
@@ -188,7 +193,8 @@ public struct AppSetup {
             sports: SportsServiceService(client: httpClient),
             mentorSlots: MentorSlotsService(client: httpClient),
             mentors: MentorsService(client: httpClient),
-            feed: FeedService(client: httpClient)
+            feed: FeedService(client: httpClient),
+            stripe: StripeService(client: httpClient)
         )
     }
 

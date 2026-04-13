@@ -17,6 +17,7 @@ public enum ProfileRoute: Hashable, Sendable {
     case myBookings
     case mySlots
     case generateSlots
+    case stripeOnboarding
     case contact
 }
 
@@ -66,6 +67,8 @@ public struct ProfileView: View {
                         placesService: viewModel.placesService,
                         riderSports: viewModel.riderSports
                     )
+                case .stripeOnboarding:
+                    StripeOnboardingView(viewModel: viewModel.stripeOnboardingViewModel)
                 case .contact:
                     ContactView()
                 }
@@ -161,6 +164,12 @@ public struct ProfileView: View {
             if viewModel.hasMentorSports {
                 NavigationLink(value: ProfileRoute.generateSlots) {
                     Label(ProfileStrings.generateSlotsTitle.localized, systemImage: "calendar.badge.plus")
+                }
+            }
+
+            if viewModel.isMentor {
+                NavigationLink(value: ProfileRoute.stripeOnboarding) {
+                    Label(StripeStrings.navigationTitle.localized, systemImage: "creditcard")
                 }
             }
         }

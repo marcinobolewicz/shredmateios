@@ -147,3 +147,21 @@
 /* Zameldowanie */
 "profile.section_check_in" = "Aktualne zameldowanie";
 "profile.checked_in_as_format" = "Zameldowany jako %@";
+
+/* Konfiguracja Stripe */
+"stripe.navigation_title" = "Konfiguracja płatności";
+"stripe.setup_description" = "Skonfiguruj konto Stripe, aby otrzymywać płatności za sesje mentorskie.";
+"stripe.start_onboarding_button" = "Skonfiguruj płatności";
+"stripe.continue_onboarding_button" = "Kontynuuj konfigurację";
+"stripe.refresh_status_button" = "Odśwież status";
+"stripe.status_title" = "Status płatności";
+"stripe.onboarding_completed" = "Konfiguracja zakończona";
+"stripe.onboarding_pending" = "Konfiguracja niezakończona";
+"stripe.payouts_enabled" = "Wypłaty włączone";
+"stripe.payouts_disabled" = "Wypłaty jeszcze nieaktywne";
+"stripe.awaiting_return_message" = "Dokończ konfigurację w przeglądarce, a następnie wróć tutaj.";
+"stripe.invalid_onboarding_url" = "Otrzymano nieprawidłowy adres URL";
+"stripe.failed_load_status_format" = "Nie udało się załadować statusu płatności: %@";
+"stripe.failed_create_account_format" = "Nie udało się utworzyć konta Stripe: %@";
+"stripe.failed_create_link_format" = "Nie udało się utworzyć linku konfiguracyjnego: %@";
+"stripe.failed_refresh_status_format" = "Nie udało się odświeżyć statusu płatności: %@";

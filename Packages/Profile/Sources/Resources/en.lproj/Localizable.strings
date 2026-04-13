@@ -147,3 +147,21 @@
 /* Check-In */
 "profile.section_check_in" = "Current Check-In";
 "profile.checked_in_as_format" = "Checked in as %@";
+
+/* Stripe Onboarding */
+"stripe.navigation_title" = "Payment Setup";
+"stripe.setup_description" = "Set up your Stripe account to receive payments from mentoring sessions.";
+"stripe.start_onboarding_button" = "Set Up Payments";
+"stripe.continue_onboarding_button" = "Continue Setup";
+"stripe.refresh_status_button" = "Refresh Status";
+"stripe.status_title" = "Payment Status";
+"stripe.onboarding_completed" = "Onboarding completed";
+"stripe.onboarding_pending" = "Onboarding not completed";
+"stripe.payouts_enabled" = "Payouts enabled";
+"stripe.payouts_disabled" = "Payouts not yet enabled";
+"stripe.awaiting_return_message" = "Complete the setup in your browser, then return here.";
+"stripe.invalid_onboarding_url" = "Invalid onboarding URL received";
+"stripe.failed_load_status_format" = "Failed to load payment status: %@";
+"stripe.failed_create_account_format" = "Failed to create Stripe account: %@";
+"stripe.failed_create_link_format" = "Failed to create onboarding link: %@";
+"stripe.failed_refresh_status_format" = "Failed to refresh payment status: %@";
