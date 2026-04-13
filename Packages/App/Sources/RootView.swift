@@ -14,6 +14,7 @@ public struct RootView: View {
     private var dependencies: AppDependencies
     @Environment(AuthState.self) private var authState
     @Environment(FollowRepository.self) private var followRepository
+    @Environment(\.scenePhase) private var scenePhase
     @State private var router = RootRouter()
     @State private var appRouter: AppRouter = {
         let router = AppRouter()
@@ -23,6 +24,9 @@ public struct RootView: View {
     @State private var showWelcome = false
     @State private var sportsCount: Int = 0
     @State private var primarySportId: String?
+    @State private var sportsLoaded = false
+    @State private var parkedOnSplashForOnboarding = false
+    @State private var sportsRetryInFlight = false
     #if DEBUG
     @State private var showPulseConsole = false
     #endif
@@ -98,6 +102,14 @@ public struct RootView: View {
                 followRepository.reset()
             }
         }
+        .onChange(of: scenePhase) { _, phase in
+            // When the app returns to the foreground, retry the sports
+            // fetch if onboarding is still pending and we never got a
+            // successful load. On success, `retrySportsIfNeeded()` flips
+            // an already-on-home user into the onboarding flow.
+            guard phase == .active else { return }
+            Task { await retrySportsIfNeeded() }
+        }
         .alert(
             CommonStrings.sessionExpiredTitle.localized,
             isPresented: Bindable(authState).sessionExpired
@@ -148,15 +160,25 @@ public struct RootView: View {
 
     // MARK: - Post-login routing
 
-    /// Single source of truth for routing after a successful login or
-    /// registration. Both `AuthFlowView.onLoginSuccess` and the global
-    /// `onChange(of: authState.isLoggedIn)` funnel through here so the
-    /// onboarding branch can never be lost to a callback ordering race.
+    /// Routes the user after login or session restore. New registrations
+    /// get `isPending` persisted so onboarding survives app restarts when
+    /// the sports fetch fails. Onboarding only starts once sports metadata
+    /// is loaded; otherwise we park on the splash and let
+    /// `loadSportsCount()` or `retrySportsIfNeeded()` flip the flow.
     private func routeAfterLogin() {
         guard authState.isLoggedIn else { return }
-        
-        if authState.isNewRegistration && !OnboardingStorage.isCompleted {
-            router.showOnboarding()
+
+        if authState.isNewRegistration {
+            OnboardingStorage.markPending()
+        }
+
+        if OnboardingStorage.isPending {
+            if sportsLoaded {
+                router.showOnboarding()
+            } else {
+                parkedOnSplashForOnboarding = true
+                router.flow = .loading
+            }
         } else {
             router.showUser()
         }
@@ -178,19 +200,57 @@ public struct RootView: View {
     }
 
     private func finishOnboarding(deepLink: DeepLink) {
-        OnboardingStorage.markCompleted()
+        OnboardingStorage.clearPending()
         authState.clearNewRegistration()
         appRouter.handle(deepLink)
         router.showUser()
     }
 
-    /// Pre-loads the sports catalog so the onboarding flow can pick the
-    /// single-sport vs. multi-sport variant and the single-sport flow has
-    /// a sport id ready for the rider/mentor upserts.
+    /// Pre-loads the sports catalog so onboarding can pick the right
+    /// variant. On success parks flip into `.onboarding`; on failure the
+    /// user lands on `.user` and `isPending` stays set for retry.
     private func loadSportsCount() async {
+        let sports = try? await dependencies.sportsService.fetchSports()
+        if let sports {
+            sportsCount = sports.count
+            primarySportId = sports.first?.id.uuidString
+            sportsLoaded = true
+        }
+
+        guard parkedOnSplashForOnboarding else { return }
+        parkedOnSplashForOnboarding = false
+        if sportsLoaded {
+            router.showOnboarding()
+        } else {
+            router.showUser()
+        }
+    }
+
+    /// Retries the sports fetch on foreground if onboarding is still
+    /// pending and we never got a successful load. On success flips
+    /// an already-on-home user into onboarding.
+    private func retrySportsIfNeeded() async {
+        guard
+            OnboardingStorage.isPending,
+            !sportsLoaded,
+            !sportsRetryInFlight,
+            authState.isLoggedIn
+        else { return }
+
+        sportsRetryInFlight = true
+        defer { sportsRetryInFlight = false }
+
         guard let sports = try? await dependencies.sportsService.fetchSports() else { return }
         sportsCount = sports.count
         primarySportId = sports.first?.id.uuidString
+        sportsLoaded = true
+
+        guard
+            OnboardingStorage.isPending,
+            authState.isLoggedIn,
+            router.flow == .user
+        else { return }
+        router.showOnboarding()
     }
 
     // MARK: - Welcome Flow
