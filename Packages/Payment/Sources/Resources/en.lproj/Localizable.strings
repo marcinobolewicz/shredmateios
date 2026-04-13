@@ -1,0 +1,9 @@
+/* Payment */
+"payment.success_title" = "Payment Successful";
+"payment.success_message" = "Your booking has been confirmed.";
+"payment.canceled_title" = "Payment Canceled";
+"payment.canceled_message" = "You can try again at any time.";
+"payment.failed_title" = "Payment Failed";
+"payment.failed_message_format" = "Something went wrong: %@";
+"payment.pay_button" = "Pay";
+"payment.processing" = "Processing payment...";

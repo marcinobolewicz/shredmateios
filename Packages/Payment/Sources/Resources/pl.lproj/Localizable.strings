@@ -1,0 +1,9 @@
+/* Płatności */
+"payment.success_title" = "Płatność zakończona";
+"payment.success_message" = "Twoja rezerwacja została potwierdzona.";
+"payment.canceled_title" = "Płatność anulowana";
+"payment.canceled_message" = "Możesz spróbować ponownie w dowolnym momencie.";
+"payment.failed_title" = "Płatność nieudana";
+"payment.failed_message_format" = "Coś poszło nie tak: %@";
+"payment.pay_button" = "Zapłać";
+"payment.processing" = "Przetwarzanie płatności...";

@@ -167,7 +167,7 @@ public struct ProfileView: View {
                 }
             }
 
-            if viewModel.isMentor {
+            if viewModel.hasMentorSports {
                 NavigationLink(value: ProfileRoute.stripeOnboarding) {
                     Label(StripeStrings.navigationTitle.localized, systemImage: "creditcard")
                 }

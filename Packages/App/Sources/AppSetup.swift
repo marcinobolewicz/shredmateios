@@ -2,6 +2,7 @@ import SwiftUI
 import Networking
 import Core
 import Conversations
+import Payment
 import Pulse
 
 @MainActor
@@ -17,6 +18,7 @@ public final class AppDependencies {
     public let mentorsService: any MentorsServiceProtocol
     public let feedService: any FeedServiceProtocol
     public let stripeService: any StripeServiceProtocol
+    public let stripePaymentService: StripePaymentService
     public let chatService: any ChatServiceProtocol
     public let chatRealtimeClient: ChatRealtimeProviding
     public let chatRepository: ChatRepository
@@ -36,6 +38,7 @@ public final class AppDependencies {
         mentorsService: any MentorsServiceProtocol,
         feedService: any FeedServiceProtocol,
         stripeService: any StripeServiceProtocol,
+        stripePaymentService: StripePaymentService,
         chatService: any ChatServiceProtocol,
         chatRealtimeClient: ChatRealtimeProviding,
         chatRepository: ChatRepository,
@@ -54,6 +57,7 @@ public final class AppDependencies {
         self.mentorsService = mentorsService
         self.feedService = feedService
         self.stripeService = stripeService
+        self.stripePaymentService = stripePaymentService
         self.chatService = chatService
         self.chatRealtimeClient = chatRealtimeClient
         self.chatRepository = chatRepository
@@ -73,6 +77,7 @@ public struct AppSetup {
         let auth = configureAuth()
         let services = configureServices(httpClient: auth.httpClient)
         let chat = configureChat(httpClient: auth.httpClient, authState: auth.authState)
+        let stripePaymentService = StripeSetup.configure()
         let notificationCenter = InAppNotificationCenter()
         let sportPreferenceStorage = SportPreferenceStorage()
         
@@ -110,6 +115,7 @@ public struct AppSetup {
             mentorsService: services.mentors,
             feedService: services.feed,
             stripeService: services.stripe,
+            stripePaymentService: stripePaymentService,
             chatService: chat.service,
             chatRealtimeClient: chat.realtimeClient,
             chatRepository: chat.repository,
