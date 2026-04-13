@@ -21,13 +21,28 @@ struct OnboardingTests {
         #expect(OnboardingStorage.isWelcomeShown == true)
     }
 
-    @Test("reset clears both completed and welcome flags")
-    func resetClearsBothFlags() {
-        OnboardingStorage.markCompleted()
-        OnboardingStorage.markWelcomeShown()
+    @Test("pending flag defaults to false")
+    func pendingFlagDefaultsToFalse() {
         OnboardingStorage.reset()
-        #expect(OnboardingStorage.isCompleted == false)
+        #expect(OnboardingStorage.isPending == false)
+    }
+
+    @Test("markPending sets the flag, clearPending removes it")
+    func markAndClearPending() {
+        OnboardingStorage.reset()
+        OnboardingStorage.markPending()
+        #expect(OnboardingStorage.isPending == true)
+        OnboardingStorage.clearPending()
+        #expect(OnboardingStorage.isPending == false)
+    }
+
+    @Test("reset clears all flags")
+    func resetClearsAllFlags() {
+        OnboardingStorage.markWelcomeShown()
+        OnboardingStorage.markPending()
+        OnboardingStorage.reset()
         #expect(OnboardingStorage.isWelcomeShown == false)
+        #expect(OnboardingStorage.isPending == false)
     }
 
     // MARK: - WelcomeAction

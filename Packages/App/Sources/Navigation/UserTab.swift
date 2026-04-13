@@ -68,10 +68,12 @@ struct UserTabView: View {
                 router: router.conversations,
                 repository: dependencies.chatRepository,
                 riderService: dependencies.riderService,
-                currentUserId: dependencies.authState.user?.id ?? ""
+                currentUserId: dependencies.authState.user?.id ?? "",
+                riderProfileDestination: makeRiderProfileDestination
             )
             .tabItem { Label(AppStrings.userTabChat.localized, systemImage: "message") }
             .tag(UserTab.messages)
+            .badge(unreadConversationsBadge)
 
             ProfileView(
                 viewModel: ProfileViewModel(
@@ -88,6 +90,29 @@ struct UserTabView: View {
             .tag(UserTab.profile)
         }
         .tint(theme.colors.primary)
+    }
+
+    // MARK: - Badge
+
+    private var unreadConversationsBadge: Text? {
+        let count = dependencies.chatRepository.unreadConversationsCount
+        guard count > 0 else { return nil }
+        return Text(count > 9 ? "9+" : "\(count)")
+    }
+
+    /// Builds a rider profile destination for the Conversations module by user ID.
+    /// Kept here so the Conversations package stays decoupled from the Places feature.
+    @MainActor
+    private func makeRiderProfileDestination(userId: UUID, displayName: String) -> AnyView {
+        AnyView(
+            RiderByUserLoadingView(
+                userId: userId,
+                displayName: displayName,
+                riderService: dependencies.riderService,
+                mentorSlotsService: dependencies.mentorSlotsService,
+                onMessageTap: openChat
+            )
+        )
     }
 
     private func openChat(userId: UUID, displayName: String) {

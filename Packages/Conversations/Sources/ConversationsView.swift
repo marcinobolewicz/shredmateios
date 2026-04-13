@@ -16,17 +16,20 @@ public struct ConversationsView: View {
     private let repository: ChatRepository
     private let riderService: any RiderServiceProtocol
     private let currentUserId: String
+    private let riderProfileDestination: RiderProfileDestinationBuilder
 
     public init(
         router: ConversationsRouter,
         repository: ChatRepository,
         riderService: any RiderServiceProtocol,
-        currentUserId: String
+        currentUserId: String,
+        riderProfileDestination: @escaping RiderProfileDestinationBuilder
     ) {
         self.router = router
         self.repository = repository
         self.riderService = riderService
         self.currentUserId = currentUserId
+        self.riderProfileDestination = riderProfileDestination
     }
 
     public var body: some View {
@@ -34,7 +37,8 @@ public struct ConversationsView: View {
             router: router,
             repository: repository,
             riderService: riderService,
-            currentUserId: currentUserId
+            currentUserId: currentUserId,
+            riderProfileDestination: riderProfileDestination
         )
     }
 }

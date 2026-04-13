@@ -17,6 +17,7 @@ public final class AuthState {
     public private(set) var error: AuthError?
     public var sessionExpired = false
     public private(set) var isNewRegistration = false
+    public private(set) var isLoggingOut = false
 
     public var isLoggedIn: Bool { user != nil }
     
@@ -142,15 +143,18 @@ public final class AuthState {
     
     public func logout() async {
         isLoading = true
+        isLoggingOut = true
 
         await pushDeviceService?.unregisterCurrentDeviceIfNeeded()
-        
+
         try? await authService.logout()
-        
+
         user = nil
         rider = nil
         error = nil
+        sessionExpired = false
         isLoading = false
+        isLoggingOut = false
     }
     
     // MARK: - Rider Actions
@@ -180,6 +184,11 @@ public final class AuthState {
     // MARK: - Session Management
 
     public func handleSessionInvalidation() async {
+        // Ignore invalidation triggered by our own logout flow — a concurrent 401
+        // from an in-flight request would otherwise race with logout, surface as
+        // sessionExpired and show the "session expired" alert right after the user
+        // taps log out.
+        guard !isLoggingOut else { return }
         let wasLoggedIn = isLoggedIn
         try? await tokenStorage.clearAll()
         user = nil

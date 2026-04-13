@@ -6,9 +6,11 @@ import Common
 @Observable
 final class MyBookingsViewModel {
 
-    private(set) var slots: [MentorSlot] = []
+    private(set) var allSlots: [MentorSlot] = []
     private(set) var state: LoadState = .idle
     var actionError: AppError?
+
+    var filter: MyBookingFilter?
 
     var selectedSlot: MentorSlot?
     var showCancelConfirmation = false
@@ -19,6 +21,25 @@ final class MyBookingsViewModel {
 
     init(service: MentorSlotsServiceProtocol) {
         self.service = service
+    }
+
+    // MARK: - Computed
+
+    var slots: [MentorSlot] {
+        switch filter {
+        case .none:
+            return allSlots
+        case .upcoming:
+            return allSlots.filter { isBookedUpcoming($0) }
+        case .toConfirm:
+            return allSlots.filter { isBookedToConfirm($0) }
+        case .finished:
+            return allSlots.filter { $0.status == .completed }
+        }
+    }
+
+    func toggleFilter(_ value: MyBookingFilter) {
+        filter = (filter == value) ? nil : value
     }
 
     func loadOnAppear() {
@@ -104,10 +125,40 @@ final class MyBookingsViewModel {
         state = .loading
         do {
             let response = try await service.fetchBookedByMe()
-            slots = response.items
+            allSlots = response.items
             state = .loaded
         } catch {
             state = .failed(.from(error))
+        }
+    }
+
+    private func isBookedUpcoming(_ slot: MentorSlot) -> Bool {
+        guard slot.status == .booked else { return false }
+        let start = DateFormatting.shared.parseISO8601(slot.startTime) ?? .distantPast
+        return start > Date()
+    }
+
+    private func isBookedToConfirm(_ slot: MentorSlot) -> Bool {
+        guard slot.status == .booked else { return false }
+        let start = DateFormatting.shared.parseISO8601(slot.startTime) ?? .distantFuture
+        return start <= Date()
+    }
+}
+
+// MARK: - MyBookingFilter
+
+enum MyBookingFilter: String, CaseIterable, Sendable, Identifiable {
+    case upcoming
+    case toConfirm
+    case finished
+
+    var id: String { rawValue }
+
+    var label: String {
+        switch self {
+        case .upcoming: return ProfileStrings.bookingFilterUpcoming.localized
+        case .toConfirm: return ProfileStrings.bookingFilterToConfirm.localized
+        case .finished: return ProfileStrings.bookingFilterFinished.localized
         }
     }
 }

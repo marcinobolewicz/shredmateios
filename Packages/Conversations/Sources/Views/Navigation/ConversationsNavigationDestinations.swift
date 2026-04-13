@@ -8,9 +8,16 @@
 import SwiftUI
 import Networking
 
+/// Builds a destination view for a rider profile, given the rider's User ID and display name.
+///
+/// Provided by the host module (e.g. App) so the Conversations package stays decoupled
+/// from the rider profile feature.
+public typealias RiderProfileDestinationBuilder = @MainActor (UUID, String) -> AnyView
+
 struct ConversationsNavigationDestinations: ViewModifier {
     let repository: ChatRepository
     let currentUserId: String
+    let riderProfileDestination: RiderProfileDestinationBuilder
 
     func body(content: Content) -> some View {
         content
@@ -31,6 +38,8 @@ struct ConversationsNavigationDestinations: ViewModifier {
                     currentUserId: currentUserId
                 )
             )
+        case .riderProfile(let userId, let displayName):
+            riderProfileDestination(userId, displayName)
         }
     }
 }
@@ -38,11 +47,13 @@ struct ConversationsNavigationDestinations: ViewModifier {
 extension View {
     func conversationsDestinations(
         repository: ChatRepository,
-        currentUserId: String
+        currentUserId: String,
+        riderProfileDestination: @escaping RiderProfileDestinationBuilder
     ) -> some View {
         modifier(ConversationsNavigationDestinations(
             repository: repository,
-            currentUserId: currentUserId
+            currentUserId: currentUserId,
+            riderProfileDestination: riderProfileDestination
         ))
     }
 }

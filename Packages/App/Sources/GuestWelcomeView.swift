@@ -12,7 +12,7 @@ import SwiftUI
 /// Three slides highlight core app features; each CTA button forwards
 /// the `onCTATap` callback so the parent can decide what to do
 /// (e.g. switch to the login flow).
-public struct GuestWelcomeView: View {
+struct GuestWelcomeView: View {
 
     var onSlideCTATap: ((GuestSlide) -> Void)?
 
@@ -20,7 +20,7 @@ public struct GuestWelcomeView: View {
         self.onSlideCTATap = onSlideCTATap
     }
 
-    public var body: some View {
+    var body: some View {
         PageView(items: GuestSlide.all) { slide in
             SlideView(slide: slide, onCTATap: { onSlideCTATap?(slide) })
         }

@@ -9,4 +9,5 @@ import Foundation
 
 public enum ConversationsRoute: Hashable {
     case chat(conversationId: String, participantName: String)
+    case riderProfile(userId: UUID, displayName: String)
 }

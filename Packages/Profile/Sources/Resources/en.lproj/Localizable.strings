@@ -84,6 +84,10 @@
 "profile.booking_session_not_started_title" = "Session not started yet";
 "profile.booking_session_not_started_message" = "You can confirm the session only after the start time has passed.";
 
+"profile.booking_filter_upcoming" = "Booked";
+"profile.booking_filter_to_confirm" = "To confirm";
+"profile.booking_filter_finished" = "Finished";
+
 /* My Posts */
 "profile.delete_post" = "Delete post";
 "profile.ok" = "OK";

@@ -85,3 +85,5 @@
 "places.checked_in_elsewhere_format" = "Already checked in at %@";
 "places.failed_check_in_format" = "Failed to check in: %@";
 "places.failed_check_out_format" = "Failed to check out: %@";
+"places.rider_profile_unavailable_title" = "Profile unavailable";
+"places.rider_profile_unavailable_description" = "We couldn't load this rider's profile.";

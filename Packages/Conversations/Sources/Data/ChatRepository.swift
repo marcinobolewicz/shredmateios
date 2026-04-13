@@ -43,6 +43,29 @@ public final class ChatRepository {
     public private(set) var hasMoreMessages: [String: Bool] = [:]
     public private(set) var messagesError: [String: Error] = [:]
 
+    // MARK: - Published State — Read Receipts
+
+    /// ISO-8601 timestamp up to which the *other* participant has read a given conversation,
+    /// keyed by `conversationId`. Used to render "seen" (✓✓) indicators on my own messages.
+    ///
+    /// Updated by the `conversation:read` socket event.
+    public private(set) var otherUserLastReadAt: [String: String] = [:]
+
+    /// The `conversationId` currently visible on the chat screen, or `nil` if the user
+    /// is not inside a conversation. Set via ``setCurrentConversation(_:)`` from the
+    /// chat view model so socket handlers can skip noisy refreshes / auto-mark-as-read.
+    public private(set) var currentConversationId: String?
+
+    /// Total number of unread messages across all conversations. Drives the nav-bar badge.
+    public var totalUnreadCount: Int {
+        conversations.reduce(0) { $0 + $1.unreadCount }
+    }
+
+    /// Number of conversations that have at least one unread message.
+    public var unreadConversationsCount: Int {
+        conversations.count { $0.unreadCount > 0 }
+    }
+
     // MARK: - Dependencies
 
     private let chatService: ChatServiceProtocol
@@ -181,13 +204,59 @@ public final class ChatRepository {
         return message
     }
 
+    // MARK: - Mark as Read
+
+    /// Marks a conversation as read. Optimistically zeroes the local `unreadCount`
+    /// and invalidates the conversations list. Safe to call repeatedly (idempotent).
+    public func markAsRead(conversationId: String) async {
+        // Optimistic local update so the badge disappears instantly.
+        setUnreadCount(0, for: conversationId)
+
+        do {
+            _ = try await chatService.markAsRead(conversationId: conversationId)
+            logger.debug("Marked conversation \(conversationId) as read")
+        } catch {
+            logger.error("Failed to mark conversation \(conversationId) as read: \(error.localizedDescription)")
+            // REST refetch will correct any drift on next list refresh.
+        }
+    }
+
+    // MARK: - Delete
+
+    /// Deletes a conversation on the server and removes it from the local cache.
+    public func deleteConversation(conversationId: String) async throws {
+        try await chatService.deleteConversation(conversationId: conversationId)
+        conversations.removeAll { $0.id == conversationId }
+        messagesByConversation[conversationId] = nil
+        messagesCursors[conversationId] = nil
+        hasMoreMessages[conversationId] = nil
+        isLoadingMessages[conversationId] = nil
+        messagesError[conversationId] = nil
+        otherUserLastReadAt[conversationId] = nil
+        if currentConversationId == conversationId {
+            currentConversationId = nil
+        }
+    }
+
+    // MARK: - Current Conversation Tracking
+
+    /// Registers which conversation is currently visible on screen.
+    /// Pass `nil` when the chat view disappears.
+    public func setCurrentConversation(_ conversationId: String?) {
+        currentConversationId = conversationId
+    }
+
     // MARK: - Socket Event Handling
 
     /// Handles a `message:new` socket event.
     ///
     /// 1. Converts payload to `ChatMessage` (with placeholder sender).
     /// 2. Optimistically inserts into the message cache (deduplicated).
-    /// 3. Invalidates both messages and conversations via REST re-fetch.
+    /// 3. Increments `unreadCount` locally unless the chat screen is open
+    ///    or the message was sent by the current user (no `senderId` check
+    ///    here — ``ChatEventHandler`` wires the decision point).
+    /// 4. Invalidates the affected conversation's messages; the list is refreshed
+    ///    via the sibling `conversation:updated` event.
     public func handleMessageNew(_ payload: MessageNewPayload) {
         let message = payload.toChatMessage()
         let conversationId = payload.conversationId
@@ -195,21 +264,38 @@ public final class ChatRepository {
 
         Task { [weak self] in
             await self?.loadMessages(for: conversationId, refresh: true)
-            await self?.loadConversations(refresh: true)
         }
     }
 
     /// Handles a `conversation:updated` socket event.
     ///
-    /// 1. If conversation exists in cache — moves it to the top.
-    /// 2. Invalidates conversations and the affected conversation's messages.
-    public func handleConversationUpdated(_ payload: ConversationUpdatedPayload) {
+    /// 1. If conversation exists in cache — moves it to the top and increments
+    ///    `unreadCount` (unless the chat screen is open or the message came from
+    ///    the current user).
+    /// 2. Refetches the conversations list so derived fields (avatars, last message
+    ///    sender info) stay consistent with the server.
+    public func handleConversationUpdated(_ payload: ConversationUpdatedPayload, currentUserId: String) {
         moveConversationToTop(payload.conversationId)
+
+        let senderId = payload.lastMessage?.senderId
+        let isFromMe = senderId == currentUserId
+        let isCurrentlyOpen = currentConversationId == payload.conversationId
+
+        if !isFromMe && !isCurrentlyOpen {
+            incrementUnreadCount(for: payload.conversationId)
+        }
 
         Task { [weak self] in
             await self?.loadConversations(refresh: true)
-            await self?.loadMessages(for: payload.conversationId, refresh: true)
         }
+    }
+
+    /// Handles a `conversation:read` socket event.
+    ///
+    /// Stores the other user's `lastReadAt` timestamp so message bubbles can
+    /// render "seen" (✓✓) for messages whose `createdAt <= lastReadAt`.
+    public func handleConversationRead(_ payload: ConversationReadPayload) {
+        otherUserLastReadAt[payload.conversationId] = payload.lastReadAt
     }
 
     /// Returns current messages for a conversation (oldest-first).
@@ -249,5 +335,18 @@ public final class ChatRepository {
         guard let index = conversations.firstIndex(where: { $0.id == conversationId }) else { return }
         let conversation = conversations.remove(at: index)
         conversations.insert(conversation, at: 0)
+    }
+
+    /// Overwrites the local `unreadCount` for a conversation without touching the server.
+    private func setUnreadCount(_ value: Int, for conversationId: String) {
+        guard let index = conversations.firstIndex(where: { $0.id == conversationId }) else { return }
+        conversations[index] = conversations[index].withUnreadCount(value)
+    }
+
+    /// Increments the local `unreadCount` by one for a conversation.
+    private func incrementUnreadCount(for conversationId: String) {
+        guard let index = conversations.firstIndex(where: { $0.id == conversationId }) else { return }
+        let current = conversations[index].unreadCount
+        conversations[index] = conversations[index].withUnreadCount(current + 1)
     }
 }

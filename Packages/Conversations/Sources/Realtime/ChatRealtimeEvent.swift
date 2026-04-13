@@ -28,6 +28,10 @@ public enum ChatRealtimeEvent: Sendable {
     /// A conversation was updated via `conversation:updated`
     case conversationUpdated(ConversationUpdatedPayload)
 
+    /// The other participant marked the conversation as read via `conversation:read`.
+    /// Delivered to the sender so they can render "seen" indicators.
+    case conversationRead(ConversationReadPayload)
+
     /// A sent message was acknowledged via `message:ack`
     case messageAck(MessageAckPayload)
 }
