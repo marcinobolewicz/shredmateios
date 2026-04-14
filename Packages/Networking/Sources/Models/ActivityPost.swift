@@ -27,7 +27,7 @@ public struct CreateActivityRequest: Encodable, Sendable {
     public let taggedRiderIds: [String]
 
     public init(
-        type: ActivityType = .checkIn,
+        type: ActivityType = .photo,
         placeId: String,
         photoUrl: String? = nil,
         caption: String? = nil,
@@ -78,5 +78,9 @@ public struct ActivityPost: Decodable, Sendable, Identifiable {
     public let createdAt: String
     public let place: ActivityPostPlace
     public let rider: ActivityPostRider
+
+    public var isCheckIn: Bool {
+        type == ActivityType.checkIn.rawValue
+    }
     public let taggedRiders: [ActivityPostRider]
 }

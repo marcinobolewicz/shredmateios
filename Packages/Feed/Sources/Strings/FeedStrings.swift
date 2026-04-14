@@ -18,6 +18,7 @@ enum FeedStrings: String {
     case failedTitle         = "feed.failed_title"
     case failedDescription   = "feed.failed_description"
     case refreshButton       = "feed.refresh_button"
+    case checkedInAt           = "feed.checked_in_at"
 
     var localized: String {
         NSLocalizedString(rawValue, bundle: .module, comment: "")
