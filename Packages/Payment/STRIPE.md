@@ -58,12 +58,12 @@ Profile menu shows "Payment Setup" link when the mentor has at least one sport w
 User taps "Set Up Payments"
         │
         ▼
-POST /mentors/me/stripe/account
+POST /riders/me/stripe/account
   → creates Stripe Connected Account on backend
   → returns { accountId }
         │
         ▼
-POST /mentors/me/stripe/onboarding-link
+POST /riders/me/stripe/onboarding-link
   → backend generates Stripe Account Link (type: account_onboarding)
   → returns { url }
         │
@@ -76,7 +76,7 @@ Open URL in Safari (UIApplication.shared.open)
 User returns to app (detected via scenePhase → .active)
         │
         ▼
-GET /mentors/me/stripe/status
+GET /riders/me/stripe/status
   → returns { onboardingCompleted, payoutsEnabled }
         │
         ▼
@@ -172,9 +172,9 @@ This sets `STPAPIClient.shared.publishableKey` once at app startup.
 
 | Method | Path | Auth | Request | Response |
 |--------|------|------|---------|----------|
-| `POST` | `/mentors/me/stripe/account` | Bearer | — | `{ accountId: String }` |
-| `POST` | `/mentors/me/stripe/onboarding-link` | Bearer | — | `{ url: String }` |
-| `GET` | `/mentors/me/stripe/status` | Bearer | — | `{ onboardingCompleted: Bool, payoutsEnabled: Bool }` |
+| `POST` | `/riders/me/stripe/account` | Bearer | — | `{ accountId: String }` |
+| `POST` | `/riders/me/stripe/onboarding-link` | Bearer | — | `{ url: String }` |
+| `GET` | `/riders/me/stripe/status` | Bearer | — | `{ onboardingCompleted: Bool, payoutsEnabled: Bool }` |
 
 ### Payment (future)
 

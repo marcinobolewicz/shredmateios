@@ -9,6 +9,8 @@ enum StripeStrings: String {
     case statusTitle = "stripe.status_title"
     case onboardingCompleted = "stripe.onboarding_completed"
     case onboardingPending = "stripe.onboarding_pending"
+    case chargesEnabled = "stripe.charges_enabled"
+    case chargesDisabled = "stripe.charges_disabled"
     case payoutsEnabled = "stripe.payouts_enabled"
     case payoutsDisabled = "stripe.payouts_disabled"
     case awaitingReturnMessage = "stripe.awaiting_return_message"

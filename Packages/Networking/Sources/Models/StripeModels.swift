@@ -3,10 +3,21 @@ import Foundation
 // MARK: - Stripe Account
 
 public struct StripeAccount: Codable, Sendable, Equatable {
-    public let accountId: String
+    public let stripeAccountId: String
+    public let chargesEnabled: Bool
+    public let detailsSubmitted: Bool
+    public let payoutsEnabled: Bool
 
-    public init(accountId: String) {
-        self.accountId = accountId
+    public init(
+        stripeAccountId: String,
+        chargesEnabled: Bool,
+        detailsSubmitted: Bool,
+        payoutsEnabled: Bool
+    ) {
+        self.stripeAccountId = stripeAccountId
+        self.chargesEnabled = chargesEnabled
+        self.detailsSubmitted = detailsSubmitted
+        self.payoutsEnabled = payoutsEnabled
     }
 }
 
@@ -23,11 +34,13 @@ public struct StripeOnboardingLink: Codable, Sendable, Equatable {
 // MARK: - Stripe Status
 
 public struct StripeStatus: Codable, Sendable, Equatable {
-    public let onboardingCompleted: Bool
+    public let chargesEnabled: Bool
+    public let detailsSubmitted: Bool
     public let payoutsEnabled: Bool
 
-    public init(onboardingCompleted: Bool, payoutsEnabled: Bool) {
-        self.onboardingCompleted = onboardingCompleted
+    public init(chargesEnabled: Bool, detailsSubmitted: Bool, payoutsEnabled: Bool) {
+        self.chargesEnabled = chargesEnabled
+        self.detailsSubmitted = detailsSubmitted
         self.payoutsEnabled = payoutsEnabled
     }
 }

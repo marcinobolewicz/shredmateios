@@ -155,8 +155,10 @@
 "stripe.continue_onboarding_button" = "Continue Setup";
 "stripe.refresh_status_button" = "Refresh Status";
 "stripe.status_title" = "Payment Status";
-"stripe.onboarding_completed" = "Onboarding completed";
-"stripe.onboarding_pending" = "Onboarding not completed";
+"stripe.onboarding_completed" = "Details submitted";
+"stripe.onboarding_pending" = "Details not submitted";
+"stripe.charges_enabled" = "Charges enabled";
+"stripe.charges_disabled" = "Charges not yet enabled";
 "stripe.payouts_enabled" = "Payouts enabled";
 "stripe.payouts_disabled" = "Payouts not yet enabled";
 "stripe.awaiting_return_message" = "Complete the setup in your browser, then return here.";

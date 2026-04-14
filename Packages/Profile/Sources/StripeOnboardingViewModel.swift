@@ -29,11 +29,15 @@ public final class StripeOnboardingViewModel {
     }
 
     var isOnboardingComplete: Bool {
-        status?.onboardingCompleted == true
+        status?.detailsSubmitted == true
     }
 
     var arePayoutsEnabled: Bool {
         status?.payoutsEnabled == true
+    }
+
+    var areChargesEnabled: Bool {
+        status?.chargesEnabled == true
     }
 
     // MARK: - Dependencies
@@ -59,6 +63,8 @@ public final class StripeOnboardingViewModel {
 
         do {
             status = try await stripeService.fetchStatus()
+        } catch let networkError as NetworkError where networkError.isNotFound {
+            status = nil
         } catch {
             self.error = StripeStrings.failedLoadStatus(error.localizedDescription)
         }
@@ -104,6 +110,8 @@ public final class StripeOnboardingViewModel {
 
         do {
             status = try await stripeService.fetchStatus()
+        } catch let networkError as NetworkError where networkError.isNotFound {
+            status = nil
         } catch {
             self.error = StripeStrings.failedRefreshStatus(error.localizedDescription)
         }

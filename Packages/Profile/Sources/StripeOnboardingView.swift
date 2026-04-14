@@ -83,6 +83,14 @@ struct StripeOnboardingView: View {
             )
 
             StatusRow(
+                label: viewModel.areChargesEnabled
+                    ? StripeStrings.chargesEnabled.localized
+                    : StripeStrings.chargesDisabled.localized,
+                isPositive: viewModel.areChargesEnabled,
+                theme: theme
+            )
+
+            StatusRow(
                 label: viewModel.arePayoutsEnabled
                     ? StripeStrings.payoutsEnabled.localized
                     : StripeStrings.payoutsDisabled.localized,
@@ -102,7 +110,7 @@ struct StripeOnboardingView: View {
     private var actionSection: some View {
         if viewModel.step == .awaitingReturn {
             awaitingReturnCard
-        } else if viewModel.isOnboardingComplete && viewModel.arePayoutsEnabled {
+        } else if viewModel.isOnboardingComplete && viewModel.areChargesEnabled && viewModel.arePayoutsEnabled {
             EmptyView()
         } else {
             VStack(spacing: theme.spacing.sm) {

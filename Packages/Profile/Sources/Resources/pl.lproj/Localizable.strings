@@ -155,8 +155,10 @@
 "stripe.continue_onboarding_button" = "Kontynuuj konfigurację";
 "stripe.refresh_status_button" = "Odśwież status";
 "stripe.status_title" = "Status płatności";
-"stripe.onboarding_completed" = "Konfiguracja zakończona";
-"stripe.onboarding_pending" = "Konfiguracja niezakończona";
+"stripe.onboarding_completed" = "Dane przesłane";
+"stripe.onboarding_pending" = "Dane nieprzesłane";
+"stripe.charges_enabled" = "Płatności włączone";
+"stripe.charges_disabled" = "Płatności jeszcze nieaktywne";
 "stripe.payouts_enabled" = "Wypłaty włączone";
 "stripe.payouts_disabled" = "Wypłaty jeszcze nieaktywne";
 "stripe.awaiting_return_message" = "Dokończ konfigurację w przeglądarce, a następnie wróć tutaj.";
