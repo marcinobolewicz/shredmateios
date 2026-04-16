@@ -21,6 +21,10 @@ enum StripeStrings: String {
     case failedCreateLinkFormat = "stripe.failed_create_link_format"
     case failedRefreshStatusFormat = "stripe.failed_refresh_status_format"
 
+    case returnStatusSuccess = "stripe.return_status_success"
+    case returnStatusPending = "stripe.return_status_pending"
+    case returnStatusRestricted = "stripe.return_status_restricted"
+
     var localized: String {
         NSLocalizedString(rawValue, bundle: .module, comment: "")
     }

@@ -68,6 +68,9 @@ func handle(_ deepLink: DeepLink) {
                 conversationId: id,
                 participantName: participantName
             )
+
+        case .stripeOnboardingResult(let status):
+            switchTo(.profile, profileRoute: .stripeOnboardingReturn(status: status))
         }
     }
 

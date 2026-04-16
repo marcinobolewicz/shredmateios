@@ -27,6 +27,7 @@ public struct RootView: View {
     @State private var sportsLoaded = false
     @State private var parkedOnSplashForOnboarding = false
     @State private var sportsRetryInFlight = false
+    @State private var pendingDeepLink: DeepLink?
     #if DEBUG
     @State private var showPulseConsole = false
     #endif
@@ -102,6 +103,11 @@ public struct RootView: View {
                 followRepository.reset()
             }
         }
+        .onChange(of: router.flow) { _, flow in
+            if flow == .user {
+                applyPendingDeepLink()
+            }
+        }
         .onChange(of: scenePhase) { _, phase in
             // When the app returns to the foreground, retry the sports
             // fetch if onboarding is still pending and we never got a
@@ -117,6 +123,18 @@ public struct RootView: View {
             Button(CommonStrings.okButton.localized) {}
         } message: {
             Text(CommonStrings.sessionExpiredMessage.localized)
+        }
+        .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) { activity in
+            guard
+                let url = activity.webpageURL,
+                let deepLink = UniversalLinkRouter.deepLink(from: url)
+            else { return }
+
+            handleIncomingDeepLink(deepLink)
+        }
+        .onOpenURL { url in
+            guard let deepLink = UniversalLinkRouter.deepLink(from: url) else { return }
+            handleIncomingDeepLink(deepLink)
         }
         .environment(router)
         .environment(appRouter)
@@ -182,6 +200,22 @@ public struct RootView: View {
         } else {
             router.showUser()
         }
+    }
+
+    // MARK: - Deep Link Handling
+
+    private func handleIncomingDeepLink(_ deepLink: DeepLink) {
+        if authState.isLoggedIn && router.flow == .user {
+            appRouter.handle(deepLink)
+        } else {
+            pendingDeepLink = deepLink
+        }
+    }
+
+    private func applyPendingDeepLink() {
+        guard let deepLink = pendingDeepLink else { return }
+        pendingDeepLink = nil
+        appRouter.handle(deepLink)
     }
 
     // MARK: - Onboarding

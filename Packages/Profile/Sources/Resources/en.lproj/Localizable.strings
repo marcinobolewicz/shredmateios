@@ -167,3 +167,6 @@
 "stripe.failed_create_account_format" = "Failed to create Stripe account: %@";
 "stripe.failed_create_link_format" = "Failed to create onboarding link: %@";
 "stripe.failed_refresh_status_format" = "Failed to refresh payment status: %@";
+"stripe.return_status_success" = "Onboarding completed successfully!";
+"stripe.return_status_pending" = "Onboarding in progress — additional verification may be required.";
+"stripe.return_status_restricted" = "Account restricted — please complete the remaining steps.";

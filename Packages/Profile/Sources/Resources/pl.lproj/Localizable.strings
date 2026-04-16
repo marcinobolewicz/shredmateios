@@ -167,3 +167,6 @@
 "stripe.failed_create_account_format" = "Nie udało się utworzyć konta Stripe: %@";
 "stripe.failed_create_link_format" = "Nie udało się utworzyć linku konfiguracyjnego: %@";
 "stripe.failed_refresh_status_format" = "Nie udało się odświeżyć statusu płatności: %@";
+"stripe.return_status_success" = "Konfiguracja zakończona pomyślnie!";
+"stripe.return_status_pending" = "Konfiguracja w toku — może być wymagana dodatkowa weryfikacja.";
+"stripe.return_status_restricted" = "Konto ograniczone — dokończ pozostałe kroki konfiguracji.";

@@ -3,6 +3,23 @@ import Observation
 import Networking
 import UIKit
 
+// MARK: - Return Status
+
+public enum StripeReturnStatus: Sendable, Equatable {
+    case success
+    case pending
+    case restricted
+
+    public init?(rawValue: String?) {
+        switch rawValue {
+        case "success", "complete": self = .success
+        case "pending": self = .pending
+        case "restricted": self = .restricted
+        default: return nil
+        }
+    }
+}
+
 @MainActor
 @Observable
 public final class StripeOnboardingViewModel {
@@ -20,6 +37,7 @@ public final class StripeOnboardingViewModel {
     private(set) var step: Step = .idle
     private(set) var status: StripeStatus?
     private(set) var error: String?
+    private(set) var returnStatus: StripeReturnStatus?
 
     var isLoading: Bool {
         switch step {
@@ -117,6 +135,15 @@ public final class StripeOnboardingViewModel {
         }
 
         step = .idle
+    }
+
+    func handleReturn(status rawStatus: String?) async {
+        returnStatus = StripeReturnStatus(rawValue: rawStatus)
+        await refreshAfterReturn()
+    }
+
+    func clearReturnStatus() {
+        returnStatus = nil
     }
 
     func clearError() {

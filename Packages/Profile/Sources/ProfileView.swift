@@ -18,6 +18,7 @@ public enum ProfileRoute: Hashable, Sendable {
     case mySlots
     case generateSlots
     case stripeOnboarding
+    case stripeOnboardingReturn(status: String?)
     case contact
 }
 
@@ -69,6 +70,11 @@ public struct ProfileView: View {
                     )
                 case .stripeOnboarding:
                     StripeOnboardingView(viewModel: viewModel.stripeOnboardingViewModel)
+                case .stripeOnboardingReturn(let status):
+                    StripeOnboardingView(
+                        viewModel: viewModel.stripeOnboardingViewModel,
+                        returnStatus: status
+                    )
                 case .contact:
                     ContactView()
                 }

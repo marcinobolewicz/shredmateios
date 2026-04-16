@@ -8,8 +8,11 @@ struct StripeOnboardingView: View {
     @Environment(\.scenePhase) private var scenePhase
     @State private var viewModel: StripeOnboardingViewModel
 
-    init(viewModel: StripeOnboardingViewModel) {
+    private let returnStatus: String?
+
+    init(viewModel: StripeOnboardingViewModel, returnStatus: String? = nil) {
         self._viewModel = State(initialValue: viewModel)
+        self.returnStatus = returnStatus
     }
 
     var body: some View {
@@ -18,6 +21,9 @@ struct StripeOnboardingView: View {
             ScrollView {
                 VStack(spacing: theme.spacing.lg) {
                     descriptionCard
+                    if let returnStatus = viewModel.returnStatus {
+                        ReturnStatusBanner(status: returnStatus, theme: theme)
+                    }
                     if viewModel.status != nil {
                         statusCard
                     }
@@ -28,7 +34,13 @@ struct StripeOnboardingView: View {
             }
         }
         .background(theme.colors.backgroundSecondary)
-        .task { await viewModel.loadStatus() }
+        .task {
+            if returnStatus != nil {
+                await viewModel.handleReturn(status: returnStatus)
+            } else {
+                await viewModel.loadStatus()
+            }
+        }
         .onChange(of: scenePhase) { _, newPhase in
             if newPhase == .active && viewModel.step == .awaitingReturn {
                 Task { await viewModel.refreshAfterReturn() }
@@ -153,6 +165,62 @@ struct StripeOnboardingView: View {
         viewModel.status != nil
             ? StripeStrings.continueOnboardingButton.localized
             : StripeStrings.startOnboardingButton.localized
+    }
+}
+
+// MARK: - Return Status Banner
+
+private struct ReturnStatusBanner: View {
+
+    let status: StripeReturnStatus
+    let theme: AppTheme
+
+    var body: some View {
+        HStack(spacing: theme.spacing.sm) {
+            Image(systemName: iconName)
+                .font(.title3)
+                .foregroundStyle(iconColor)
+
+            Text(message)
+                .font(theme.typography.subheadline)
+                .foregroundStyle(theme.colors.textPrimary)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(theme.spacing.md)
+        .background(backgroundColor)
+        .clipShape(RoundedRectangle(cornerRadius: theme.radius.md, style: .continuous))
+    }
+
+    private var iconName: String {
+        switch status {
+        case .success: "checkmark.circle.fill"
+        case .pending: "clock.fill"
+        case .restricted: "exclamationmark.triangle.fill"
+        }
+    }
+
+    private var iconColor: Color {
+        switch status {
+        case .success: theme.colors.success
+        case .pending: theme.colors.warning
+        case .restricted: theme.colors.error
+        }
+    }
+
+    private var backgroundColor: Color {
+        switch status {
+        case .success: theme.colors.success.opacity(0.12)
+        case .pending: theme.colors.warning.opacity(0.12)
+        case .restricted: theme.colors.error.opacity(0.12)
+        }
+    }
+
+    private var message: String {
+        switch status {
+        case .success: StripeStrings.returnStatusSuccess.localized
+        case .pending: StripeStrings.returnStatusPending.localized
+        case .restricted: StripeStrings.returnStatusRestricted.localized
+        }
     }
 }
 
