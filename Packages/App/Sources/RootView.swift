@@ -1,82 +1,66 @@
 import SwiftUI
-import Core
 import Networking
 import Login
 import Common
-import Conversations
 import Onboarding
-import Profile
 #if DEBUG
 import PulseUI
 #endif
 
 public struct RootView: View {
-    private var dependencies: AppDependencies
     @Environment(AuthState.self) private var authState
-    @Environment(FollowRepository.self) private var followRepository
     @Environment(\.scenePhase) private var scenePhase
-    @State private var router = RootRouter()
-    @State private var appRouter: AppRouter = {
-        let router = AppRouter()
-        DIContainer.shared.register(AppRouter.self) { router }
-        return router
-    }()
-    @State private var showWelcome = false
-    @State private var sportsCount: Int = 0
-    @State private var primarySportId: String?
-    @State private var sportsLoaded = false
-    @State private var parkedOnSplashForOnboarding = false
-    @State private var sportsRetryInFlight = false
-    @State private var pendingDeepLink: DeepLink?
+    @State private var coordinator: RootCoordinator
     #if DEBUG
     @State private var showPulseConsole = false
     #endif
 
-    public init(
-        dependencies: AppDependencies
-    ) {
-        self.dependencies = dependencies
+    public init(dependencies: AppDependencies) {
+        _coordinator = State(initialValue: RootCoordinator(dependencies: dependencies))
     }
 
     public var body: some View {
         ZStack {
-            switch router.flow {
+            switch coordinator.router.flow {
             case .loading:
                 SplashView()
 
             case .guest:
                 GuestTabView(
-                    dependencies: dependencies,
-                    onLoginTap: { router.showAuth(.login) }
+                    dependencies: coordinator.dependencies,
+                    onLoginTap: { coordinator.router.showAuth(.login) }
                 )
 
             case .auth(let entry):
                 AuthFlowView(
                     entry: entry,
-                    onClose: { router.showGuest() },
-                    onLoginSuccess: routeAfterLogin
+                    onClose: { coordinator.router.showGuest() },
+                    onLoginSuccess: coordinator.routeAfterLogin
                 )
 
             case .onboarding:
                 OnboardingView(
-                    sportsCount: sportsCount,
-                    sportId: primarySportId,
-                    riderService: dependencies.riderService,
-                    onClose: dismissOnboarding,
-                    onComplete: completeOnboarding(with:)
+                    sportsCount: coordinator.sportsCount,
+                    sportId: coordinator.primarySportId,
+                    riderService: coordinator.dependencies.riderService,
+                    onClose: coordinator.dismissOnboarding,
+                    onComplete: coordinator.completeOnboarding(with:)
                 )
 
             case .user:
-                UserTabView(dependencies: dependencies)
+                UserTabView(dependencies: coordinator.dependencies)
             }
 
             if authState.isLoading { LoadingOverlay() }
         }
-        .animation(.easeInOut(duration: 0.25), value: router.flow)
-        .fullScreenCover(isPresented: $showWelcome, onDismiss: OnboardingStorage.markWelcomeShown) {
-            WelcomeView(onAction: handleWelcomeAction)
+        .animation(.easeInOut(duration: 0.25), value: coordinator.router.flow)
+        .fullScreenCover(
+            isPresented: Bindable(coordinator).showWelcome,
+            onDismiss: OnboardingStorage.markWelcomeShown
+        ) {
+            WelcomeView(onAction: coordinator.handleWelcomeAction)
         }
-        .inAppNotificationOverlay(center: dependencies.notificationCenter)
+        .inAppNotificationOverlay(center: coordinator.dependencies.notificationCenter)
         #if DEBUG
         .onShake { showPulseConsole = true }
         .onTapGesture(count: 3) { showPulseConsole = true }
@@ -84,37 +68,15 @@ public struct RootView: View {
             NavigationStack { ConsoleView() }
         }
         #endif
-        .task {
-            async let sportsTask: Void = loadSportsCount()
-            await authState.restoreSession()
-            await bootstrapInitialFlow()
-            await sportsTask
-        }
+        .task { await coordinator.bootstrap() }
         .onChange(of: authState.isLoggedIn) { _, isLoggedIn in
-            if isLoggedIn {
-                routeAfterLogin()
-                Task {
-                    await connectChat()
-                    await PushNotificationsBridge.requestAuthorizationAfterLogin()
-                }
-            } else {
-                router.flow = .guest
-                disconnectChat()
-                followRepository.reset()
-            }
+            coordinator.handleAuthChange(isLoggedIn: isLoggedIn)
         }
-        .onChange(of: router.flow) { _, flow in
-            if flow == .user {
-                applyPendingDeepLink()
-            }
+        .onChange(of: coordinator.router.flow) { _, flow in
+            coordinator.handleFlowChange(flow)
         }
         .onChange(of: scenePhase) { _, phase in
-            // When the app returns to the foreground, retry the sports
-            // fetch if onboarding is still pending and we never got a
-            // successful load. On success, `retrySportsIfNeeded()` flips
-            // an already-on-home user into the onboarding flow.
-            guard phase == .active else { return }
-            Task { await retrySportsIfNeeded() }
+            coordinator.handleScenePhase(phase)
         }
         .alert(
             CommonStrings.sessionExpiredTitle.localized,
@@ -125,184 +87,14 @@ public struct RootView: View {
             Text(CommonStrings.sessionExpiredMessage.localized)
         }
         .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) { activity in
-            guard
-                let url = activity.webpageURL,
-                let deepLink = UniversalLinkRouter.deepLink(from: url)
-            else { return }
-
-            handleIncomingDeepLink(deepLink)
+            guard let url = activity.webpageURL else { return }
+            coordinator.handleIncomingURL(url)
         }
         .onOpenURL { url in
-            guard let deepLink = UniversalLinkRouter.deepLink(from: url) else { return }
-            handleIncomingDeepLink(deepLink)
+            coordinator.handleIncomingURL(url)
         }
-        .environment(router)
-        .environment(appRouter)
-    }
-
-    // MARK: - Chat Lifecycle
-
-    private func connectChat() async {
-        await dependencies.chatLifecycleManager.onAuthenticated()
-        dependencies.chatEventHandler.setCurrentUserId(authState.user?.id)
-        dependencies.chatEventHandler.startListening()
-        await dependencies.chatRepository.loadConversations(refresh: true)
-    }
-
-    private func disconnectChat() {
-        dependencies.chatLifecycleManager.onLogout()
-        dependencies.chatEventHandler.stopListening()
-        dependencies.chatEventHandler.setCurrentUserId(nil)
-    }
-
-    // MARK: - Boot
-
-    /// Resolves the no-session branch of app startup.
-    ///
-    /// The logged-in branch is handled by `onChange(of: authState.isLoggedIn)`,
-    /// which fires as soon as `restoreSession()` flips the state. This method
-    /// therefore only runs when the restore did **not** find a session: we
-    /// drop the splash for the guest tabs and, on a fresh install, raise the
-    /// one-shot welcome cover.
-    ///
-    /// Keeping the splash visible for the full duration of `restoreSession()`
-    /// is what eliminates the guest-to-user "blink".
-    private func bootstrapInitialFlow() async {
-        guard !authState.isLoggedIn else { return }
-        router.flow = .guest
-        // welcome initial flow
-        if !OnboardingStorage.isWelcomeShown {
-            showWelcome = true
-        }
-    }
-
-    // MARK: - Post-login routing
-
-    /// Routes the user after login or session restore. New registrations
-    /// get `isPending` persisted so onboarding survives app restarts when
-    /// the sports fetch fails. Onboarding only starts once sports metadata
-    /// is loaded; otherwise we park on the splash and let
-    /// `loadSportsCount()` or `retrySportsIfNeeded()` flip the flow.
-    private func routeAfterLogin() {
-        guard authState.isLoggedIn else { return }
-
-        if authState.isNewRegistration {
-            OnboardingStorage.markPending()
-        }
-
-        if OnboardingStorage.isPending {
-            if sportsLoaded {
-                router.showOnboarding()
-            } else {
-                parkedOnSplashForOnboarding = true
-                router.flow = .loading
-            }
-        } else {
-            router.showUser()
-        }
-    }
-
-    // MARK: - Deep Link Handling
-
-    private func handleIncomingDeepLink(_ deepLink: DeepLink) {
-        if authState.isLoggedIn && router.flow == .user {
-            appRouter.handle(deepLink)
-        } else {
-            pendingDeepLink = deepLink
-        }
-    }
-
-    private func applyPendingDeepLink() {
-        guard let deepLink = pendingDeepLink else { return }
-        pendingDeepLink = nil
-        appRouter.handle(deepLink)
-    }
-
-    // MARK: - Onboarding
-
-    /// Closes onboarding via the X button. Marks the flow as completed,
-    /// clears the freshly-registered flag and lands the user on the
-    /// default home tab.
-    private func dismissOnboarding() {
-        finishOnboarding(deepLink: .home)
-    }
-
-    /// Routes the user out of onboarding into the right corner of the
-    /// main app, based on the CTA they picked on the success step.
-    private func completeOnboarding(with destination: OnboardingDestination) {
-        finishOnboarding(deepLink: destination.deepLink)
-    }
-
-    private func finishOnboarding(deepLink: DeepLink) {
-        OnboardingStorage.clearPending()
-        authState.clearNewRegistration()
-        appRouter.handle(deepLink)
-        router.showUser()
-    }
-
-    /// Pre-loads the sports catalog so onboarding can pick the right
-    /// variant. On success parks flip into `.onboarding`; on failure the
-    /// user lands on `.user` and `isPending` stays set for retry.
-    private func loadSportsCount() async {
-        let sports = try? await dependencies.sportsService.fetchSports()
-        if let sports {
-            sportsCount = sports.count
-            primarySportId = sports.first?.id.uuidString
-            sportsLoaded = true
-        }
-
-        guard parkedOnSplashForOnboarding else { return }
-        parkedOnSplashForOnboarding = false
-        if sportsLoaded {
-            router.showOnboarding()
-        } else {
-            router.showUser()
-        }
-    }
-
-    /// Retries the sports fetch on foreground if onboarding is still
-    /// pending and we never got a successful load. On success flips
-    /// an already-on-home user into onboarding.
-    private func retrySportsIfNeeded() async {
-        guard
-            OnboardingStorage.isPending,
-            !sportsLoaded,
-            !sportsRetryInFlight,
-            authState.isLoggedIn
-        else { return }
-
-        sportsRetryInFlight = true
-        defer { sportsRetryInFlight = false }
-
-        guard let sports = try? await dependencies.sportsService.fetchSports() else { return }
-        sportsCount = sports.count
-        primarySportId = sports.first?.id.uuidString
-        sportsLoaded = true
-
-        guard
-            OnboardingStorage.isPending,
-            authState.isLoggedIn,
-            router.flow == .user
-        else { return }
-        router.showOnboarding()
-    }
-
-    // MARK: - Welcome Flow
-
-    /// Handles a user choice from the first-run welcome cover.
-    ///
-    /// The cover is always dismissed; `signUp`/`signIn` additionally kick
-    /// off the auth flow, while `later` leaves the user on the guest tabs.
-    private func handleWelcomeAction(_ action: WelcomeAction) {
-        showWelcome = false
-        switch action {
-        case .signUp:
-            router.showAuth(.register)
-        case .signIn:
-            router.showAuth(.login)
-        case .later:
-            break
-        }
+        .environment(coordinator.router)
+        .environment(coordinator.appRouter)
     }
 }
 
