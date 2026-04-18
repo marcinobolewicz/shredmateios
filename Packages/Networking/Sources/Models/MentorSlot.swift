@@ -7,6 +7,7 @@ public struct MentorSlot: Decodable, Sendable, Equatable, Identifiable {
     public let duration: Int
     public let price: Int
     public let currency: String
+    public let rejectionMessage: String?
     public let status: MentorSlotStatus
     public let paymentStatus: MentorSlotPaymentStatus?
     public let recommendationStatus: MentorSlotRecommendationStatus?
@@ -21,6 +22,8 @@ public enum MentorSlotStatus: String, Codable, Sendable, Equatable {
     case booked = "BOOKED"
     case completed = "COMPLETED"
     case cancelled = "CANCELLED"
+    case rejected = "REJECTED"
+    case reservationPending = "RESERVATION_PENDING"
 }
 
 public enum MentorSlotPaymentStatus: String, Codable, Sendable, Equatable {
@@ -58,4 +61,22 @@ public struct MentorSlotPlace: Decodable, Sendable, Equatable {
 public struct MentorSlotsResponse: Decodable, Sendable {
     public let items: [MentorSlot]
     public let total: Int
+}
+
+// MARK: - Payment Intent
+
+public struct PaymentIntentResponse: Decodable, Sendable {
+    public let paymentIntentId: String
+    public let clientSecret: String
+    public let amount: Int
+    public let currency: String
+    public let publishableKey: String
+}
+
+public struct ConfirmPaymentBody: Encodable, Sendable {
+    public let paymentIntentId: String
+
+    public init(paymentIntentId: String) {
+        self.paymentIntentId = paymentIntentId
+    }
 }

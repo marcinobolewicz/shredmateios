@@ -244,7 +244,7 @@ let package = Package(
         // Places Package
         .target(
             name: "Places",
-            dependencies: ["Core", "Networking", "Common", "Theme"],
+            dependencies: ["Core", "Networking", "Common", "Theme", "Payment"],
             path: "Packages/Places/Sources",
             resources: [
                 .process("Resources")

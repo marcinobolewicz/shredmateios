@@ -1,6 +1,7 @@
 import SwiftUI
 import Theme
 import Networking
+import Payment
 
 public struct RiderCardViewData: Equatable, Hashable, Sendable, Identifiable {
     public let id: UUID
@@ -49,6 +50,7 @@ public struct RiderCardView: View {
         viewData: RiderCardViewData,
         followRepository: FollowRepository,
         mentorSlotsService: (any MentorSlotsServiceProtocol)? = nil,
+        stripePaymentService: StripePaymentService? = nil,
         currentRiderId: String? = nil,
         onMessageTap: @escaping (_ userId: UUID, _ displayName: String) -> Void = { _, _ in }
     ) {
@@ -64,7 +66,8 @@ public struct RiderCardView: View {
             _slotsViewModel = State(wrappedValue: MentorSlotsViewModel(
                 mentorRiderId: riderIdString,
                 currentRiderId: currentRiderId,
-                service: service
+                service: service,
+                stripePaymentService: stripePaymentService
             ))
         }
     }

@@ -1,6 +1,7 @@
 import SwiftUI
 import Networking
 import Common
+import Payment
 
 /// Wrapper that fetches full rider profile before showing RiderCardView.
 /// Ensures consistent experience (description + mentor slots) regardless of entry point.
@@ -8,6 +9,7 @@ public struct RiderDetailLoadingView: View {
     let partialViewData: RiderCardViewData
     let riderService: any RiderServiceProtocol
     let mentorSlotsService: any MentorSlotsServiceProtocol
+    let stripePaymentService: StripePaymentService?
     let onMessageTap: (_ userId: UUID, _ displayName: String) -> Void
 
     @Environment(FollowRepository.self) private var followRepository
@@ -19,11 +21,13 @@ public struct RiderDetailLoadingView: View {
         partialViewData: RiderCardViewData,
         riderService: any RiderServiceProtocol,
         mentorSlotsService: any MentorSlotsServiceProtocol,
+        stripePaymentService: StripePaymentService? = nil,
         onMessageTap: @escaping (_ userId: UUID, _ displayName: String) -> Void = { _, _ in }
     ) {
         self.partialViewData = partialViewData
         self.riderService = riderService
         self.mentorSlotsService = mentorSlotsService
+        self.stripePaymentService = stripePaymentService
         self.onMessageTap = onMessageTap
     }
 
@@ -39,6 +43,7 @@ public struct RiderDetailLoadingView: View {
                     viewData: resolvedViewData,
                     followRepository: followRepository,
                     mentorSlotsService: mentorSlotsService,
+                    stripePaymentService: stripePaymentService,
                     currentRiderId: currentRiderId,
                     onMessageTap: onMessageTap
                 )

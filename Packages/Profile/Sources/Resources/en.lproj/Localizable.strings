@@ -70,6 +70,8 @@
 "profile.status_completed" = "Completed";
 "profile.status_cancelled" = "Cancelled";
 "profile.status_available" = "Available";
+"profile.status_reservation_pending" = "In progress";
+"profile.status_rejected" = "Rejected";
 
 "profile.booking_cancel_title" = "Cancel booking?";
 "profile.booking_cancel_confirm" = "Cancel booking";

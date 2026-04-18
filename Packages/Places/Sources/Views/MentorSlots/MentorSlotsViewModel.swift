@@ -1,6 +1,8 @@
 import Foundation
 import Networking
 import Common
+import Payment
+import StripePaymentSheet
 
 @MainActor
 @Observable
@@ -11,27 +13,40 @@ public final class MentorSlotsViewModel {
     private(set) var hasSlots = false
     private(set) var sessionCount: Int?
     private(set) var recommendationCount: Int?
-    
+
     var actionError: String?
     var selectedSlot: MentorSlotRowViewData?
     var showDeleteConfirmation = false
     var showBookConfirmation = false
     var showBookingTooSoon = false
 
+    // Payment flow state
+    private(set) var isProcessingPayment = false
+    var showPaymentSheet = false
+    var paymentSheet: PaymentSheet?
+    var showPaymentSuccess = false
+    var showPaymentError = false
+    var paymentErrorMessage: String?
+    private var currentPaymentIntentId: String?
+    private var currentPaymentSlotId: String?
+
     let isOwner: Bool
 
     private let mentorRiderId: String
     private let service: MentorSlotsServiceProtocol
+    private let stripePaymentService: StripePaymentService?
     private let presenter = MentorSlotPresenter()
 
     init(
         mentorRiderId: String,
         currentRiderId: String?,
-        service: MentorSlotsServiceProtocol
+        service: MentorSlotsServiceProtocol,
+        stripePaymentService: StripePaymentService? = nil
     ) {
         self.mentorRiderId = mentorRiderId
         self.isOwner = currentRiderId != nil && currentRiderId == mentorRiderId
         self.service = service
+        self.stripePaymentService = stripePaymentService
     }
 
     func loadSlots() async {
@@ -97,15 +112,68 @@ public final class MentorSlotsViewModel {
         selectedSlot = nil
     }
 
+    // MARK: - Payment Flow
+
     func confirmBook() async {
         guard let slot = selectedSlot else { return }
+        guard let stripePaymentService else {
+            actionError = "Payment service unavailable"
+            selectedSlot = nil
+            return
+        }
+
         actionError = nil
+        isProcessingPayment = true
+
         do {
-            _ = try await service.bookSlot(id: slot.id)
-            await loadSlots()
+            let response = try await service.createPaymentIntent(slotId: slot.id)
+            currentPaymentIntentId = response.paymentIntentId
+            currentPaymentSlotId = slot.id
+            paymentSheet = stripePaymentService.makePaymentSheet(clientSecret: response.clientSecret)
+            isProcessingPayment = false
+            showPaymentSheet = true
         } catch {
+            isProcessingPayment = false
             actionError = error.localizedDescription
         }
+    }
+
+    func handlePaymentResult(_ result: PaymentResult) {
+        switch result {
+        case .completed:
+            Task { await confirmPaymentOnBackend() }
+        case .canceled:
+            resetPaymentState()
+        case .failed(let message):
+            paymentErrorMessage = message
+            showPaymentError = true
+            resetPaymentState()
+        }
+    }
+
+    private func confirmPaymentOnBackend() async {
+        guard let slotId = currentPaymentSlotId,
+              let paymentIntentId = currentPaymentIntentId else { return }
+
+        isProcessingPayment = true
+
+        do {
+            _ = try await service.confirmPayment(slotId: slotId, paymentIntentId: paymentIntentId)
+            isProcessingPayment = false
+            resetPaymentState()
+            showPaymentSuccess = true
+            await loadSlots()
+        } catch {
+            isProcessingPayment = false
+            resetPaymentState()
+            actionError = error.localizedDescription
+        }
+    }
+
+    private func resetPaymentState() {
+        currentPaymentIntentId = nil
+        currentPaymentSlotId = nil
+        paymentSheet = nil
         selectedSlot = nil
     }
 
@@ -114,5 +182,14 @@ public final class MentorSlotsViewModel {
         showDeleteConfirmation = false
         showBookConfirmation = false
         showBookingTooSoon = false
+    }
+
+    func dismissPaymentError() {
+        paymentErrorMessage = nil
+        showPaymentError = false
+    }
+
+    func dismissPaymentSuccess() {
+        showPaymentSuccess = false
     }
 }

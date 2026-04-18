@@ -26,20 +26,19 @@ final class MyBookingsViewModel {
     // MARK: - Computed
 
     var slots: [MentorSlot] {
+        guard let filter else { return allSlots }
         switch filter {
-        case .none:
-            return allSlots
         case .upcoming:
             return allSlots.filter { isBookedUpcoming($0) }
         case .toConfirm:
             return allSlots.filter { isBookedToConfirm($0) }
         case .finished:
             return allSlots.filter { $0.status == .completed }
+        case .rejected:
+            return allSlots.filter { $0.status == .rejected }
+        case .reservationPending:
+            return allSlots.filter { $0.status == .reservationPending }
         }
-    }
-
-    func toggleFilter(_ value: MyBookingFilter) {
-        filter = (filter == value) ? nil : value
     }
 
     func loadOnAppear() {
@@ -147,10 +146,12 @@ final class MyBookingsViewModel {
 
 // MARK: - MyBookingFilter
 
-enum MyBookingFilter: String, CaseIterable, Sendable, Identifiable {
+enum MyBookingFilter: String, CaseIterable, Sendable, Identifiable, ChipFilterOption {
     case upcoming
     case toConfirm
     case finished
+    case rejected
+    case reservationPending
 
     var id: String { rawValue }
 
@@ -159,6 +160,8 @@ enum MyBookingFilter: String, CaseIterable, Sendable, Identifiable {
         case .upcoming: return ProfileStrings.bookingFilterUpcoming.localized
         case .toConfirm: return ProfileStrings.bookingFilterToConfirm.localized
         case .finished: return ProfileStrings.bookingFilterFinished.localized
+        case .rejected: return ProfileStrings.statusRejected.localized
+        case .reservationPending: return ProfileStrings.statusReservationPending.localized
         }
     }
 }

@@ -1,5 +1,6 @@
 import SwiftUI
 import Networking
+import Payment
 import Places
 import Common
 
@@ -13,6 +14,7 @@ struct FeedNavigationDestinations: ViewModifier {
     let onOpenChat: (_ userId: UUID, _ displayName: String) -> Void
 
     @Environment(AuthState.self) private var authState
+    @Environment(StripePaymentService.self) private var stripePaymentService
 
     func body(content: Content) -> some View {
         content
@@ -69,6 +71,7 @@ struct FeedNavigationDestinations: ViewModifier {
                 ),
                 riderService: riderService,
                 mentorSlotsService: mentorSlotsService,
+                stripePaymentService: stripePaymentService,
                 onMessageTap: onOpenChat
             )
         }
@@ -89,6 +92,7 @@ struct FeedNavigationDestinations: ViewModifier {
                 partialViewData: viewData,
                 riderService: riderService,
                 mentorSlotsService: mentorSlotsService,
+                stripePaymentService: stripePaymentService,
                 onMessageTap: onOpenChat
             )
         }

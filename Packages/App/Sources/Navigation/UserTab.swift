@@ -111,6 +111,7 @@ struct UserTabView: View {
                 displayName: displayName,
                 riderService: dependencies.riderService,
                 mentorSlotsService: dependencies.mentorSlotsService,
+                stripePaymentService: dependencies.stripePaymentService,
                 onMessageTap: openChat
             )
         )

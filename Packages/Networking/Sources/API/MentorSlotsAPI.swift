@@ -33,16 +33,25 @@ public enum MentorSlotsAPI {
         .get("/mentor-slots/booked-by-me", auth: .bearerToken)
     }
 
-    public static func bookSlot(id: String) -> Endpoint<MentorSlot> {
-        .post("/mentor-slots/\(id)/book", auth: .bearerToken)
-    }
-
     public static func cancelBooking(id: String) -> Endpoint<MentorSlot> {
         .post("/mentor-slots/\(id)/cancel", auth: .bearerToken)
     }
 
     public static func completeSession(id: String, recommend: Bool) -> Endpoint<MentorSlot> {
         .post("/mentor-slots/\(id)/complete", body: CompleteSessionBody(recommend: recommend), auth: .bearerToken)
+    }
+
+    public static func createPaymentIntent(slotId: String) -> Endpoint<PaymentIntentResponse> {
+        .post("/mentor-slots/\(slotId)/payment-intent", auth: .bearerToken)
+    }
+
+    public static func confirmPayment(slotId: String, paymentIntentId: String) -> Endpoint<MentorSlot> {
+        .post(
+            "/mentor-slots/\(slotId)/confirm-payment",
+            body: ConfirmPaymentBody(paymentIntentId: paymentIntentId),
+            keys: .camelCase,
+            auth: .bearerToken
+        )
     }
 
     public static func deleteSlot(id: String) -> Endpoint<EmptyResponse> {

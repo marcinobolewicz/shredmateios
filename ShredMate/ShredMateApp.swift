@@ -1,5 +1,6 @@
 import SwiftUI
 import App
+import Payment
 import Theme
 import FirebaseCore
 import FirebaseCrashlytics
@@ -72,6 +73,7 @@ struct ShredMateApp: App {
             RootView(dependencies: dependencies)
                 .environment(dependencies.authState)
                 .environment(dependencies.followRepository)
+                .environment(dependencies.stripePaymentService)
                 .environment(theme)
         }
     }

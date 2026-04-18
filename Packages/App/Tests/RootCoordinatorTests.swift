@@ -376,7 +376,6 @@ private actor MockMentorSlotsService: MentorSlotsServiceProtocol {
     func fetchBookedByMe() async throws -> MentorSlotsResponse {
         MentorSlotsResponse(data: [], meta: .init(total: 0, page: 1, limit: 20, totalPages: 0))
     }
-    func bookSlot(id: String) async throws -> MentorSlot { throw AuthError.unauthorized }
     func cancelBooking(id: String) async throws -> MentorSlot { throw AuthError.unauthorized }
     func completeSession(id: String, recommend: Bool) async throws -> MentorSlot { throw AuthError.unauthorized }
     func deleteSlot(id: String) async throws {}

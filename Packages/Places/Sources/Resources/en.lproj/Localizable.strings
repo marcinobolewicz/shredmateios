@@ -59,6 +59,10 @@
 "places.slot_book_too_soon_title" = "Cannot book";
 "places.slot_book_too_soon_message" = "Sessions can only be booked at least 30 minutes before start time.";
 "places.slot_action_error_title" = "Error";
+"places.slot_payment_processing" = "Processing payment...";
+"places.slot_payment_success_title" = "Booking confirmed";
+"places.slot_payment_success_message" = "Your session has been booked and paid for successfully.";
+"places.slot_payment_error_title" = "Payment failed";
 
 /* Rider Card */
 "places.follow_button"   = "Follow";

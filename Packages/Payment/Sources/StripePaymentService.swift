@@ -1,4 +1,5 @@
 import Foundation
+import Observation
 import StripePaymentSheet
 
 /// Configures the Stripe SDK and prepares `PaymentSheet` instances.
@@ -7,16 +8,31 @@ import StripePaymentSheet
 /// It owns SDK initialization (publishable key) and builds payment sheet
 /// configurations from a server-provided `clientSecret`.
 @MainActor
+@Observable
 public final class StripePaymentService {
+
+    private let applePayMerchantId: String?
+    private let applePayMerchantCountryCode: String
 
     // MARK: - Init
 
     /// Initializes the Stripe SDK with the given publishable key.
     ///
     /// Call this once at app startup (e.g. in `AppSetup.configure()`).
-    /// - Parameter publishableKey: Your Stripe publishable key (`pk_test_…` / `pk_live_…`).
-    public init(publishableKey: String) {
+    /// - Parameters:
+    ///   - publishableKey: Your Stripe publishable key (`pk_test_…` / `pk_live_…`).
+    ///   - applePayMerchantId: Apple Merchant ID (e.g. `merchant.pl.shredmate.app`).
+    ///     When `nil` or empty, Apple Pay will not be offered in the PaymentSheet.
+    ///   - applePayMerchantCountryCode: ISO country code of the merchant (default `PL`).
+    public init(
+        publishableKey: String,
+        applePayMerchantId: String? = nil,
+        applePayMerchantCountryCode: String = "PL"
+    ) {
         STPAPIClient.shared.publishableKey = publishableKey
+        let trimmed = applePayMerchantId?.trimmingCharacters(in: .whitespaces)
+        self.applePayMerchantId = (trimmed?.isEmpty == false) ? trimmed : nil
+        self.applePayMerchantCountryCode = applePayMerchantCountryCode
     }
 
     // MARK: - Payment Sheet
@@ -38,6 +54,13 @@ public final class StripePaymentService {
         var configuration = PaymentSheet.Configuration()
         configuration.merchantDisplayName = merchantDisplayName
         configuration.allowsDelayedPaymentMethods = false
+
+        if let applePayMerchantId {
+            configuration.applePay = .init(
+                merchantId: applePayMerchantId,
+                merchantCountryCode: applePayMerchantCountryCode
+            )
+        }
 
         if let customerId, let ephemeralKeySecret {
             configuration.customer = .init(

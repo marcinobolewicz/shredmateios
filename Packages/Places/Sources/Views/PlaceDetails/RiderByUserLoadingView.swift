@@ -1,6 +1,7 @@
 import SwiftUI
 import Networking
 import Common
+import Payment
 
 /// Resolves a rider profile by **User ID** (not Rider ID), then defers to ``RiderDetailLoadingView``.
 ///
@@ -15,6 +16,7 @@ public struct RiderByUserLoadingView: View {
     let displayName: String
     let riderService: any RiderServiceProtocol
     let mentorSlotsService: any MentorSlotsServiceProtocol
+    let stripePaymentService: StripePaymentService?
     let onMessageTap: (_ userId: UUID, _ displayName: String) -> Void
 
     @State private var state: LoadState = .idle
@@ -25,12 +27,14 @@ public struct RiderByUserLoadingView: View {
         displayName: String,
         riderService: any RiderServiceProtocol,
         mentorSlotsService: any MentorSlotsServiceProtocol,
+        stripePaymentService: StripePaymentService? = nil,
         onMessageTap: @escaping (_ userId: UUID, _ displayName: String) -> Void = { _, _ in }
     ) {
         self.userId = userId
         self.displayName = displayName
         self.riderService = riderService
         self.mentorSlotsService = mentorSlotsService
+        self.stripePaymentService = stripePaymentService
         self.onMessageTap = onMessageTap
     }
 
@@ -47,6 +51,7 @@ public struct RiderByUserLoadingView: View {
                         partialViewData: partialViewData(from: rider),
                         riderService: riderService,
                         mentorSlotsService: mentorSlotsService,
+                        stripePaymentService: stripePaymentService,
                         onMessageTap: onMessageTap
                     )
                 } else {

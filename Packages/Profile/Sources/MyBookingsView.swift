@@ -19,8 +19,9 @@ struct MyBookingsView: View {
             .background(theme.colors.backgroundSecondary)
             .navigationTitle(ProfileStrings.myBookingsTitle.localized)
             .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(theme.colors.backgroundSecondary, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
             .task { viewModel.loadOnAppear() }
-            .refreshable { viewModel.refresh() }
             .alert(
                 ProfileStrings.bookingCancelTitle.localized,
                 isPresented: $viewModel.showCancelConfirmation,
@@ -73,22 +74,10 @@ struct MyBookingsView: View {
     }
 
     private var filterPicker: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: theme.spacing.xs) {
-                ForEach(MyBookingFilter.allCases) { filter in
-                    DSChip(
-                        title: filter.label,
-                        isSelected: viewModel.filter == filter
-                    ) {
-                        withAnimation(.snappy(duration: 0.2)) {
-                            viewModel.toggleFilter(filter)
-                        }
-                    }
-                }
-            }
-            .padding(.horizontal, theme.spacing.md)
-            .padding(.vertical, theme.spacing.sm)
-        }
+        ChipFilterPicker(
+            selection: $viewModel.filter,
+            allLabel: ProfileStrings.slotFilterAll.localized
+        )
     }
 
     @ViewBuilder
@@ -140,6 +129,7 @@ struct MyBookingsView: View {
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
         .background(theme.colors.backgroundSecondary)
+        .refreshable { viewModel.refresh() }
     }
 
     private func slotSummary(_ slot: MentorSlot) -> String {
@@ -217,6 +207,8 @@ private struct BookingRow: View {
         case .completed: return (ProfileStrings.statusCompleted.localized, .green)
         case .cancelled: return (ProfileStrings.statusCancelled.localized, .red)
         case .available: return (ProfileStrings.statusAvailable.localized, .gray)
+        case .reservationPending: return (ProfileStrings.statusReservationPending.localized, .pink)
+        case .rejected: return (ProfileStrings.statusRejected.localized, .red)
         }
     }
 

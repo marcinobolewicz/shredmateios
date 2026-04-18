@@ -90,6 +90,8 @@ enum ProfileStrings: String {
     case statusCompleted = "profile.status_completed"
     case statusCancelled = "profile.status_cancelled"
     case statusAvailable = "profile.status_available"
+    case statusReservationPending = "profile.status_reservation_pending"
+    case statusRejected = "profile.status_rejected"
 
     case bookingCancelTitle = "profile.booking_cancel_title"
     case bookingCancelConfirm = "profile.booking_cancel_confirm"

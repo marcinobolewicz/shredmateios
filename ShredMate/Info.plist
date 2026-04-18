@@ -31,6 +31,10 @@
 	<string>$(ENVIRONMENT)</string>
 	<key>STRIPE_PUBLISHABLE_KEY</key>
 	<string>$(STRIPE_PUBLISHABLE_KEY)</string>
+	<key>STRIPE_APPLE_MERCHANT_ID</key>
+	<string>$(STRIPE_APPLE_MERCHANT_ID)</string>
+	<key>STRIPE_APPLE_MERCHANT_COUNTRY</key>
+	<string>$(STRIPE_APPLE_MERCHANT_COUNTRY)</string>
 	<key>FirebaseAppDelegateProxyEnabled</key>
 	<false/>
 	<key>LSRequiresIPhoneOS</key>

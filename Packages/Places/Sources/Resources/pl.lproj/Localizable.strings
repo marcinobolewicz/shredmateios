@@ -59,6 +59,10 @@
 "places.slot_book_too_soon_title" = "Nie można zarezerwować";
 "places.slot_book_too_soon_message" = "Sesję można zarezerwować najwcześniej 30 minut przed rozpoczęciem.";
 "places.slot_action_error_title" = "Błąd";
+"places.slot_payment_processing" = "Przetwarzanie płatności...";
+"places.slot_payment_success_title" = "Rezerwacja potwierdzona";
+"places.slot_payment_success_message" = "Twoja sesja została zarezerwowana i opłacona.";
+"places.slot_payment_error_title" = "Płatność nieudana";
 
 /* Profil ridera */
 "places.follow_button"   = "Obserwuj";

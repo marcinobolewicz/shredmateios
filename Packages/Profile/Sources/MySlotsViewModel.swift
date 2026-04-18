@@ -2,16 +2,20 @@ import Foundation
 import Networking
 import Common
 
-enum MySlotFilter: String, CaseIterable, Sendable {
-    case all
+enum MySlotFilter: String, CaseIterable, Sendable, Identifiable, ChipFilterOption {
     case available
     case booked
+    case rejected
+    case reservationPending
+
+    var id: String { rawValue }
 
     var label: String {
         switch self {
-        case .all: return ProfileStrings.slotFilterAll.localized
         case .available: return ProfileStrings.statusAvailable.localized
         case .booked: return ProfileStrings.statusBooked.localized
+        case .rejected: return ProfileStrings.statusRejected.localized
+        case .reservationPending: return ProfileStrings.statusReservationPending.localized
         }
     }
 }
@@ -29,7 +33,7 @@ final class MySlotsViewModel {
     private(set) var allSlots: [MentorSlot] = []
     private(set) var state: LoadState = .idle
 
-    var filter: MySlotFilter = .all
+    var filter: MySlotFilter?
 
     var selectedSlot: MentorSlot?
     var showDeleteConfirmation = false
@@ -60,10 +64,12 @@ final class MySlotsViewModel {
     var isEmpty: Bool { filteredSlots.isEmpty }
 
     private var filteredSlots: [MentorSlot] {
+        guard let filter else { return allSlots }
         switch filter {
-        case .all: return allSlots
         case .available: return allSlots.filter { $0.status == .available }
         case .booked: return allSlots.filter { $0.status == .booked }
+        case .rejected: return allSlots.filter { $0.status == .rejected }
+        case .reservationPending: return allSlots.filter { $0.status == .reservationPending }
         }
     }
 

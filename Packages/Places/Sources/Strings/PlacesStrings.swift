@@ -67,6 +67,10 @@ enum PlacesStrings: String {
     case slotBookTooSoonTitle = "places.slot_book_too_soon_title"
     case slotBookTooSoonMessage = "places.slot_book_too_soon_message"
     case slotActionErrorTitle = "places.slot_action_error_title"
+    case slotPaymentProcessing = "places.slot_payment_processing"
+    case slotPaymentSuccessTitle = "places.slot_payment_success_title"
+    case slotPaymentSuccessMessage = "places.slot_payment_success_message"
+    case slotPaymentErrorTitle = "places.slot_payment_error_title"
 
     // MARK: - Mentors Search
     case mentorsSearchTitle = "places.mentors_search_title"

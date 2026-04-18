@@ -4,7 +4,9 @@
 // Production Configuration
 DISPLAY_NAME = ShredMate
 PRODUCT_BUNDLE_IDENTIFIER = pl.shredmate.app
-API_BASE_URL = https://api.shredmate.pl
+API_BASE_URL = https://api.shredmate.eu
 ENVIRONMENT = PROD
 STRIPE_PUBLISHABLE_KEY = pk_test_51TEch9Jx89BufTAcmOleiQS9zFI1aBFAIeNzvRdAFgU0sa4Sf0sBwotGYe68yIyhLhm9xeT0fsPWHKRoz9J0LqG300QGqmN9lV
+STRIPE_APPLE_MERCHANT_ID = merchant.pl.shredmate.app
+STRIPE_APPLE_MERCHANT_COUNTRY = PL
 SWIFT_ACTIVE_COMPILATION_CONDITIONS = $(inherited) PROD
