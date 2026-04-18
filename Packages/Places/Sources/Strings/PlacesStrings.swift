@@ -99,6 +99,13 @@ enum PlacesStrings: String {
     case failedCheckInFormat = "places.failed_check_in_format"
     case failedCheckOutFormat = "places.failed_check_out_format"
 
+    // MARK: - Location Update Prompt
+    case locationUpdatePromptTitle = "places.location_update_prompt_title"
+    case locationUpdatePromptMessage = "places.location_update_prompt_message"
+    case locationUpdateConfirm = "places.location_update_confirm"
+    case locationUpdateOnMap = "places.location_update_on_map"
+    case failedUpdateBaseLocationFormat = "places.failed_update_base_location_format"
+
     case riderProfileUnavailableTitle = "places.rider_profile_unavailable_title"
     case riderProfileUnavailableDescription = "places.rider_profile_unavailable_description"
 
@@ -120,6 +127,10 @@ enum PlacesStrings: String {
 
     static func failedCheckOut(_ error: String) -> String {
         String(format: NSLocalizedString(PlacesStrings.failedCheckOutFormat.rawValue, bundle: .module, comment: ""), error)
+    }
+
+    static func failedUpdateBaseLocation(_ error: String) -> String {
+        String(format: NSLocalizedString(PlacesStrings.failedUpdateBaseLocationFormat.rawValue, bundle: .module, comment: ""), error)
     }
 
     static func mentorSessions(_ count: Int) -> String {

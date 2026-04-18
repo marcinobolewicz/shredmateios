@@ -22,9 +22,6 @@
 "profile.save_location_button" = "Zapisz lokalizację";
 "profile.no_location_set" = "Brak lokalizacji";
 "profile.pick_on_map" = "Wybierz na mapie";
-"profile.tap_map_to_pin" = "Stuknij na mapie, aby ustawić pineskę";
-"profile.location_picker_title" = "Wybierz lokalizację";
-"profile.confirm_location_button" = "Potwierdź";
 "profile.section_sports" = "Sporty";
 "profile.loading_sports" = "Wczytywanie sportów...";
 "profile.logout_button" = "Wyloguj się";

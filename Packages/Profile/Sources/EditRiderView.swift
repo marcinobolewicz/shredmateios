@@ -20,14 +20,10 @@ struct EditRiderView: View {
         .navigationTitle(ProfileStrings.editRiderTitle.localized)
         .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $showLocationPicker) {
-            let initialCoord: CLLocationCoordinate2D? = {
-                guard let lat = Double(viewModel.latitudeText),
-                      let lng = Double(viewModel.longitudeText) else { return nil }
-                return CLLocationCoordinate2D(latitude: lat, longitude: lng)
-            }()
-            MapLocationPickerView(
-                initialCoordinate: initialCoord,
-                initialLocationName: viewModel.locationName
+            LocationPickerView(
+                initialCoordinate: locationCoordinate,
+                initialLocationName: viewModel.locationName,
+                nameField: .editable(placeholder: ProfileStrings.locationNamePlaceholder.localized)
             ) { coord, name in
                 viewModel.latitudeText = String(format: "%.6f", coord.latitude)
                 viewModel.longitudeText = String(format: "%.6f", coord.longitude)

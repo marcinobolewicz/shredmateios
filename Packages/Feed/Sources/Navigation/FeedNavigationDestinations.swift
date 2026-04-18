@@ -53,6 +53,7 @@ struct FeedNavigationDestinations: ViewModifier {
                         avatar: .imageRemote(place.avatarUrl.flatMap(URL.init))
                     ),
                     placesService: placesService,
+                    riderService: riderService,
                     authState: authState,
                     sportPreferenceStorage: sportPreferenceStorage
                 )
@@ -84,6 +85,7 @@ struct FeedNavigationDestinations: ViewModifier {
             PlaceDetailsView(
                 viewData: viewData,
                 placesService: placesService,
+                riderService: riderService,
                 authState: authState,
                 sportPreferenceStorage: sportPreferenceStorage
             )

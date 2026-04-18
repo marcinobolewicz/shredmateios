@@ -35,6 +35,7 @@ public struct PlacesNavigationDestinations: ViewModifier {
             PlaceDetailsView(
                 viewData: viewData,
                 placesService: placesService,
+                riderService: riderService,
                 authState: authState,
                 sportPreferenceStorage: sportPreferenceStorage,
                 onRequestLogin: onRequestLogin

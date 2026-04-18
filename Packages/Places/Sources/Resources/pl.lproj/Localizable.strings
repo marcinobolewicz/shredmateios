@@ -89,5 +89,12 @@
 "places.checked_in_elsewhere_format" = "Już zameldowany w %@";
 "places.failed_check_in_format" = "Nie udało się zameldować: %@";
 "places.failed_check_out_format" = "Nie udało się wymeldować: %@";
+
+/* Aktualizacja lokalizacji po zameldowaniu */
+"places.location_update_prompt_title" = "Zaktualizować lokalizację?";
+"places.location_update_prompt_message" = "Twoja bazowa lokalizacja jest daleko od tego spotu. Chcesz ją zaktualizować?";
+"places.location_update_confirm" = "Zaktualizuj";
+"places.location_update_on_map" = "Na mapie";
+"places.failed_update_base_location_format" = "Nie udało się zaktualizować lokalizacji: %@";
 "places.rider_profile_unavailable_title" = "Profil niedostępny";
 "places.rider_profile_unavailable_description" = "Nie udało się wczytać profilu tego ridera.";

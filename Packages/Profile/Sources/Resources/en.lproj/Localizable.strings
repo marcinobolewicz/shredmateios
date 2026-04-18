@@ -22,9 +22,6 @@
 "profile.save_location_button" = "Save Location";
 "profile.no_location_set" = "No location set";
 "profile.pick_on_map" = "Pick on Map";
-"profile.tap_map_to_pin" = "Tap on the map to drop a pin";
-"profile.location_picker_title" = "Pick Location";
-"profile.confirm_location_button" = "Confirm";
 "profile.section_sports" = "Sports";
 "profile.loading_sports" = "Loading sports...";
 "profile.logout_button" = "Log Out";

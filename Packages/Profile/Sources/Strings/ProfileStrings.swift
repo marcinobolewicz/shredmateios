@@ -32,9 +32,6 @@ enum ProfileStrings: String {
     case saveLocationButton = "profile.save_location_button"
     case noLocationSet = "profile.no_location_set"
     case pickOnMap = "profile.pick_on_map"
-    case tapMapToPin = "profile.tap_map_to_pin"
-    case locationPickerTitle = "profile.location_picker_title"
-    case confirmLocationButton = "profile.confirm_location_button"
 
     case sectionSports = "profile.section_sports"
     case loadingSports = "profile.loading_sports"
