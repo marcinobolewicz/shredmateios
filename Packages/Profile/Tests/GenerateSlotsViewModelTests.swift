@@ -24,8 +24,8 @@ private final class MockMentorSlotsService: MentorSlotsServiceProtocol, @uncheck
     func fetchSlots(mentorRiderId: String, from: String?, to: String?, limit: Int) async throws -> MentorSlotsResponse {
         throw TestError.notImplemented
     }
-    func fetchMySlots() async throws -> MentorSlotsResponse { throw TestError.notImplemented }
-    func fetchBookedByMe() async throws -> MentorSlotsResponse { throw TestError.notImplemented }
+    func fetchMySlots(from: String?, to: String?) async throws -> MentorSlotsResponse { throw TestError.notImplemented }
+    func fetchBookedByMe(from: String?, to: String?) async throws -> MentorSlotsResponse { throw TestError.notImplemented }
     func cancelBooking(id: String) async throws -> MentorSlot { throw TestError.notImplemented }
     func completeSession(id: String, recommend: Bool) async throws -> MentorSlot { throw TestError.notImplemented }
     func deleteSlot(id: String) async throws { throw TestError.notImplemented }

@@ -25,12 +25,27 @@ public enum MentorSlotsAPI {
         return .get("/mentor-slots", query: query, auth: .bearerToken)
     }
 
-    public static func mySlots(limit: Int = 100) -> Endpoint<MentorSlotsResponse> {
-        .get("/mentor-slots/my", query: [URLQueryItem(name: "limit", value: String(limit))], auth: .bearerToken)
+    public static func mySlots(
+        from: String? = nil,
+        to: String? = nil,
+        limit: Int = 100
+    ) -> Endpoint<MentorSlotsResponse> {
+        .get("/mentor-slots/my", query: rangeQuery(from: from, to: to, limit: limit), auth: .bearerToken)
     }
 
-    public static func bookedByMe() -> Endpoint<MentorSlotsResponse> {
-        .get("/mentor-slots/booked-by-me", auth: .bearerToken)
+    public static func bookedByMe(
+        from: String? = nil,
+        to: String? = nil,
+        limit: Int = 100
+    ) -> Endpoint<MentorSlotsResponse> {
+        .get("/mentor-slots/booked-by-me", query: rangeQuery(from: from, to: to, limit: limit), auth: .bearerToken)
+    }
+
+    private static func rangeQuery(from: String?, to: String?, limit: Int) -> [URLQueryItem] {
+        var query: [URLQueryItem] = [URLQueryItem(name: "limit", value: String(limit))]
+        if let from { query.append(URLQueryItem(name: "from", value: from)) }
+        if let to { query.append(URLQueryItem(name: "to", value: to)) }
+        return query
     }
 
     public static func cancelBooking(id: String) -> Endpoint<MentorSlot> {

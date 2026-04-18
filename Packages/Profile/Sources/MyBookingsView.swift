@@ -19,8 +19,14 @@ struct MyBookingsView: View {
             .background(theme.colors.backgroundSecondary)
             .navigationTitle(ProfileStrings.myBookingsTitle.localized)
             .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(theme.colors.backgroundSecondary, for: .navigationBar)
-            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarBackground(.hidden, for: .navigationBar)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(viewModel.timeScope.toggleActionTitle) {
+                        viewModel.toggleScope()
+                    }
+                }
+            }
             .task { viewModel.loadOnAppear() }
             .alert(
                 ProfileStrings.bookingCancelTitle.localized,

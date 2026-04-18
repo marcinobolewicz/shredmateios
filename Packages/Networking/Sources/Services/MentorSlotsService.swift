@@ -8,8 +8,8 @@ public protocol MentorSlotsServiceProtocol: Sendable {
         limit: Int
     ) async throws -> MentorSlotsResponse
 
-    func fetchMySlots() async throws -> MentorSlotsResponse
-    func fetchBookedByMe() async throws -> MentorSlotsResponse
+    func fetchMySlots(from: String?, to: String?) async throws -> MentorSlotsResponse
+    func fetchBookedByMe(from: String?, to: String?) async throws -> MentorSlotsResponse
     func cancelBooking(id: String) async throws -> MentorSlot
     func completeSession(id: String, recommend: Bool) async throws -> MentorSlot
     func deleteSlot(id: String) async throws
@@ -42,12 +42,12 @@ public final class MentorSlotsService: MentorSlotsServiceProtocol, Sendable {
         )
     }
 
-    public func fetchMySlots() async throws -> MentorSlotsResponse {
-        try await client.send(MentorSlotsAPI.mySlots())
+    public func fetchMySlots(from: String?, to: String?) async throws -> MentorSlotsResponse {
+        try await client.send(MentorSlotsAPI.mySlots(from: from, to: to))
     }
 
-    public func fetchBookedByMe() async throws -> MentorSlotsResponse {
-        try await client.send(MentorSlotsAPI.bookedByMe())
+    public func fetchBookedByMe(from: String?, to: String?) async throws -> MentorSlotsResponse {
+        try await client.send(MentorSlotsAPI.bookedByMe(from: from, to: to))
     }
 
     public func cancelBooking(id: String) async throws -> MentorSlot {

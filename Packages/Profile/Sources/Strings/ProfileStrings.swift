@@ -110,6 +110,9 @@ enum ProfileStrings: String {
     case bookingFilterToConfirm = "profile.booking_filter_to_confirm"
     case bookingFilterFinished = "profile.booking_filter_finished"
 
+    case scopeShowArchive = "profile.scope_show_archive"
+    case scopeShowCurrent = "profile.scope_show_current"
+
     // MARK: - My Slots (Mentor)
     case sectionMySlots = "profile.section_my_slots"
     case mySlotsTitle = "profile.my_slots_title"

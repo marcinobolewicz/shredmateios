@@ -8,6 +8,7 @@ final class MyBookingsViewModel {
 
     private(set) var allSlots: [MentorSlot] = []
     private(set) var state: LoadState = .idle
+    private(set) var timeScope: SlotTimeScope = .current
     var actionError: AppError?
 
     var filter: MyBookingFilter?
@@ -47,6 +48,12 @@ final class MyBookingsViewModel {
     }
 
     func refresh() {
+        Task { await load() }
+    }
+
+    func toggleScope() {
+        timeScope = timeScope.toggled
+        allSlots = []
         Task { await load() }
     }
 
@@ -122,8 +129,9 @@ final class MyBookingsViewModel {
 
     private func load() async {
         state = .loading
+        let range = timeScope.dateRange()
         do {
-            let response = try await service.fetchBookedByMe()
+            let response = try await service.fetchBookedByMe(from: range.from, to: range.to)
             allSlots = response.items
             state = .loaded
         } catch {

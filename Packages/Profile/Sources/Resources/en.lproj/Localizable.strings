@@ -90,6 +90,9 @@
 "profile.booking_filter_to_confirm" = "To confirm";
 "profile.booking_filter_finished" = "Finished";
 
+"profile.scope_show_archive" = "Show archive";
+"profile.scope_show_current" = "Show current";
+
 /* My Posts */
 "profile.delete_post" = "Delete post";
 "profile.ok" = "OK";

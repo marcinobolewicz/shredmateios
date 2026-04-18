@@ -32,6 +32,7 @@ final class MySlotsViewModel {
 
     private(set) var allSlots: [MentorSlot] = []
     private(set) var state: LoadState = .idle
+    private(set) var timeScope: SlotTimeScope = .current
 
     var filter: MySlotFilter?
 
@@ -84,6 +85,12 @@ final class MySlotsViewModel {
         Task { await load() }
     }
 
+    func toggleScope() {
+        timeScope = timeScope.toggled
+        allSlots = []
+        Task { await load() }
+    }
+
     func deleteTapped(_ slot: MentorSlot) {
         guard slot.status == .available else { return }
         selectedSlot = slot
@@ -110,8 +117,9 @@ final class MySlotsViewModel {
 
     private func load() async {
         state = .loading
+        let range = timeScope.dateRange()
         do {
-            let response = try await service.fetchMySlots()
+            let response = try await service.fetchMySlots(from: range.from, to: range.to)
             allSlots = response.items
             state = .loaded
         } catch {

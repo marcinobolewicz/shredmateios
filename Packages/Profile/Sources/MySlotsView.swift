@@ -20,8 +20,14 @@ struct MySlotsView: View {
         .background(theme.colors.backgroundSecondary)
         .navigationTitle(ProfileStrings.mySlotsTitle.localized)
         .navigationBarTitleDisplayMode(.inline)
-        .toolbarBackground(theme.colors.backgroundSecondary, for: .navigationBar)
-        .toolbarBackground(.visible, for: .navigationBar)
+        .toolbarBackground(.hidden, for: .navigationBar)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button(viewModel.timeScope.toggleActionTitle) {
+                    viewModel.toggleScope()
+                }
+            }
+        }
         .task { viewModel.loadOnAppear() }
         .alert(
             ProfileStrings.slotDeleteTitle.localized,
@@ -234,4 +240,3 @@ private struct MentorSlotRow: View {
         return formatter.string(from: NSNumber(value: value)) ?? "\(value) \(currency)"
     }
 }
-
