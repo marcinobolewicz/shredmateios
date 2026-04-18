@@ -15,7 +15,7 @@ public protocol MentorSlotsServiceProtocol: Sendable {
     func deleteSlot(id: String) async throws
     func generateSlots(request: GenerateSlotsRequest) async throws -> GenerateSlotsResponse
     func createPaymentIntent(slotId: String) async throws -> PaymentIntentResponse
-    func confirmPayment(slotId: String, paymentIntentId: String) async throws -> MentorSlot
+    func confirmPayment(slotId: String, paymentIntentId: String) async throws -> ConfirmPaymentResponse
 }
 
 public final class MentorSlotsService: MentorSlotsServiceProtocol, Sendable {
@@ -70,7 +70,7 @@ public final class MentorSlotsService: MentorSlotsServiceProtocol, Sendable {
         try await client.send(MentorSlotsAPI.createPaymentIntent(slotId: slotId))
     }
 
-    public func confirmPayment(slotId: String, paymentIntentId: String) async throws -> MentorSlot {
+    public func confirmPayment(slotId: String, paymentIntentId: String) async throws -> ConfirmPaymentResponse {
         try await client.send(MentorSlotsAPI.confirmPayment(slotId: slotId, paymentIntentId: paymentIntentId))
     }
 }

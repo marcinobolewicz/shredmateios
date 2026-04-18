@@ -45,7 +45,7 @@ public enum MentorSlotsAPI {
         .post("/mentor-slots/\(slotId)/payment-intent", auth: .bearerToken)
     }
 
-    public static func confirmPayment(slotId: String, paymentIntentId: String) -> Endpoint<MentorSlot> {
+    public static func confirmPayment(slotId: String, paymentIntentId: String) -> Endpoint<ConfirmPaymentResponse> {
         .post(
             "/mentor-slots/\(slotId)/confirm-payment",
             body: ConfirmPaymentBody(paymentIntentId: paymentIntentId),

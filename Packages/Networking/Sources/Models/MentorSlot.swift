@@ -80,3 +80,26 @@ public struct ConfirmPaymentBody: Encodable, Sendable {
         self.paymentIntentId = paymentIntentId
     }
 }
+
+public struct ConfirmPaymentResponse: Decodable, Sendable {
+    public let status: String
+    public let slot: ConfirmedSlot
+
+    public struct ConfirmedSlot: Decodable, Sendable {
+        public let id: String
+        public let startTime: String
+        public let mentorRider: Rider
+        public let studentRider: Student?
+        public let sport: MentorSlotSport
+        public let place: MentorSlotPlace?
+
+        public struct Rider: Decodable, Sendable {
+            public let displayName: String
+        }
+
+        public struct Student: Decodable, Sendable {
+            public let id: String
+            public let displayName: String
+        }
+    }
+}
