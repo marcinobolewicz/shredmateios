@@ -43,6 +43,14 @@ extension GuestSlide {
             ctaTitle: AppStrings.guestSlide3Cta.localized,
             contentAlignment: .bottom,
             targetTab: .explore
+        ),
+        GuestSlide(
+            id: "slide_3",
+            imageName: "slide_3",
+            title: AppStrings.guestSlide4Title.localized,
+            subtitle: AppStrings.guestSlide4Subtitle.localized,
+            ctaTitle: AppStrings.guestSlide4Cta.localized,
+            contentAlignment: .bottom
         )
     ]
 }
