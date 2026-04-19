@@ -29,6 +29,10 @@ enum AppStrings: String {
     case guestSlide3Subtitle = "app.guest_slide3_subtitle"
     case guestSlide3Cta      = "app.guest_slide3_cta"
 
+    case guestSlide4Title    = "app.guest_slide4_title"
+    case guestSlide4Subtitle = "app.guest_slide4_subtitle"
+    case guestSlide4Cta      = "app.guest_slide4_cta"
+
     var localized: String {
         NSLocalizedString(rawValue, bundle: .module, comment: "")
     }

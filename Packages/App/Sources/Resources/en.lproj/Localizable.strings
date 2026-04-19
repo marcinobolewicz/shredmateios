@@ -11,14 +11,18 @@
 "app.home_welcome_title" = "Welcome to ShredMate!";
 "app.home_sign_out" = "Sign Out";
 
-"app.guest_slide1_title"    = "Find an Instructor / Mentor";
-"app.guest_slide1_subtitle" = "Mentors are recommended by the community, so you'll easily find a good one — matched to your sport and specific spot. Log in to see recommendations.";
-"app.guest_slide1_cta"      = "Log In";
+"app.guest_slide1_title"    = "Learn from the Best at Your Spot";
+"app.guest_slide1_subtitle" = "Mentors recommended by the community, not by an algorithm. Filter by sport, spot and riding style — find someone who truly knows your conditions.";
+"app.guest_slide1_cta"      = "Log in to see recommendations";
 
-"app.guest_slide2_title"    = "Find Riding Buddies Nearby";
-"app.guest_slide2_subtitle" = "Follow others, check who's checking in at nearby spots and arrange group rides. Log in to join the community.";
-"app.guest_slide2_cta"      = "Log In";
+"app.guest_slide2_title"    = "Ride with Others, Not Alone";
+"app.guest_slide2_subtitle" = "See who's checking in at nearby spots, follow riders and arrange group sessions.";
+"app.guest_slide2_cta"      = "Join the community";
 
-"app.guest_slide3_title"    = "Discover Spots and Riders Nearby";
-"app.guest_slide3_subtitle" = "Track rider activity on the slopes, explore spots and book slots with local riders.";
-"app.guest_slide3_cta"      = "Explore Spots";
+"app.guest_slide3_title"    = "Discover New Spots and Riders Nearby";
+"app.guest_slide3_subtitle" = "Track real-time activity on the slopes, explore places you didn't know about, book slots with local mentors.";
+"app.guest_slide3_cta"      = "See what's happening nearby";
+
+"app.guest_slide4_title"    = "Become a Mentor Yourself";
+"app.guest_slide4_subtitle" = "Ride well? Teach others and earn from your passion. Set your own slots, rates and spots — payouts via Stripe straight to your account.";
+"app.guest_slide4_cta"      = "Create a mentor profile";
