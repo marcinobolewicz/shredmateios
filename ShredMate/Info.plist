@@ -33,6 +33,8 @@
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>ShredMate uses the camera to scan payment cards when booking a session with a mentor.</string>
 	<key>STRIPE_APPLE_MERCHANT_COUNTRY</key>
 	<string>$(STRIPE_APPLE_MERCHANT_COUNTRY)</string>
 	<key>STRIPE_APPLE_MERCHANT_ID</key>
