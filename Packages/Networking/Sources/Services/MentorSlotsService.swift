@@ -11,6 +11,7 @@ public protocol MentorSlotsServiceProtocol: Sendable {
     func fetchMySlots(from: String?, to: String?) async throws -> MentorSlotsResponse
     func fetchBookedByMe(from: String?, to: String?) async throws -> MentorSlotsResponse
     func cancelBooking(id: String) async throws -> MentorSlot
+    func rejectSession(id: String) async throws -> MentorSlot
     func completeSession(id: String, recommend: Bool) async throws -> MentorSlot
     func deleteSlot(id: String) async throws
     func generateSlots(request: GenerateSlotsRequest) async throws -> GenerateSlotsResponse
@@ -52,6 +53,10 @@ public final class MentorSlotsService: MentorSlotsServiceProtocol, Sendable {
 
     public func cancelBooking(id: String) async throws -> MentorSlot {
         try await client.send(MentorSlotsAPI.cancelBooking(id: id))
+    }
+
+    public func rejectSession(id: String) async throws -> MentorSlot {
+        try await client.send(MentorSlotsAPI.rejectSession(id: id))
     }
 
     public func completeSession(id: String, recommend: Bool) async throws -> MentorSlot {

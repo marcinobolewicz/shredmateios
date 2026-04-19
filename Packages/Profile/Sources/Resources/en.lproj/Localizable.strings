@@ -83,12 +83,17 @@
 "profile.booking_session_not_started_title" = "Session not started yet";
 "profile.booking_session_not_started_message" = "You can confirm the session only after the start time has passed.";
 
+"profile.booking_reject_title" = "Reject session?";
+"profile.booking_reject_message_format" = "Did %@ not show up? Rejecting will cancel the booking and refund the payment.";
+"profile.booking_reject_confirm" = "Reject";
+"profile.booking_reject_button" = "Mentor no-show";
+
 "profile.booking_filter_upcoming" = "Booked";
 "profile.booking_filter_to_confirm" = "To confirm";
 "profile.booking_filter_finished" = "Finished";
 
-"profile.scope_show_archive" = "Show archive";
-"profile.scope_show_current" = "Show current";
+"profile.scope_show_archive" = "Archive";
+"profile.scope_show_current" = "Current";
 
 /* My Posts */
 "profile.delete_post" = "Delete post";

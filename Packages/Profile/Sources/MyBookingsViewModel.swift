@@ -16,7 +16,10 @@ final class MyBookingsViewModel {
     var selectedSlot: MentorSlot?
     var showCancelConfirmation = false
     var showCompleteConfirmation = false
+    var showRejectConfirmation = false
     var showSessionNotStarted = false
+
+    static let rejectWindowSeconds: TimeInterval = 30 * 60
 
     private let service: MentorSlotsServiceProtocol
 
@@ -62,22 +65,24 @@ final class MyBookingsViewModel {
     func action(for slot: MentorSlot) -> BookingAction? {
         switch slot.status {
         case .booked:
+            let now = Date()
             let start = DateFormatting.shared.parseISO8601(slot.startTime) ?? .distantPast
-            if start > Date() {
-                let hoursLeft = start.timeIntervalSince(Date()) / 3600
-                if hoursLeft >= 2 {
-                    return .cancel
-                } else {
-                    return .tooLateToCancel
-                }
+            if start > now {
+                let hoursLeft = start.timeIntervalSince(now) / 3600
+                return hoursLeft >= 2 ? .cancel : .tooLateToCancel
             } else {
-                return .complete
+                let end = DateFormatting.shared.parseISO8601(slot.endTime) ?? .distantFuture
+                return .complete(canReject: Self.canReject(now: now, startTime: start, endTime: end))
             }
         case .completed:
             return .completed(slot.recommendationStatus)
         default:
             return nil
         }
+    }
+
+    static func canReject(now: Date, startTime: Date, endTime: Date) -> Bool {
+        startTime <= now && now <= endTime.addingTimeInterval(rejectWindowSeconds)
     }
 
     func cancelTapped(_ slot: MentorSlot) {
@@ -94,6 +99,11 @@ final class MyBookingsViewModel {
         }
         selectedSlot = slot
         showCompleteConfirmation = true
+    }
+
+    func rejectTapped(_ slot: MentorSlot) {
+        selectedSlot = slot
+        showRejectConfirmation = true
     }
 
     func confirmCancel() async {
@@ -118,10 +128,22 @@ final class MyBookingsViewModel {
         selectedSlot = nil
     }
 
+    func confirmReject() async {
+        guard let slot = selectedSlot else { return }
+        do {
+            _ = try await service.rejectSession(id: slot.id)
+            await load()
+        } catch {
+            actionError = .from(error)
+        }
+        selectedSlot = nil
+    }
+
     func dismissAction() {
         selectedSlot = nil
         showCancelConfirmation = false
         showCompleteConfirmation = false
+        showRejectConfirmation = false
         showSessionNotStarted = false
     }
 
@@ -179,6 +201,6 @@ enum MyBookingFilter: String, CaseIterable, Sendable, Identifiable, ChipFilterOp
 enum BookingAction: Equatable {
     case cancel
     case tooLateToCancel
-    case complete
+    case complete(canReject: Bool)
     case completed(MentorSlotRecommendationStatus?)
 }

@@ -83,12 +83,17 @@
 "profile.booking_session_not_started_title" = "Sesja jeszcze się nie rozpoczęła";
 "profile.booking_session_not_started_message" = "Sesję można potwierdzić dopiero po upływie godziny rozpoczęcia.";
 
+"profile.booking_reject_title" = "Odrzucić sesję?";
+"profile.booking_reject_message_format" = "Czy mentor %@ nie pojawił się na sesji? Odrzucenie anuluje rezerwację i zwróci płatność.";
+"profile.booking_reject_confirm" = "Odrzuć";
+"profile.booking_reject_button" = "Mentor nie dotarł";
+
 "profile.booking_filter_upcoming" = "Zarezerwowane";
 "profile.booking_filter_to_confirm" = "Do potwierdzenia";
 "profile.booking_filter_finished" = "Zakończone";
 
-"profile.scope_show_archive" = "Pokaż archiwalne";
-"profile.scope_show_current" = "Pokaż aktualne";
+"profile.scope_show_archive" = "Archiwalne";
+"profile.scope_show_current" = "Aktualne";
 
 /* Moje posty */
 "profile.delete_post" = "Usuń post";

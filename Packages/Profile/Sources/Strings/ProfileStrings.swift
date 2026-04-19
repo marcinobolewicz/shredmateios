@@ -102,6 +102,10 @@ enum ProfileStrings: String {
     case bookingRecommended = "profile.booking_recommended"
     case bookingSessionNotStartedTitle = "profile.booking_session_not_started_title"
     case bookingSessionNotStartedMessage = "profile.booking_session_not_started_message"
+    case bookingRejectTitle = "profile.booking_reject_title"
+    case bookingRejectMessageFormat = "profile.booking_reject_message_format"
+    case bookingRejectConfirm = "profile.booking_reject_confirm"
+    case bookingRejectButton = "profile.booking_reject_button"
 
     case bookingFilterUpcoming = "profile.booking_filter_upcoming"
     case bookingFilterToConfirm = "profile.booking_filter_to_confirm"
@@ -212,6 +216,10 @@ enum ProfileStrings: String {
 
     static func bookingCompleteMessage(_ mentorName: String) -> String {
         String(format: NSLocalizedString(ProfileStrings.bookingCompleteMessageFormat.rawValue, bundle: .module, comment: ""), mentorName)
+    }
+
+    static func bookingRejectMessage(_ mentorName: String) -> String {
+        String(format: NSLocalizedString(ProfileStrings.bookingRejectMessageFormat.rawValue, bundle: .module, comment: ""), mentorName)
     }
 
     static func generatePartialResult(_ generated: Int, _ skipped: Int) -> String {

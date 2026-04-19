@@ -68,6 +68,20 @@ struct MyBookingsView: View {
             } message: {
                 Text(ProfileStrings.bookingSessionNotStartedMessage.localized)
             }
+            .alert(
+                ProfileStrings.bookingRejectTitle.localized,
+                isPresented: $viewModel.showRejectConfirmation,
+                presenting: viewModel.selectedSlot
+            ) { _ in
+                Button(CommonStrings.cancelButton.localized, role: .cancel) {
+                    viewModel.dismissAction()
+                }
+                Button(ProfileStrings.bookingRejectConfirm.localized, role: .destructive) {
+                    Task { await viewModel.confirmReject() }
+                }
+            } message: { slot in
+                Text(ProfileStrings.bookingRejectMessage(slot.mentorRider.displayName))
+            }
             .alert(item: $viewModel.actionError) { err in
                 Alert(
                     title: Text(err.title),
@@ -119,7 +133,8 @@ struct MyBookingsView: View {
                     slot: slot,
                     action: viewModel.action(for: slot),
                     onCancel: { viewModel.cancelTapped(slot) },
-                    onComplete: { viewModel.completeTapped(slot) }
+                    onComplete: { viewModel.completeTapped(slot) },
+                    onReject: { viewModel.rejectTapped(slot) }
                 )
                 .listRowInsets(EdgeInsets(
                     top: theme.spacing.sm,
@@ -154,6 +169,7 @@ private struct BookingRow: View {
     let action: BookingAction?
     let onCancel: () -> Void
     let onComplete: () -> Void
+    let onReject: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: theme.spacing.xs) {
@@ -231,10 +247,18 @@ private struct BookingRow: View {
                 .dsTextStyle(.caption)
                 .foregroundStyle(theme.colors.textSecondary)
 
-        case .complete:
-            Button(ProfileStrings.bookingConfirmSession.localized, action: onComplete)
-                .buttonStyle(.borderedProminent)
-                .controlSize(.small)
+        case .complete(let canReject):
+            HStack(spacing: theme.spacing.sm) {
+                Button(ProfileStrings.bookingConfirmSession.localized, action: onComplete)
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.small)
+
+                if canReject {
+                    Button(ProfileStrings.bookingRejectButton.localized, role: .destructive, action: onReject)
+                        .buttonStyle(.bordered)
+                        .controlSize(.small)
+                }
+            }
 
         case .completed(let recommendation):
             if recommendation == .recommended {

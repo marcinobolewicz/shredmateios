@@ -52,6 +52,10 @@ public enum MentorSlotsAPI {
         .post("/mentor-slots/\(id)/cancel", auth: .bearerToken)
     }
 
+    public static func rejectSession(id: String) -> Endpoint<MentorSlot> {
+        .post("/mentor-slots/\(id)/reject", auth: .bearerToken)
+    }
+
     public static func completeSession(id: String, recommend: Bool) -> Endpoint<MentorSlot> {
         .post("/mentor-slots/\(id)/complete", body: CompleteSessionBody(recommend: recommend), auth: .bearerToken)
     }
