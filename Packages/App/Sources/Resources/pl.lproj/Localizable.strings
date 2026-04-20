@@ -13,7 +13,7 @@
 
 "app.guest_slide1_title"    = "Ucz się od najlepszych na Twoim spocie";
 "app.guest_slide1_subtitle" = "Mentorzy polecani przez społeczność, nie algorytm. Filtruj po sporcie, spocie i stylu jazdy — znajdź kogoś, kto naprawdę zna Twoje warunki.";
-"app.guest_slide1_cta"      = "Zaloguj się, żeby zobaczyć rekomendacje";
+"app.guest_slide1_cta"      = "Zobacz rekomendacje";
 
 "app.guest_slide2_title"    = "Jedź z ludźmi, nie sam";
 "app.guest_slide2_subtitle" = "Zobacz kto melduje się na pobliskich spotach, obserwuj riderów i umawiajcie się na wspólne zjazdy.";

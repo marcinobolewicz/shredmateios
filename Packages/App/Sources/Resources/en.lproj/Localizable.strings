@@ -13,7 +13,7 @@
 
 "app.guest_slide1_title"    = "Learn from the Best at Your Spot";
 "app.guest_slide1_subtitle" = "Mentors recommended by the community, not by an algorithm. Filter by sport, spot and riding style — find someone who truly knows your conditions.";
-"app.guest_slide1_cta"      = "Log in to see recommendations";
+"app.guest_slide1_cta"      = "See recommendations";
 
 "app.guest_slide2_title"    = "Ride with Others, Not Alone";
 "app.guest_slide2_subtitle" = "See who's checking in at nearby spots, follow riders and arrange group sessions.";
