@@ -13,4 +13,12 @@ public enum StripeAPI {
     public static func status() -> Endpoint<StripeStatus> {
         .get("/riders/me/stripe/status", auth: .bearerToken)
     }
+
+    public static func balance() -> Endpoint<StripeBalance> {
+        .get("/riders/me/stripe/balance", auth: .bearerToken)
+    }
+
+    public static func createDashboardLink() -> Endpoint<StripeDashboardLink> {
+        .post("/riders/me/stripe/dashboard-link", auth: .bearerToken)
+    }
 }

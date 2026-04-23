@@ -180,3 +180,15 @@
 "stripe.return_status_success" = "Onboarding completed successfully!";
 "stripe.return_status_pending" = "Onboarding in progress — additional verification may be required.";
 "stripe.return_status_restricted" = "Account restricted — please complete the remaining steps.";
+
+/* Mentor Wallet (Stripe) */
+"stripe.wallet_title" = "Wallet";
+"stripe.wallet_available_label" = "Available for payout";
+"stripe.wallet_pending_label" = "Pending:";
+"stripe.wallet_pending_tooltip" = "Funds become available after Stripe settles them (about 7 days).";
+"stripe.wallet_payouts_info" = "Payouts are sent automatically by Stripe to your bank account. In the dashboard you can also trigger a manual payout or change your bank account.";
+"stripe.wallet_unavailable" = "Balance could not be loaded. Please try refreshing in a moment.";
+"stripe.open_dashboard_button" = "Open Stripe Dashboard";
+"stripe.refresh_balance_button" = "Refresh balance";
+"stripe.invalid_dashboard_url" = "Invalid dashboard URL received";
+"stripe.failed_dashboard_link_format" = "Failed to open Stripe dashboard: %@";

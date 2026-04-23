@@ -4,6 +4,8 @@ public protocol StripeServiceProtocol: Sendable {
     func createAccount() async throws -> StripeAccount
     func createOnboardingLink() async throws -> StripeOnboardingLink
     func fetchStatus() async throws -> StripeStatus
+    func fetchBalance() async throws -> StripeBalance
+    func createDashboardLink() async throws -> StripeDashboardLink
 }
 
 public final class StripeService: StripeServiceProtocol, Sendable {
@@ -24,5 +26,13 @@ public final class StripeService: StripeServiceProtocol, Sendable {
 
     public func fetchStatus() async throws -> StripeStatus {
         try await client.send(StripeAPI.status())
+    }
+
+    public func fetchBalance() async throws -> StripeBalance {
+        try await client.send(StripeAPI.balance())
+    }
+
+    public func createDashboardLink() async throws -> StripeDashboardLink {
+        try await client.send(StripeAPI.createDashboardLink())
     }
 }

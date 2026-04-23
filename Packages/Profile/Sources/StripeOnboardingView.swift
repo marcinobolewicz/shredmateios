@@ -1,6 +1,7 @@
 import SwiftUI
 import Theme
 import Common
+import Networking
 
 struct StripeOnboardingView: View {
 
@@ -26,6 +27,9 @@ struct StripeOnboardingView: View {
                     }
                     if viewModel.status != nil {
                         statusCard
+                    }
+                    if viewModel.isReady {
+                        walletCard
                     }
                     actionSection
                 }
@@ -116,14 +120,109 @@ struct StripeOnboardingView: View {
         .clipShape(RoundedRectangle(cornerRadius: theme.radius.lg, style: .continuous))
     }
 
+    // MARK: - Wallet
+
+    private var walletCard: some View {
+        VStack(alignment: .leading, spacing: theme.spacing.sm) {
+            Text(StripeStrings.walletTitle.localized)
+                .font(theme.typography.headline)
+                .foregroundStyle(theme.colors.textPrimary)
+
+            if viewModel.step == .loadingBalance && viewModel.balance == nil {
+                HStack {
+                    Spacer()
+                    ProgressView()
+                    Spacer()
+                }
+                .padding(.vertical, theme.spacing.sm)
+            } else if viewModel.balanceUnavailable {
+                walletUnavailableMessage
+            } else {
+                walletAmounts
+            }
+
+            Text(StripeStrings.walletPayoutsInfo.localized)
+                .font(theme.typography.footnote)
+                .foregroundStyle(theme.colors.textSecondary)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(theme.spacing.lg)
+        .background(theme.colors.background)
+        .clipShape(RoundedRectangle(cornerRadius: theme.radius.lg, style: .continuous))
+    }
+
+    private var walletUnavailableMessage: some View {
+        HStack(alignment: .top, spacing: theme.spacing.xs) {
+            Image(systemName: "exclamationmark.circle")
+                .foregroundStyle(theme.colors.warning)
+            Text(StripeStrings.walletUnavailable.localized)
+                .font(theme.typography.subheadline)
+                .foregroundStyle(theme.colors.textSecondary)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    @ViewBuilder
+    private var walletAmounts: some View {
+        let available = StripeBalanceFormatter.sum(viewModel.balance?.available)
+        let pending = StripeBalanceFormatter.sum(viewModel.balance?.pending)
+        let primaryCurrency = available.first?.key
+            ?? pending.first?.key
+            ?? StripeBalanceFormatter.defaultCurrency
+
+        VStack(alignment: .leading, spacing: theme.spacing.xs) {
+            Text(StripeStrings.walletAvailableLabel.localized)
+                .font(theme.typography.footnote)
+                .foregroundStyle(theme.colors.textSecondary)
+
+            Text(StripeBalanceFormatter.format(
+                minorUnits: available[primaryCurrency] ?? 0,
+                currency: primaryCurrency
+            ))
+            .font(theme.typography.largeTitle)
+            .foregroundStyle(theme.colors.textPrimary)
+
+            HStack(spacing: theme.spacing.xs) {
+                Text(StripeStrings.walletPendingLabel.localized)
+                Text(StripeBalanceFormatter.format(
+                    minorUnits: pending[primaryCurrency] ?? 0,
+                    currency: primaryCurrency
+                ))
+            }
+            .font(theme.typography.footnote)
+            .foregroundStyle(theme.colors.textSecondary)
+
+            if viewModel.balance?.pending.isEmpty == false {
+                Text(StripeStrings.walletPendingTooltip.localized)
+                    .font(theme.typography.caption)
+                    .foregroundStyle(theme.colors.textTertiary)
+            }
+        }
+    }
+
     // MARK: - Actions
 
     @ViewBuilder
     private var actionSection: some View {
         if viewModel.step == .awaitingReturn {
             awaitingReturnCard
-        } else if viewModel.isOnboardingComplete && viewModel.areChargesEnabled && viewModel.arePayoutsEnabled {
-            EmptyView()
+        } else if viewModel.isReady {
+            VStack(spacing: theme.spacing.sm) {
+                DSLoadingButton(
+                    StripeStrings.openDashboardButton.localized,
+                    isLoading: viewModel.isOpeningDashboard
+                ) {
+                    Task { await viewModel.openDashboard() }
+                }
+
+                DSLoadingButton(
+                    secondary: StripeStrings.refreshBalanceButton.localized,
+                    isLoading: viewModel.step == .loadingBalance
+                        || viewModel.step == .refreshingStatus
+                ) {
+                    Task { await viewModel.refreshAfterReturn() }
+                }
+            }
         } else {
             VStack(spacing: theme.spacing.sm) {
                 DSLoadingButton(
@@ -221,6 +320,31 @@ private struct ReturnStatusBanner: View {
         case .pending: StripeStrings.returnStatusPending.localized
         case .restricted: StripeStrings.returnStatusRestricted.localized
         }
+    }
+}
+
+// MARK: - Balance Formatter
+
+enum StripeBalanceFormatter {
+
+    static let defaultCurrency = "pln"
+
+    static func sum(_ entries: [StripeBalanceEntry]?) -> [String: Int] {
+        guard let entries else { return [:] }
+        return entries.reduce(into: [String: Int]()) { result, entry in
+            result[entry.currency.lowercased(), default: 0] += entry.amount
+        }
+    }
+
+    static func format(minorUnits: Int, currency: String) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        formatter.currencyCode = currency.uppercased()
+        formatter.maximumFractionDigits = 2
+        formatter.minimumFractionDigits = 2
+        let major = Decimal(minorUnits) / 100
+        return formatter.string(from: major as NSDecimalNumber)
+            ?? "\(major) \(currency.uppercased())"
     }
 }
 

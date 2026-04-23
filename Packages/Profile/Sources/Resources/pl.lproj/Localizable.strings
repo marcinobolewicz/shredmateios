@@ -180,3 +180,15 @@
 "stripe.return_status_success" = "Konfiguracja zakończona pomyślnie!";
 "stripe.return_status_pending" = "Konfiguracja w toku — może być wymagana dodatkowa weryfikacja.";
 "stripe.return_status_restricted" = "Konto ograniczone — dokończ pozostałe kroki konfiguracji.";
+
+/* Portfel mentora (Stripe) */
+"stripe.wallet_title" = "Portfel";
+"stripe.wallet_available_label" = "Dostępne do wypłaty";
+"stripe.wallet_pending_label" = "W trakcie rozliczania:";
+"stripe.wallet_pending_tooltip" = "Środki będą dostępne po rozliczeniu przez Stripe (ok. 7 dni).";
+"stripe.wallet_payouts_info" = "Wypłaty realizowane są automatycznie przez Stripe na Twoje konto bankowe. W dashboardzie możesz też wypłacić środki ręcznie lub zmienić rachunek.";
+"stripe.wallet_unavailable" = "Nie udało się pobrać salda. Spróbuj odświeżyć za chwilę.";
+"stripe.open_dashboard_button" = "Otwórz dashboard Stripe";
+"stripe.refresh_balance_button" = "Odśwież saldo";
+"stripe.invalid_dashboard_url" = "Otrzymano nieprawidłowy adres dashboardu";
+"stripe.failed_dashboard_link_format" = "Nie udało się otworzyć dashboardu Stripe: %@";

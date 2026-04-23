@@ -44,3 +44,35 @@ public struct StripeStatus: Codable, Sendable, Equatable {
         self.payoutsEnabled = payoutsEnabled
     }
 }
+
+// MARK: - Stripe Balance
+
+public struct StripeBalanceEntry: Codable, Sendable, Equatable {
+    public let amount: Int
+    public let currency: String
+
+    public init(amount: Int, currency: String) {
+        self.amount = amount
+        self.currency = currency
+    }
+}
+
+public struct StripeBalance: Codable, Sendable, Equatable {
+    public let available: [StripeBalanceEntry]
+    public let pending: [StripeBalanceEntry]
+
+    public init(available: [StripeBalanceEntry], pending: [StripeBalanceEntry]) {
+        self.available = available
+        self.pending = pending
+    }
+}
+
+// MARK: - Stripe Dashboard Link
+
+public struct StripeDashboardLink: Codable, Sendable, Equatable {
+    public let url: String
+
+    public init(url: String) {
+        self.url = url
+    }
+}

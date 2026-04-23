@@ -32,16 +32,20 @@ public final class StripeOnboardingViewModel {
         case creatingLink
         case awaitingReturn
         case refreshingStatus
+        case loadingBalance
+        case openingDashboard
     }
 
     private(set) var step: Step = .idle
     private(set) var status: StripeStatus?
+    private(set) var balance: StripeBalance?
+    private(set) var balanceUnavailable: Bool = false
     private(set) var error: String?
     private(set) var returnStatus: StripeReturnStatus?
 
     var isLoading: Bool {
         switch step {
-        case .creatingAccount, .creatingLink, .refreshingStatus: true
+        case .creatingAccount, .creatingLink, .refreshingStatus, .loadingBalance, .openingDashboard: true
         default: false
         }
     }
@@ -56,6 +60,14 @@ public final class StripeOnboardingViewModel {
 
     var areChargesEnabled: Bool {
         status?.chargesEnabled == true
+    }
+
+    var isReady: Bool {
+        isOnboardingComplete && areChargesEnabled && arePayoutsEnabled
+    }
+
+    var isOpeningDashboard: Bool {
+        step == .openingDashboard
     }
 
     // MARK: - Dependencies
@@ -88,6 +100,13 @@ public final class StripeOnboardingViewModel {
         }
 
         step = .idle
+
+        if isReady {
+            await loadBalance()
+        } else {
+            balance = nil
+            balanceUnavailable = false
+        }
     }
 
     func startOnboarding() async {
@@ -134,6 +153,51 @@ public final class StripeOnboardingViewModel {
             self.error = StripeStrings.failedRefreshStatus(error.localizedDescription)
         }
 
+        step = .idle
+
+        if isReady {
+            await loadBalance()
+        } else {
+            balance = nil
+            balanceUnavailable = false
+        }
+    }
+
+    func loadBalance() async {
+        step = .loadingBalance
+        error = nil
+
+        do {
+            balance = try await stripeService.fetchBalance()
+            balanceUnavailable = false
+        } catch {
+            balance = nil
+            balanceUnavailable = true
+        }
+
+        step = .idle
+    }
+
+    func openDashboard() async {
+        step = .openingDashboard
+        error = nil
+
+        let dashboardURL: URL
+        do {
+            let link = try await stripeService.createDashboardLink()
+            guard let url = URL(string: link.url) else {
+                self.error = StripeStrings.invalidDashboardURL.localized
+                step = .idle
+                return
+            }
+            dashboardURL = url
+        } catch {
+            self.error = StripeStrings.failedDashboardLink(error.localizedDescription)
+            step = .idle
+            return
+        }
+
+        await urlOpener.open(dashboardURL)
         step = .idle
     }
 

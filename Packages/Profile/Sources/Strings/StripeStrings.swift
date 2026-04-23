@@ -15,15 +15,26 @@ enum StripeStrings: String {
     case payoutsDisabled = "stripe.payouts_disabled"
     case awaitingReturnMessage = "stripe.awaiting_return_message"
     case invalidOnboardingURL = "stripe.invalid_onboarding_url"
+    case invalidDashboardURL = "stripe.invalid_dashboard_url"
 
     case failedLoadStatusFormat = "stripe.failed_load_status_format"
     case failedCreateAccountFormat = "stripe.failed_create_account_format"
     case failedCreateLinkFormat = "stripe.failed_create_link_format"
     case failedRefreshStatusFormat = "stripe.failed_refresh_status_format"
+    case failedDashboardLinkFormat = "stripe.failed_dashboard_link_format"
 
     case returnStatusSuccess = "stripe.return_status_success"
     case returnStatusPending = "stripe.return_status_pending"
     case returnStatusRestricted = "stripe.return_status_restricted"
+
+    case walletTitle = "stripe.wallet_title"
+    case walletAvailableLabel = "stripe.wallet_available_label"
+    case walletPendingLabel = "stripe.wallet_pending_label"
+    case walletPendingTooltip = "stripe.wallet_pending_tooltip"
+    case walletPayoutsInfo = "stripe.wallet_payouts_info"
+    case walletUnavailable = "stripe.wallet_unavailable"
+    case openDashboardButton = "stripe.open_dashboard_button"
+    case refreshBalanceButton = "stripe.refresh_balance_button"
 
     var localized: String {
         NSLocalizedString(rawValue, bundle: .module, comment: "")
@@ -60,6 +71,15 @@ enum StripeStrings: String {
         String(
             format: NSLocalizedString(
                 StripeStrings.failedRefreshStatusFormat.rawValue,
+                bundle: .module, comment: ""
+            ), error
+        )
+    }
+
+    static func failedDashboardLink(_ error: String) -> String {
+        String(
+            format: NSLocalizedString(
+                StripeStrings.failedDashboardLinkFormat.rawValue,
                 bundle: .module, comment: ""
             ), error
         )
