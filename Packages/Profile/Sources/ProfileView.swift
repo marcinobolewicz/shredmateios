@@ -26,6 +26,7 @@ public struct ProfileView: View {
     @Environment(AppTheme.self) private var theme
     @State private var viewModel: ProfileViewModel
     @State private var showDeleteConfirmation = false
+    @State private var showStripeSetupGate = false
     @Binding private var path: [ProfileRoute]
 
     public init(viewModel: ProfileViewModel, path: Binding<[ProfileRoute]>) {
@@ -99,6 +100,17 @@ public struct ProfileView: View {
         } message: {
             Text(ProfileStrings.deleteAccountDialogMessage.localized)
         }
+        .alert(
+            ProfileStrings.stripeGateTitle.localized,
+            isPresented: $showStripeSetupGate
+        ) {
+            Button(ProfileStrings.stripeGateConfigureButton.localized) {
+                path.append(.stripeOnboarding)
+            }
+            Button(CommonStrings.cancelButton.localized, role: .cancel) {}
+        } message: {
+            Text(ProfileStrings.stripeGateMessage.localized)
+        }
     }
 
     // MARK: - Header
@@ -168,9 +180,7 @@ public struct ProfileView: View {
             }
 
             if viewModel.hasMentorSports {
-                NavigationLink(value: ProfileRoute.generateSlots) {
-                    Label(ProfileStrings.generateSlotsTitle.localized, systemImage: "calendar.badge.plus")
-                }
+                generateSlotsMenuItem
             }
 
             if viewModel.hasMentorSports {
@@ -178,6 +188,17 @@ public struct ProfileView: View {
                     Label(StripeStrings.navigationTitle.localized, systemImage: "creditcard")
                 }
             }
+        }
+    }
+
+    @ViewBuilder
+    private var generateSlotsMenuItem: some View {
+        let label = Label(ProfileStrings.generateSlotsTitle.localized, systemImage: "calendar.badge.plus")
+        if viewModel.stripeOnboardingViewModel.arePayoutsEnabled {
+            NavigationLink(value: ProfileRoute.generateSlots) { label }
+        } else {
+            Button { showStripeSetupGate = true } label: { label }
+                .foregroundStyle(theme.colors.textPrimary)
         }
     }
 

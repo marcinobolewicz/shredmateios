@@ -120,6 +120,10 @@ public final class ProfileViewModel {
             let locationForm = presenter.mapLocationForm(from: snapshot.baseLocation)
             latitudeText = locationForm.latitudeText
             longitudeText = locationForm.longitudeText
+
+            if hasMentorSports {
+                await stripeOnboardingViewModel.loadStatus()
+            }
         } catch {
             self.error = ProfileStrings.failedLoadProfile(error.localizedDescription)
         }

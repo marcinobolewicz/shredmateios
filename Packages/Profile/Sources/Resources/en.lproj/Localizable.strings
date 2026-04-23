@@ -113,6 +113,9 @@
 /* Mentor Profile / Generate Slots */
 "profile.section_mentor_profile" = "Mentor Profile";
 "profile.generate_slots_title" = "Add Slots";
+"profile.stripe_gate_title" = "Set Up Payments First";
+"profile.stripe_gate_message" = "Before you can add slots, configure your payout account so mentees can pay you.";
+"profile.stripe_gate_configure_button" = "Set Up";
 "profile.generate_sport_label" = "Sport";
 "profile.generate_sport_placeholder" = "Choose sport...";
 "profile.generate_place_label" = "Spot (optional)";

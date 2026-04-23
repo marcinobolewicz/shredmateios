@@ -113,6 +113,9 @@
 /* Profil mentora / Generowanie slotów */
 "profile.section_mentor_profile" = "Profil mentora";
 "profile.generate_slots_title" = "Dodaj sloty";
+"profile.stripe_gate_title" = "Najpierw skonfiguruj płatności";
+"profile.stripe_gate_message" = "Zanim dodasz sloty, skonfiguruj konto wypłat, aby uczniowie mogli Ci płacić.";
+"profile.stripe_gate_configure_button" = "Konfiguruj";
 "profile.generate_sport_label" = "Sport";
 "profile.generate_sport_placeholder" = "Wybierz sport...";
 "profile.generate_place_label" = "Spot (opcjonalnie)";

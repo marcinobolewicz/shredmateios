@@ -128,6 +128,9 @@ enum ProfileStrings: String {
     // MARK: - Mentor Profile / Generate Slots
     case sectionMentorProfile = "profile.section_mentor_profile"
     case generateSlotsTitle = "profile.generate_slots_title"
+    case stripeGateTitle = "profile.stripe_gate_title"
+    case stripeGateMessage = "profile.stripe_gate_message"
+    case stripeGateConfigureButton = "profile.stripe_gate_configure_button"
     case generateSportLabel = "profile.generate_sport_label"
     case generateSportPlaceholder = "profile.generate_sport_placeholder"
     case generatePlaceLabel = "profile.generate_place_label"
