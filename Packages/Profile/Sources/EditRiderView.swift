@@ -21,13 +21,10 @@ struct EditRiderView: View {
         .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $showLocationPicker) {
             LocationPickerView(
-                initialCoordinate: locationCoordinate,
-                initialLocationName: viewModel.locationName,
-                nameField: .editable(placeholder: ProfileStrings.locationNamePlaceholder.localized)
-            ) { coord, name in
+                initialCoordinate: locationCoordinate
+            ) { coord in
                 viewModel.latitudeText = String(format: "%.6f", coord.latitude)
                 viewModel.longitudeText = String(format: "%.6f", coord.longitude)
-                viewModel.locationName = name
                 Task { await viewModel.saveBaseLocation() }
             }
         }

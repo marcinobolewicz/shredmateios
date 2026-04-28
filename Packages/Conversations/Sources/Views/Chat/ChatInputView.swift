@@ -18,6 +18,8 @@ struct ChatInputView: View {
         HStack(spacing: theme.spacing.sm) {
             TextField(ConversationsStrings.chatInputPlaceholder.localized, text: $text, axis: .vertical)
                 .lineLimit(1...5)
+                .foregroundStyle(theme.colors.textPrimary)
+                .tint(theme.colors.primary)
                 .padding(.horizontal, theme.spacing.sm)
                 .padding(.vertical, theme.spacing.xs)
                 .background(

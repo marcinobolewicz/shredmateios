@@ -24,9 +24,8 @@ struct LocationUpdatePromptModifier: ViewModifier {
             }
             .sheet(isPresented: $viewModel.showLocationMapPicker) {
                 LocationPickerView(
-                    initialCoordinate: spot,
-                    nameField: .hidden
-                ) { coord, _ in
+                    initialCoordinate: spot
+                ) { coord in
                     Task { await viewModel.confirmMapLocation(coord) }
                 }
             }

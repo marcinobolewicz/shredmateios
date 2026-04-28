@@ -2,37 +2,23 @@ import SwiftUI
 import MapKit
 
 public struct LocationPickerView: View {
-
-    public enum NameField {
-        case hidden
-        case editable(placeholder: String)
-    }
-
     private let initialCoordinate: CLLocationCoordinate2D?
-    private let initialLocationName: String
     private let regionSpan: MKCoordinateSpan
-    private let nameField: NameField
-    private let onConfirm: (CLLocationCoordinate2D, String) -> Void
+    private let onConfirm: (CLLocationCoordinate2D) -> Void
 
     @Environment(\.dismiss) private var dismiss
     @State private var selectedCoordinate: CLLocationCoordinate2D?
-    @State private var locationName: String
     @State private var cameraPosition: MapCameraPosition
 
     public init(
         initialCoordinate: CLLocationCoordinate2D?,
-        initialLocationName: String = "",
         regionSpan: MKCoordinateSpan = MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1),
-        nameField: NameField = .editable(placeholder: ""),
-        onConfirm: @escaping (CLLocationCoordinate2D, String) -> Void
+        onConfirm: @escaping (CLLocationCoordinate2D) -> Void
     ) {
         self.initialCoordinate = initialCoordinate
-        self.initialLocationName = initialLocationName
         self.regionSpan = regionSpan
-        self.nameField = nameField
         self.onConfirm = onConfirm
 
-        _locationName = State(initialValue: initialLocationName)
         _selectedCoordinate = State(initialValue: initialCoordinate)
 
         if let coord = initialCoordinate {
@@ -54,7 +40,7 @@ public struct LocationPickerView: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button(CommonStrings.locationPickerConfirm.localized) {
                         if let coord = selectedCoordinate {
-                            onConfirm(coord, locationName)
+                            onConfirm(coord)
                         }
                         dismiss()
                     }
@@ -85,7 +71,6 @@ public struct LocationPickerView: View {
     private var footerSection: some View {
         VStack(spacing: 12) {
             coordinateLabel
-            nameFieldView
         }
         .padding()
         .background(.regularMaterial)
@@ -103,17 +88,6 @@ public struct LocationPickerView: View {
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .frame(maxWidth: .infinity)
-        }
-    }
-
-    @ViewBuilder
-    private var nameFieldView: some View {
-        switch nameField {
-        case .hidden:
-            EmptyView()
-        case .editable(let placeholder):
-            TextField(placeholder, text: $locationName)
-                .textFieldStyle(.roundedBorder)
         }
     }
 }
