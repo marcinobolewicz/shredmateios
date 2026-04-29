@@ -8,3 +8,7 @@
 "common.send_button" = "Wyślij";
 "common.session_expired_title" = "Sesja wygasła";
 "common.session_expired_message" = "Twoja sesja wygasła. Zaloguj się ponownie.";
+
+"common.location_picker_title" = "Wybierz lokalizację";
+"common.location_picker_confirm" = "Potwierdź";
+"common.location_picker_tap_hint" = "Stuknij na mapie, aby ustawić pineskę";

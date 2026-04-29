@@ -47,6 +47,34 @@ public enum ChatAPI {
         .post("/chat/conversations/with/\(otherUserId)", auth: .bearerToken)
     }
 
+    /// Marks a conversation as read for the current user.
+    ///
+    /// `POST /chat/conversations/:conversationId/read`
+    ///
+    /// Idempotent — safe to call multiple times.
+    ///
+    /// - Parameter conversationId: The conversation to mark as read.
+    /// - Returns: Endpoint returning the updated `lastReadAt` timestamp.
+    public static func markAsRead(conversationId: String) -> Endpoint<MarkAsReadResponse> {
+        .post(
+            "/chat/conversations/\(conversationId)/read",
+            auth: .bearerToken
+        )
+    }
+
+    /// Deletes a conversation (cascades to messages and participations).
+    ///
+    /// `DELETE /chat/conversations/:conversationId`
+    ///
+    /// - Parameter conversationId: The conversation to delete.
+    /// - Returns: Endpoint returning an empty response.
+    public static func deleteConversation(conversationId: String) -> Endpoint<EmptyResponse> {
+        .delete(
+            "/chat/conversations/\(conversationId)",
+            auth: .bearerToken
+        )
+    }
+
     // MARK: - Messages
 
     /// Lists messages in a conversation (cursor-based pagination).

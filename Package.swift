@@ -20,12 +20,14 @@ let package = Package(
         .library(name: "Feed", targets: ["Feed"]),
         .library(name: "MediaPicker", targets: ["MediaPicker"]),
         .library(name: "Onboarding", targets: ["Onboarding"]),
+        .library(name: "Payment", targets: ["Payment"]),
         .library(name: "Theme", targets: ["Theme"])
     ],
     dependencies: [
         .package(url: "https://github.com/socketio/socket.io-client-swift", from: "16.1.1"),
         .package(url: "https://github.com/firebase/firebase-ios-sdk", from: "11.0.0"),
-        .package(url: "https://github.com/kean/Pulse.git", from: "5.0.0")
+        .package(url: "https://github.com/kean/Pulse.git", from: "5.0.0"),
+        .package(url: "https://github.com/stripe/stripe-ios", from: "24.0.0")
     ],
     targets: [
         // MediaPicker Package
@@ -174,11 +176,34 @@ let package = Package(
             path: "Packages/Onboarding/Tests"
         ),
 
+        // Payment Package
+        .target(
+            name: "Payment",
+            dependencies: [
+                "Networking",
+                "Theme",
+                "Common",
+                .product(name: "StripePaymentSheet", package: "stripe-ios")
+            ],
+            path: "Packages/Payment/Sources",
+            resources: [
+                .process("Resources")
+            ],
+            swiftSettings: [
+                .enableUpcomingFeature("StrictConcurrency")
+            ]
+        ),
+        .testTarget(
+            name: "PaymentTests",
+            dependencies: ["Payment"],
+            path: "Packages/Payment/Tests"
+        ),
+
         // App Package
         .target(
             name: "App",
             dependencies: [
-                "Core", "Networking", "Auth", "Login", "Profile", "Places", "Conversations", "Feed", "Onboarding", "Theme",
+                "Core", "Networking", "Auth", "Login", "Profile", "Places", "Conversations", "Feed", "Onboarding", "Payment", "Theme",
                 .product(name: "FirebaseCrashlytics", package: "firebase-ios-sdk"),
                 .product(name: "FirebaseMessaging", package: "firebase-ios-sdk"),
                 .product(name: "Pulse", package: "Pulse"),
@@ -219,7 +244,7 @@ let package = Package(
         // Places Package
         .target(
             name: "Places",
-            dependencies: ["Core", "Networking", "Common", "Theme"],
+            dependencies: ["Core", "Networking", "Common", "Theme", "Payment"],
             path: "Packages/Places/Sources",
             resources: [
                 .process("Resources")

@@ -13,6 +13,8 @@
 		DevAssetsFileBuild /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = Assets /* Assets.xcassets */; };
 		DevGSIFileBuild /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = EEF9D7E12F5B4876006390C4 /* GoogleService-Info.plist */; };
 		DevShredMateAppFileBuild /* ShredMateApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = ShredMateAppSwift /* ShredMateApp.swift */; };
+		EEB280F72F94CE7400058E0D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EEB280F62F94CE7400058E0D /* LaunchScreen.storyboard */; };
+		EEB280F82F94CE7400058E0D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EEB280F62F94CE7400058E0D /* LaunchScreen.storyboard */; };
 		EEF9D7E02F5B39D6006390C4 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = EEF9D7DF2F5B39D6006390C4 /* GoogleService-Info.plist */; };
 		ShredMateAppFile /* ShredMateApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = ShredMateAppSwift /* ShredMateApp.swift */; };
 /* End PBXBuildFile section */
@@ -23,6 +25,7 @@
 		DevConfig /* Dev.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Dev.xcconfig; sourceTree = "<group>"; };
 		DevEntitlementsRef /* ShredMate Dev.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "ShredMate Dev.entitlements"; sourceTree = "<group>"; };
 		EE03339B2F4DB97800ECE70E /* ShredMate.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ShredMate.entitlements; sourceTree = "<group>"; };
+		EEB280F62F94CE7400058E0D /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		EEF9D7DF2F5B39D6006390C4 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		EEF9D7E12F5B4876006390C4 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		InfoPlist /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -99,6 +102,7 @@
 		ShredMate /* ShredMate */ = {
 			isa = PBXGroup;
 			children = (
+				EEB280F62F94CE7400058E0D /* LaunchScreen.storyboard */,
 				EEF9D7E42F5B6030006390C4 /* GoogleService */,
 				EEF9D7E32F5B601D006390C4 /* GoogleServiceDev */,
 				EE03339B2F4DB97800ECE70E /* ShredMate.entitlements */,
@@ -205,6 +209,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DevAssetsFileBuild /* Assets.xcassets in Resources */,
+				EEB280F72F94CE7400058E0D /* LaunchScreen.storyboard in Resources */,
 				DevGSIFileBuild /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -214,6 +219,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AssetsFile /* Assets.xcassets in Resources */,
+				EEB280F82F94CE7400058E0D /* LaunchScreen.storyboard in Resources */,
 				EEF9D7E02F5B39D6006390C4 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -400,7 +406,7 @@
 				CODE_SIGN_ENTITLEMENTS = "ShredMate/ShredMate Dev.entitlements";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 4;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = "";
@@ -410,6 +416,7 @@
 				GENERATE_INFOPLIST_FILE = NO;
 				GOOGLE_APP_ID = "1:620509939173:ios:297fae121033a782f11b0c";
 				INFOPLIST_FILE = ShredMate/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -428,7 +435,7 @@
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_STRICT_CONCURRENCY = complete;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -441,7 +448,7 @@
 				CODE_SIGN_ENTITLEMENTS = "ShredMate/ShredMate Dev.entitlements";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 2VL6ZJ5JTY;
@@ -450,6 +457,7 @@
 				GENERATE_INFOPLIST_FILE = NO;
 				GOOGLE_APP_ID = "1:620509939173:ios:297fae121033a782f11b0c";
 				INFOPLIST_FILE = ShredMate/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -468,7 +476,7 @@
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_STRICT_CONCURRENCY = complete;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
@@ -538,7 +546,7 @@
 				CODE_SIGN_ENTITLEMENTS = ShredMate/ShredMate.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 4;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = "";
@@ -548,6 +556,7 @@
 				GENERATE_INFOPLIST_FILE = NO;
 				GOOGLE_APP_ID = "1:620509939173:ios:be6128edb90a2995f11b0c";
 				INFOPLIST_FILE = ShredMate/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -566,7 +575,7 @@
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_STRICT_CONCURRENCY = complete;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -579,7 +588,7 @@
 				CODE_SIGN_ENTITLEMENTS = ShredMate/ShredMate.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 2VL6ZJ5JTY;
@@ -588,6 +597,7 @@
 				GENERATE_INFOPLIST_FILE = NO;
 				GOOGLE_APP_ID = "1:620509939173:ios:be6128edb90a2995f11b0c";
 				INFOPLIST_FILE = ShredMate/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -601,12 +611,12 @@
 				PRODUCT_BUNDLE_IDENTIFIER = pl.shredmate.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "ShredMate Distribution 2026";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "ShredMate App Store 2026";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_STRICT_CONCURRENCY = complete;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};

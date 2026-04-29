@@ -20,8 +20,15 @@ struct MySlotsView: View {
         .background(theme.colors.backgroundSecondary)
         .navigationTitle(ProfileStrings.mySlotsTitle.localized)
         .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.hidden, for: .navigationBar)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button(viewModel.timeScope.toggleActionTitle) {
+                    viewModel.toggleScope()
+                }
+            }
+        }
         .task { viewModel.loadOnAppear() }
-        .refreshable { viewModel.refresh() }
         .alert(
             ProfileStrings.slotDeleteTitle.localized,
             isPresented: $viewModel.showDeleteConfirmation,
@@ -55,14 +62,10 @@ struct MySlotsView: View {
     // MARK: - Filter
 
     private var filterPicker: some View {
-        Picker(selection: $viewModel.filter, label: EmptyView()) {
-            ForEach(MySlotFilter.allCases, id: \.self) { filter in
-                Text(filter.label).tag(filter)
-            }
-        }
-        .pickerStyle(.segmented)
-        .padding(.horizontal, theme.spacing.md)
-        .padding(.vertical, theme.spacing.sm)
+        ChipFilterPicker(
+            selection: $viewModel.filter,
+            allLabel: ProfileStrings.slotFilterAll.localized
+        )
     }
 
     // MARK: - Content
@@ -118,6 +121,7 @@ struct MySlotsView: View {
         }
         .listStyle(.sidebar)
         .scrollContentBackground(.hidden)
+        .refreshable { viewModel.refresh() }
     }
 
     // MARK: - Helpers
@@ -220,6 +224,8 @@ private struct MentorSlotRow: View {
         case .booked: return (ProfileStrings.statusBooked.localized, .blue)
         case .completed: return (ProfileStrings.statusCompleted.localized, .gray)
         case .cancelled: return (ProfileStrings.statusCancelled.localized, .red)
+        case .reservationPending: return (ProfileStrings.statusReservationPending.localized, .pink)
+        case .rejected: return (ProfileStrings.statusRejected.localized, .red)
         }
     }
 
@@ -234,4 +240,3 @@ private struct MentorSlotRow: View {
         return formatter.string(from: NSNumber(value: value)) ?? "\(value) \(currency)"
     }
 }
-

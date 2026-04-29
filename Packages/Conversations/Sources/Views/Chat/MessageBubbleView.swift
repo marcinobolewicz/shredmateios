@@ -23,13 +23,21 @@ struct MessageBubbleView: View {
                         color: viewData.isFromCurrentUser ? \.primaryForeground : nil
                     )
 
-                Text(viewData.timeText)
-                    .font(.caption2)
-                    .foregroundStyle(
-                        viewData.isFromCurrentUser
-                            ? theme.colors.primaryForeground.opacity(0.7)
-                            : theme.colors.textTertiary
-                    )
+                HStack(spacing: 4) {
+                    Text(viewData.timeText)
+                        .font(.caption2)
+                        .foregroundStyle(
+                            viewData.isFromCurrentUser
+                                ? theme.colors.primaryForeground.opacity(0.7)
+                                : theme.colors.textTertiary
+                        )
+
+                    if viewData.isFromCurrentUser {
+                        Image(systemName: viewData.isRead ? "checkmark.circle.fill" : "checkmark.circle")
+                            .font(.caption2)
+                            .foregroundStyle(theme.colors.primaryForeground.opacity(0.85))
+                    }
+                }
             }
             .padding(.horizontal, theme.spacing.sm)
             .padding(.vertical, theme.spacing.xs)

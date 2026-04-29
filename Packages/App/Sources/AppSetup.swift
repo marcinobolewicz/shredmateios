@@ -2,6 +2,7 @@ import SwiftUI
 import Networking
 import Core
 import Conversations
+import Payment
 import Pulse
 
 @MainActor
@@ -16,6 +17,8 @@ public final class AppDependencies {
     public let mentorSlotsService: any MentorSlotsServiceProtocol
     public let mentorsService: any MentorsServiceProtocol
     public let feedService: any FeedServiceProtocol
+    public let stripeService: any StripeServiceProtocol
+    public let stripePaymentService: StripePaymentService
     public let chatService: any ChatServiceProtocol
     public let chatRealtimeClient: ChatRealtimeProviding
     public let chatRepository: ChatRepository
@@ -34,6 +37,8 @@ public final class AppDependencies {
         mentorSlotsService: any MentorSlotsServiceProtocol,
         mentorsService: any MentorsServiceProtocol,
         feedService: any FeedServiceProtocol,
+        stripeService: any StripeServiceProtocol,
+        stripePaymentService: StripePaymentService,
         chatService: any ChatServiceProtocol,
         chatRealtimeClient: ChatRealtimeProviding,
         chatRepository: ChatRepository,
@@ -51,6 +56,8 @@ public final class AppDependencies {
         self.mentorSlotsService = mentorSlotsService
         self.mentorsService = mentorsService
         self.feedService = feedService
+        self.stripeService = stripeService
+        self.stripePaymentService = stripePaymentService
         self.chatService = chatService
         self.chatRealtimeClient = chatRealtimeClient
         self.chatRepository = chatRepository
@@ -70,6 +77,7 @@ public struct AppSetup {
         let auth = configureAuth()
         let services = configureServices(httpClient: auth.httpClient)
         let chat = configureChat(httpClient: auth.httpClient, authState: auth.authState)
+        let stripePaymentService = StripeSetup.configure()
         let notificationCenter = InAppNotificationCenter()
         let sportPreferenceStorage = SportPreferenceStorage()
         
@@ -106,6 +114,8 @@ public struct AppSetup {
             mentorSlotsService: services.mentorSlots,
             mentorsService: services.mentors,
             feedService: services.feed,
+            stripeService: services.stripe,
+            stripePaymentService: stripePaymentService,
             chatService: chat.service,
             chatRealtimeClient: chat.realtimeClient,
             chatRepository: chat.repository,
@@ -179,6 +189,7 @@ public struct AppSetup {
         let mentorSlots: any MentorSlotsServiceProtocol
         let mentors: any MentorsServiceProtocol
         let feed: any FeedServiceProtocol
+        let stripe: any StripeServiceProtocol
     }
 
     private static func configureServices(httpClient: AuthenticatingHTTPClient) -> Services {
@@ -188,7 +199,8 @@ public struct AppSetup {
             sports: SportsServiceService(client: httpClient),
             mentorSlots: MentorSlotsService(client: httpClient),
             mentors: MentorsService(client: httpClient),
-            feed: FeedService(client: httpClient)
+            feed: FeedService(client: httpClient),
+            stripe: StripeService(client: httpClient)
         )
     }
 

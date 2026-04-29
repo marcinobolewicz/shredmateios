@@ -11,14 +11,18 @@
 "app.home_welcome_title" = "Witamy w ShredMate!";
 "app.home_sign_out" = "Wyloguj";
 
-"app.guest_slide1_title"    = "Znajdź instruktora / mentora";
-"app.guest_slide1_subtitle" = "Mentorzy są polecani przez społeczność, więc łatwo znajdziesz dobrego — dopasowanego do Twojego sportu i konkretnego spotu. Zaloguj się, żeby zobaczyć rekomendacje.";
-"app.guest_slide1_cta"      = "Zaloguj się";
+"app.guest_slide1_title"    = "Ucz się od najlepszych — tam, gdzie jeździsz";
+"app.guest_slide1_subtitle" = "Mentorzy polecani przez społeczność, nie algorytm. Filtruj po sporcie, miejscu i stylu jazdy — znajdź kogoś, kto naprawdę zna Twoje warunki.";
+"app.guest_slide1_cta"      = "Zobacz rekomendacje";
 
-"app.guest_slide2_title"    = "Znajdź towarzyszy jazdy w pobliżu";
-"app.guest_slide2_subtitle" = "Obserwuj innych, sprawdzaj kto melduje się na pobliskich spotach i umawiajcie się na wspólne zjazdy. Zaloguj się, żeby dołączyć do społeczności.";
-"app.guest_slide2_cta"      = "Zaloguj się";
+"app.guest_slide2_title"    = "Jedź z ludźmi, nie sam";
+"app.guest_slide2_subtitle" = "Sprawdź kto melduje się w pobliżu, obserwuj ekipę i umawiajcie się na wspólne zjazdy.";
+"app.guest_slide2_cta"      = "Dołącz do społeczności";
 
-"app.guest_slide3_title"    = "Odkryj spoty i riderów w pobliżu";
-"app.guest_slide3_subtitle" = "Śledź aktywność riderów na stoku, eksploruj spoty i bookuj sloty u lokalnych riderów.";
-"app.guest_slide3_cta"      = "Eksploruj spoty";
+"app.guest_slide3_title"    = "Odkrywaj nowe miejscówki i ludzi w okolicy";
+"app.guest_slide3_subtitle" = "Zobacz kto jest aktualnie w okolicy, odkrywaj nowe miejscówki i rezerwuj zajęcia u lokalnych mentorów.";
+"app.guest_slide3_cta"      = "Zobacz co się dzieje obok";
+
+"app.guest_slide4_title"    = "Sam zostań mentorem";
+"app.guest_slide4_subtitle" = "Dobrze jeździsz? Ucz innych i zarabiaj na swojej pasji. Ustaw własne terminy, stawki i miejsca — wypłaty przez Stripe prosto na konto.";
+"app.guest_slide4_cta"      = "Załóż profil mentora";

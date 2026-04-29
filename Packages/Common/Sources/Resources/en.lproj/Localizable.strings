@@ -8,3 +8,7 @@
 "common.send_button" = "Send";
 "common.session_expired_title" = "Session Expired";
 "common.session_expired_message" = "Your session has expired. Please log in again.";
+
+"common.location_picker_title" = "Pick Location";
+"common.location_picker_confirm" = "Confirm";
+"common.location_picker_tap_hint" = "Tap on the map to drop a pin";

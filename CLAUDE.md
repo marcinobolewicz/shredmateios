@@ -38,8 +38,9 @@ Modular **Swift Package Manager** architecture under `/Packages/`. Each feature 
 | `Login` | Login/register UI and view models |
 | `App` | RootView, AppSetup, AppDependencies, navigation, Firebase setup |
 | `Conversations` | Chat UI, ChatRepository, Socket.IO client, ChatLifecycleManager |
-| `Places` | Places/locations feature |
-| `Profile` | User profile management |
+| `Places` | Places/locations feature, mentor slot booking with Stripe payment flow |
+| `Profile` | User profile management, Stripe Connect mentor onboarding |
+| `Payment` | Stripe SDK wrapper: StripePaymentService, PaymentSheetPresenter, PaymentResult |
 | `Theme` | Design system: DS* button/text styles, components |
 | `Common` | Shared utilities |
 
@@ -63,12 +64,15 @@ Modular **Swift Package Manager** architecture under `/Packages/`. Each feature 
 
 - **Dev**: bundle ID `pl.shredmate.app.dev`, compilation flag `DEV`
 - **Prod**: bundle ID `pl.shredmate.app`, compilation flag `PROD`
-- Both point to `https://api.shredmate.pl` as API base URL
+- Both point to `https://api.shredmate.eu` as API base URL (`shredmate.pl` is the marketing site / universal-link host)
+
+**Stripe Payment Flow**: `MentorSlotsViewModel` orchestrates: `POST /payment-intent` → `PaymentSheet` presentation → `POST /confirm-payment`. `StripePaymentService` is `@Observable` and injected via SwiftUI Environment. Backend reserves slot for 15 min during payment. See `Packages/Payment/STRIPE.md` for full details.
 
 ### External Dependencies
 
 - `socket.io-client-swift` — realtime chat transport
 - `firebase-ios-sdk` — Crashlytics, Messaging
+- `stripe-ios` — Stripe PaymentSheet for slot booking payments
 - `Pulse` — network debugging (debug builds)
 
 ### SwiftLint Thresholds

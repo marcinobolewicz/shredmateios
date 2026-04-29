@@ -24,6 +24,9 @@ private struct LegalConsentRow: View {
                 .font(.caption)
                 .foregroundStyle(theme.colors.primaryForeground.opacity(Self.textOpacity))
                 .tint(theme.colors.primaryForeground)
+                .multilineTextAlignment(.leading)
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 

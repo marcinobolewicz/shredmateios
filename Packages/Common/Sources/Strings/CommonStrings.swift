@@ -14,6 +14,11 @@ public enum CommonStrings: String {
     case sessionExpiredTitle = "common.session_expired_title"
     case sessionExpiredMessage = "common.session_expired_message"
 
+    // MARK: - Location Picker
+    case locationPickerTitle = "common.location_picker_title"
+    case locationPickerConfirm = "common.location_picker_confirm"
+    case locationPickerTapHint = "common.location_picker_tap_hint"
+
     public var localized: String {
         NSLocalizedString(rawValue, bundle: .module, comment: "")
     }

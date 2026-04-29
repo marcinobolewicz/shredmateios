@@ -6,11 +6,6 @@
 	<string>$(API_BASE_URL)</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
-	<key>CFBundleLocalizations</key>
-	<array>
-		<string>en</string>
-		<string>pl</string>
-	</array>
 	<key>CFBundleDisplayName</key>
 	<string>$(DISPLAY_NAME)</string>
 	<key>CFBundleExecutable</key>
@@ -19,20 +14,33 @@
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>en</string>
+		<string>pl</string>
+	</array>
 	<key>CFBundleName</key>
 	<string>$(PRODUCT_NAME)</string>
 	<key>CFBundlePackageType</key>
 	<string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
+	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>ENVIRONMENT</key>
 	<string>$(ENVIRONMENT)</string>
 	<key>FirebaseAppDelegateProxyEnabled</key>
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>ShredMate uses the camera to scan payment cards when booking a session with a mentor.</string>
+	<key>STRIPE_APPLE_MERCHANT_COUNTRY</key>
+	<string>$(STRIPE_APPLE_MERCHANT_COUNTRY)</string>
+	<key>STRIPE_APPLE_MERCHANT_ID</key>
+	<string>$(STRIPE_APPLE_MERCHANT_ID)</string>
+	<key>STRIPE_PUBLISHABLE_KEY</key>
+	<string>$(STRIPE_PUBLISHABLE_KEY)</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
@@ -44,13 +52,8 @@
 	<array>
 		<string>remote-notification</string>
 	</array>
-	<key>UILaunchScreen</key>
-	<dict>
-		<key>UIImageName</key>
-		<string>slide_0</string>
-		<key>UIImageRespectsSafeAreaInsets</key>
-		<false/>
-	</dict>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>

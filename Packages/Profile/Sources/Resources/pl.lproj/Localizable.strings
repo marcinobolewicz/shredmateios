@@ -22,9 +22,6 @@
 "profile.save_location_button" = "Zapisz lokalizację";
 "profile.no_location_set" = "Brak lokalizacji";
 "profile.pick_on_map" = "Wybierz na mapie";
-"profile.tap_map_to_pin" = "Stuknij na mapie, aby ustawić pineskę";
-"profile.location_picker_title" = "Wybierz lokalizację";
-"profile.confirm_location_button" = "Potwierdź";
 "profile.section_sports" = "Sporty";
 "profile.loading_sports" = "Wczytywanie sportów...";
 "profile.logout_button" = "Wyloguj się";
@@ -70,6 +67,8 @@
 "profile.status_completed" = "Zakończone";
 "profile.status_cancelled" = "Anulowane";
 "profile.status_available" = "Dostępne";
+"profile.status_reservation_pending" = "W trakcie";
+"profile.status_rejected" = "Odrzucone";
 
 "profile.booking_cancel_title" = "Anulować rezerwację?";
 "profile.booking_cancel_confirm" = "Anuluj rezerwację";
@@ -83,6 +82,18 @@
 "profile.booking_recommended" = "Polecono";
 "profile.booking_session_not_started_title" = "Sesja jeszcze się nie rozpoczęła";
 "profile.booking_session_not_started_message" = "Sesję można potwierdzić dopiero po upływie godziny rozpoczęcia.";
+
+"profile.booking_reject_title" = "Odrzucić sesję?";
+"profile.booking_reject_message_format" = "Czy mentor %@ nie pojawił się na sesji? Odrzucenie anuluje rezerwację i zwróci płatność.";
+"profile.booking_reject_confirm" = "Odrzuć";
+"profile.booking_reject_button" = "Mentor nie dotarł";
+
+"profile.booking_filter_upcoming" = "Zarezerwowane";
+"profile.booking_filter_to_confirm" = "Do potwierdzenia";
+"profile.booking_filter_finished" = "Zakończone";
+
+"profile.scope_show_archive" = "Archiwalne";
+"profile.scope_show_current" = "Aktualne";
 
 /* Moje posty */
 "profile.delete_post" = "Usuń post";
@@ -102,6 +113,9 @@
 /* Profil mentora / Generowanie slotów */
 "profile.section_mentor_profile" = "Profil mentora";
 "profile.generate_slots_title" = "Dodaj sloty";
+"profile.stripe_gate_title" = "Najpierw skonfiguruj płatności";
+"profile.stripe_gate_message" = "Zanim dodasz sloty, skonfiguruj konto wypłat, aby uczniowie mogli Ci płacić.";
+"profile.stripe_gate_configure_button" = "Konfiguruj";
 "profile.generate_sport_label" = "Sport";
 "profile.generate_sport_placeholder" = "Wybierz sport...";
 "profile.generate_place_label" = "Spot (opcjonalnie)";
@@ -143,3 +157,38 @@
 /* Zameldowanie */
 "profile.section_check_in" = "Aktualne zameldowanie";
 "profile.checked_in_as_format" = "Zameldowany jako %@";
+
+/* Konfiguracja Stripe */
+"stripe.navigation_title" = "Konfiguracja płatności";
+"stripe.setup_description" = "Skonfiguruj konto Stripe, aby otrzymywać płatności za sesje mentorskie.";
+"stripe.start_onboarding_button" = "Skonfiguruj płatności";
+"stripe.continue_onboarding_button" = "Kontynuuj konfigurację";
+"stripe.refresh_status_button" = "Odśwież status";
+"stripe.status_title" = "Status płatności";
+"stripe.onboarding_completed" = "Dane przesłane";
+"stripe.onboarding_pending" = "Dane nieprzesłane";
+"stripe.charges_enabled" = "Płatności włączone";
+"stripe.charges_disabled" = "Płatności jeszcze nieaktywne";
+"stripe.payouts_enabled" = "Wypłaty włączone";
+"stripe.payouts_disabled" = "Wypłaty jeszcze nieaktywne";
+"stripe.awaiting_return_message" = "Dokończ konfigurację w przeglądarce, a następnie wróć tutaj.";
+"stripe.invalid_onboarding_url" = "Otrzymano nieprawidłowy adres URL";
+"stripe.failed_load_status_format" = "Nie udało się załadować statusu płatności: %@";
+"stripe.failed_create_account_format" = "Nie udało się utworzyć konta Stripe: %@";
+"stripe.failed_create_link_format" = "Nie udało się utworzyć linku konfiguracyjnego: %@";
+"stripe.failed_refresh_status_format" = "Nie udało się odświeżyć statusu płatności: %@";
+"stripe.return_status_success" = "Konfiguracja zakończona pomyślnie!";
+"stripe.return_status_pending" = "Konfiguracja w toku — może być wymagana dodatkowa weryfikacja.";
+"stripe.return_status_restricted" = "Konto ograniczone — dokończ pozostałe kroki konfiguracji.";
+
+/* Portfel mentora (Stripe) */
+"stripe.wallet_title" = "Portfel";
+"stripe.wallet_available_label" = "Dostępne do wypłaty";
+"stripe.wallet_pending_label" = "W trakcie rozliczania:";
+"stripe.wallet_pending_tooltip" = "Środki będą dostępne po rozliczeniu przez Stripe (ok. 7 dni).";
+"stripe.wallet_payouts_info" = "Wypłaty realizowane są automatycznie przez Stripe na Twoje konto bankowe. W dashboardzie możesz też wypłacić środki ręcznie lub zmienić rachunek.";
+"stripe.wallet_unavailable" = "Nie udało się pobrać salda. Spróbuj odświeżyć za chwilę.";
+"stripe.open_dashboard_button" = "Otwórz dashboard Stripe";
+"stripe.refresh_balance_button" = "Odśwież saldo";
+"stripe.invalid_dashboard_url" = "Otrzymano nieprawidłowy adres dashboardu";
+"stripe.failed_dashboard_link_format" = "Nie udało się otworzyć dashboardu Stripe: %@";

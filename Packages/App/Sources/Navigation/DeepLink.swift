@@ -24,6 +24,7 @@ enum DeepLink: Sendable, Equatable {
     case findMentor
     case addSlots
     case conversation(id: String, participantName: String)
+    case stripeOnboardingResult(status: String?)
 }
 
 // MARK: - Bridges from feature-local intent enums

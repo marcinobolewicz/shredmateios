@@ -18,6 +18,12 @@ public enum NetworkError: Error, Sendable, Equatable {
     case unknown(String)
 }
 
+extension NetworkError {
+    public var isNotFound: Bool {
+        self == .requestFailed(statusCode: 404)
+    }
+}
+
 extension NetworkError: LocalizedError {
     public var errorDescription: String? {
         switch self {

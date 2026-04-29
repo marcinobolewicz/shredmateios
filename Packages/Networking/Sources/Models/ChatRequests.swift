@@ -35,6 +35,17 @@ extension SendMessageInput: Encodable {
     }
 }
 
+// MARK: - Mark as Read Response
+
+/// Response body for `POST /chat/conversations/:conversationId/read`.
+public struct MarkAsReadResponse: Decodable, Sendable, Equatable {
+    public let lastReadAt: String
+
+    public init(lastReadAt: String) {
+        self.lastReadAt = lastReadAt
+    }
+}
+
 // MARK: - Pagination
 
 /// Cursor-based pagination parameters for chat endpoints.

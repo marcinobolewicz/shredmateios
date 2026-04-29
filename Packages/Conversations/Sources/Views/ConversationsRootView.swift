@@ -16,17 +16,20 @@ public struct ConversationsRootView: View {
     private let repository: ChatRepository
     private let riderService: any RiderServiceProtocol
     private let currentUserId: String
+    private let riderProfileDestination: RiderProfileDestinationBuilder
 
     public init(
         router: ConversationsRouter,
         repository: ChatRepository,
         riderService: any RiderServiceProtocol,
-        currentUserId: String
+        currentUserId: String,
+        riderProfileDestination: @escaping RiderProfileDestinationBuilder
     ) {
         self.router = router
         self.repository = repository
         self.riderService = riderService
         self.currentUserId = currentUserId
+        self.riderProfileDestination = riderProfileDestination
         self.viewModel = ConversationsListViewModel(repository: repository)
     }
 
@@ -51,7 +54,8 @@ public struct ConversationsRootView: View {
             .navigationBarHidden(true)
             .conversationsDestinations(
                 repository: repository,
-                currentUserId: currentUserId
+                currentUserId: currentUserId,
+                riderProfileDestination: riderProfileDestination
             )
         }
         .environment(router)

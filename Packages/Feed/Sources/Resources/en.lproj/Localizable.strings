@@ -15,3 +15,4 @@
 "feed.failed_title"        = "Something went wrong";
 "feed.failed_description"  = "Could not load the feed.";
 "feed.refresh_button"      = "Try again";
+"feed.checked_in_at"       = "Checked in at";

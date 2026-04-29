@@ -72,6 +72,29 @@ public struct ConversationUpdatedPayload: Decodable, Sendable, Equatable {
     }
 }
 
+// MARK: - conversation:read
+
+/// Payload received from Socket.IO `conversation:read` event.
+///
+/// Emitted to the sender when the other participant marks the
+/// conversation as read. Use `lastReadAt` to render "seen" indicators
+/// on messages whose `createdAt <= lastReadAt`.
+public struct ConversationReadPayload: Decodable, Sendable, Equatable {
+    public let conversationId: String
+    public let readerId: String
+    public let lastReadAt: String
+
+    private enum CodingKeys: String, CodingKey {
+        case conversationId, readerId, lastReadAt
+    }
+
+    public init(conversationId: String, readerId: String, lastReadAt: String) {
+        self.conversationId = conversationId
+        self.readerId = readerId
+        self.lastReadAt = lastReadAt
+    }
+}
+
 // MARK: - message:ack
 
 /// Payload received from Socket.IO `message:ack` event

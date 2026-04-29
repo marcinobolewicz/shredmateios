@@ -70,6 +70,21 @@ final class ConversationsListViewModel {
         }
     }
 
+    // MARK: - Delete
+
+    /// Deletes a conversation. The repository removes it from the cache on success
+    /// and the observation binding re-maps the list automatically.
+    func deleteConversation(id: String) {
+        Task {
+            do {
+                try await repository.deleteConversation(conversationId: id)
+            } catch {
+                // On failure refetch to restore the canonical list state.
+                await repository.loadConversations(refresh: true)
+            }
+        }
+    }
+
     // MARK: - Sync from repository
 
     /// Re-maps rows from the repository. Call after socket events or mutations.

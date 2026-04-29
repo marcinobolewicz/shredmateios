@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import MapKit
 import Theme
 import Networking
 import Common
@@ -69,6 +70,11 @@ public struct PlaceDetailsViewData: Equatable, Hashable, Sendable {
     public var sportFilters: [SportFilter] {
         zip(sportSlugs, sportTags).map { SportFilter(slug: $0.0, title: $0.1) }
     }
+
+    public var coordinate: CLLocationCoordinate2D? {
+        guard let latitude, let longitude else { return nil }
+        return CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+    }
 }
 
 // MARK: - View
@@ -90,6 +96,7 @@ public struct PlaceDetailsView: View {
     public init(
         viewData: PlaceDetailsViewData,
         placesService: PlacesServiceProtocol,
+        riderService: any RiderServiceProtocol,
         authState: AuthState,
         sportPreferenceStorage: any SportPreferenceStorageProtocol,
         onRequestLogin: (() -> Void)? = nil
@@ -101,7 +108,9 @@ public struct PlaceDetailsView: View {
                 placeId: viewData.id,
                 sportIds: viewData.sportIds,
                 sportFilters: viewData.sportFilters,
+                placeLocation: viewData.coordinate,
                 placesService: placesService,
+                riderService: riderService,
                 authState: authState,
                 sportPreferenceStorage: sportPreferenceStorage
             )
@@ -162,6 +171,7 @@ public struct PlaceDetailsView: View {
         } message: {
             Text(PlacesStrings.checkInRoleMessage.localized)
         }
+        .locationUpdatePrompt(viewModel: viewModel, spot: viewData.coordinate)
     }
 
     // MARK: - Hero

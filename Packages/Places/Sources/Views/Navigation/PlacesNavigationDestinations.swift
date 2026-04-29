@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Networking
+import Payment
 import Foundation
 
 public struct PlacesNavigationDestinations: ViewModifier {
@@ -18,6 +19,7 @@ public struct PlacesNavigationDestinations: ViewModifier {
     let onRequestLogin: (() -> Void)?
     @Environment(AuthState.self) private var authState
     @Environment(FollowRepository.self) private var followRepository
+    @Environment(StripePaymentService.self) private var stripePaymentService
 
     public func body(content: Content) -> some View {
         content
@@ -33,6 +35,7 @@ public struct PlacesNavigationDestinations: ViewModifier {
             PlaceDetailsView(
                 viewData: viewData,
                 placesService: placesService,
+                riderService: riderService,
                 authState: authState,
                 sportPreferenceStorage: sportPreferenceStorage,
                 onRequestLogin: onRequestLogin
@@ -42,6 +45,7 @@ public struct PlacesNavigationDestinations: ViewModifier {
                 partialViewData: viewData,
                 riderService: riderService,
                 mentorSlotsService: mentorSlotsService,
+                stripePaymentService: stripePaymentService,
                 onMessageTap: onOpenChat
             )
         }

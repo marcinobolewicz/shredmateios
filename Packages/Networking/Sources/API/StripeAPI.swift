@@ -1,0 +1,24 @@
+import Foundation
+
+public enum StripeAPI {
+
+    public static func createAccount() -> Endpoint<StripeAccount> {
+        .post("/riders/me/stripe/account", auth: .bearerToken)
+    }
+
+    public static func createOnboardingLink() -> Endpoint<StripeOnboardingLink> {
+        .post("/riders/me/stripe/onboarding-link", auth: .bearerToken)
+    }
+
+    public static func status() -> Endpoint<StripeStatus> {
+        .get("/riders/me/stripe/status", auth: .bearerToken)
+    }
+
+    public static func balance() -> Endpoint<StripeBalance> {
+        .get("/riders/me/stripe/balance", auth: .bearerToken)
+    }
+
+    public static func createDashboardLink() -> Endpoint<StripeDashboardLink> {
+        .post("/riders/me/stripe/dashboard-link", auth: .bearerToken)
+    }
+}

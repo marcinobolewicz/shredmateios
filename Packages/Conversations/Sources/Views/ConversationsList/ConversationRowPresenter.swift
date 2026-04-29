@@ -24,7 +24,7 @@ struct ConversationRowPresenter: Sendable {
             dateText: date.map { DateFormatting.shared.formatDisplayDate($0) } ?? "",
             avatarInitials: initials(from: name),
             avatarURL: conversation.otherUser.avatarUrl.flatMap { URL(string: $0) },
-            unreadCount: 0 // API does not provide unread count yet
+            unreadCount: conversation.unreadCount
         )
     }
 
@@ -50,5 +50,3 @@ struct ConversationRowPresenter: Sendable {
         return String(letters).uppercased()
     }
 }
-
-

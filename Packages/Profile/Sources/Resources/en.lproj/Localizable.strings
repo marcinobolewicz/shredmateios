@@ -22,9 +22,6 @@
 "profile.save_location_button" = "Save Location";
 "profile.no_location_set" = "No location set";
 "profile.pick_on_map" = "Pick on Map";
-"profile.tap_map_to_pin" = "Tap on the map to drop a pin";
-"profile.location_picker_title" = "Pick Location";
-"profile.confirm_location_button" = "Confirm";
 "profile.section_sports" = "Sports";
 "profile.loading_sports" = "Loading sports...";
 "profile.logout_button" = "Log Out";
@@ -70,6 +67,8 @@
 "profile.status_completed" = "Completed";
 "profile.status_cancelled" = "Cancelled";
 "profile.status_available" = "Available";
+"profile.status_reservation_pending" = "In progress";
+"profile.status_rejected" = "Rejected";
 
 "profile.booking_cancel_title" = "Cancel booking?";
 "profile.booking_cancel_confirm" = "Cancel booking";
@@ -83,6 +82,18 @@
 "profile.booking_recommended" = "Recommended";
 "profile.booking_session_not_started_title" = "Session not started yet";
 "profile.booking_session_not_started_message" = "You can confirm the session only after the start time has passed.";
+
+"profile.booking_reject_title" = "Reject session?";
+"profile.booking_reject_message_format" = "Did %@ not show up? Rejecting will cancel the booking and refund the payment.";
+"profile.booking_reject_confirm" = "Reject";
+"profile.booking_reject_button" = "Mentor no-show";
+
+"profile.booking_filter_upcoming" = "Booked";
+"profile.booking_filter_to_confirm" = "To confirm";
+"profile.booking_filter_finished" = "Finished";
+
+"profile.scope_show_archive" = "Archive";
+"profile.scope_show_current" = "Current";
 
 /* My Posts */
 "profile.delete_post" = "Delete post";
@@ -102,6 +113,9 @@
 /* Mentor Profile / Generate Slots */
 "profile.section_mentor_profile" = "Mentor Profile";
 "profile.generate_slots_title" = "Add Slots";
+"profile.stripe_gate_title" = "Set Up Payments First";
+"profile.stripe_gate_message" = "Before you can add slots, configure your payout account so mentees can pay you.";
+"profile.stripe_gate_configure_button" = "Set Up";
 "profile.generate_sport_label" = "Sport";
 "profile.generate_sport_placeholder" = "Choose sport...";
 "profile.generate_place_label" = "Spot (optional)";
@@ -143,3 +157,38 @@
 /* Check-In */
 "profile.section_check_in" = "Current Check-In";
 "profile.checked_in_as_format" = "Checked in as %@";
+
+/* Stripe Onboarding */
+"stripe.navigation_title" = "Payment Setup";
+"stripe.setup_description" = "Set up your Stripe account to receive payments from mentoring sessions.";
+"stripe.start_onboarding_button" = "Set Up Payments";
+"stripe.continue_onboarding_button" = "Continue Setup";
+"stripe.refresh_status_button" = "Refresh Status";
+"stripe.status_title" = "Payment Status";
+"stripe.onboarding_completed" = "Details submitted";
+"stripe.onboarding_pending" = "Details not submitted";
+"stripe.charges_enabled" = "Charges enabled";
+"stripe.charges_disabled" = "Charges not yet enabled";
+"stripe.payouts_enabled" = "Payouts enabled";
+"stripe.payouts_disabled" = "Payouts not yet enabled";
+"stripe.awaiting_return_message" = "Complete the setup in your browser, then return here.";
+"stripe.invalid_onboarding_url" = "Invalid onboarding URL received";
+"stripe.failed_load_status_format" = "Failed to load payment status: %@";
+"stripe.failed_create_account_format" = "Failed to create Stripe account: %@";
+"stripe.failed_create_link_format" = "Failed to create onboarding link: %@";
+"stripe.failed_refresh_status_format" = "Failed to refresh payment status: %@";
+"stripe.return_status_success" = "Onboarding completed successfully!";
+"stripe.return_status_pending" = "Onboarding in progress — additional verification may be required.";
+"stripe.return_status_restricted" = "Account restricted — please complete the remaining steps.";
+
+/* Mentor Wallet (Stripe) */
+"stripe.wallet_title" = "Wallet";
+"stripe.wallet_available_label" = "Available for payout";
+"stripe.wallet_pending_label" = "Pending:";
+"stripe.wallet_pending_tooltip" = "Funds become available after Stripe settles them (about 7 days).";
+"stripe.wallet_payouts_info" = "Payouts are sent automatically by Stripe to your bank account. In the dashboard you can also trigger a manual payout or change your bank account.";
+"stripe.wallet_unavailable" = "Balance could not be loaded. Please try refreshing in a moment.";
+"stripe.open_dashboard_button" = "Open Stripe Dashboard";
+"stripe.refresh_balance_button" = "Refresh balance";
+"stripe.invalid_dashboard_url" = "Invalid dashboard URL received";
+"stripe.failed_dashboard_link_format" = "Failed to open Stripe dashboard: %@";

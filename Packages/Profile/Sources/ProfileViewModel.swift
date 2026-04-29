@@ -43,6 +43,7 @@ public final class ProfileViewModel {
     let feedService: any FeedServiceProtocol
     let mentorSlotsService: any MentorSlotsServiceProtocol
     let placesService: any PlacesServiceProtocol
+    let stripeOnboardingViewModel: StripeOnboardingViewModel
 
     // MARK: - Computed
 
@@ -65,6 +66,7 @@ public final class ProfileViewModel {
         placesService: any PlacesServiceProtocol,
         feedService: any FeedServiceProtocol,
         mentorSlotsService: any MentorSlotsServiceProtocol,
+        stripeService: any StripeServiceProtocol,
         authState: AuthState
     ) {
         self.repository = ProfileRepository(riderService: riderService, sportsService: sportsService)
@@ -72,6 +74,7 @@ public final class ProfileViewModel {
         self.feedService = feedService
         self.mentorSlotsService = mentorSlotsService
         self.placesService = placesService
+        self.stripeOnboardingViewModel = StripeOnboardingViewModel(stripeService: stripeService)
         self.authState = authState
     }
 
@@ -80,6 +83,7 @@ public final class ProfileViewModel {
         placesService: any PlacesServiceProtocol,
         feedService: any FeedServiceProtocol,
         mentorSlotsService: any MentorSlotsServiceProtocol,
+        stripeOnboardingViewModel: StripeOnboardingViewModel,
         presenter: ProfileFormPresenter = .init(),
         authState: AuthState
     ) {
@@ -88,6 +92,7 @@ public final class ProfileViewModel {
         self.feedService = feedService
         self.mentorSlotsService = mentorSlotsService
         self.placesService = placesService
+        self.stripeOnboardingViewModel = stripeOnboardingViewModel
         self.authState = authState
     }
     
@@ -115,6 +120,10 @@ public final class ProfileViewModel {
             let locationForm = presenter.mapLocationForm(from: snapshot.baseLocation)
             latitudeText = locationForm.latitudeText
             longitudeText = locationForm.longitudeText
+
+            if hasMentorSports {
+                await stripeOnboardingViewModel.loadStatus()
+            }
         } catch {
             self.error = ProfileStrings.failedLoadProfile(error.localizedDescription)
         }

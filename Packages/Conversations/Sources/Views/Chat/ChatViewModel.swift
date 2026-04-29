@@ -22,6 +22,14 @@ final class ChatViewModel {
     private(set) var anchorMessageId: String?
     var inputText: String = ""
 
+    /// User ID (not Rider ID) of the other conversation participant. Resolved from the
+    /// repository cache populated by the conversations list / open-or-create flows.
+    var participantUserId: UUID? {
+        repository.conversations
+            .first { $0.id == conversationId }
+            .flatMap { UUID(uuidString: $0.otherUser.id) }
+    }
+
     private let repository: ChatRepository
     private let currentUserId: String
     private let dateFormatting = DateFormatting.shared
@@ -41,13 +49,31 @@ final class ChatViewModel {
     // MARK: - Loading
 
     func loadOnAppear() {
-        guard messages.isEmpty else { return }
+        repository.setCurrentConversation(conversationId)
         startObservingRepository()
+
+        guard messages.isEmpty else {
+            // Already loaded once — still (re)issue a mark-as-read in case a
+            // message arrived while we were backgrounded.
+            Task { await repository.markAsRead(conversationId: conversationId) }
+            return
+        }
 
         Task {
             await repository.loadMessages(for: conversationId, refresh: true)
             hasOlderMessages = repository.hasMoreMessages[conversationId] ?? true
             syncMessages()
+
+            // Scenario A: mark as read immediately after messages load.
+            await repository.markAsRead(conversationId: conversationId)
+        }
+    }
+
+    /// Called when the chat view disappears. Clears the "current conversation"
+    /// pointer so incoming messages start incrementing the unread badge again.
+    func onDisappear() {
+        if repository.currentConversationId == conversationId {
+            repository.setCurrentConversation(nil)
         }
     }
 
@@ -62,6 +88,7 @@ final class ChatViewModel {
     private func observeRepository() {
         withObservationTracking {
             _ = repository.messages(for: conversationId)
+            _ = repository.otherUserLastReadAt[conversationId]
         } onChange: { [weak self] in
             Task { @MainActor [weak self] in
                 guard let self else { return }
@@ -117,19 +144,32 @@ final class ChatViewModel {
     /// Re-maps messages from the repository cache. Call after socket events.
     func syncMessages() {
         let raw = repository.messages(for: conversationId)
-        messages = raw.map { mapMessage($0) }
+        let lastReadAt = repository.otherUserLastReadAt[conversationId]
+        messages = raw.map { mapMessage($0, otherUserLastReadAt: lastReadAt) }
     }
 
     // MARK: - Private
 
-    private func mapMessage(_ message: ChatMessage) -> MessageViewData {
+    private func mapMessage(
+        _ message: ChatMessage,
+        otherUserLastReadAt: String?
+    ) -> MessageViewData {
         let date = dateFormatting.parseISO8601(message.createdAt)
+        let isFromCurrentUser = message.senderId == currentUserId
+
+        let isRead: Bool = {
+            guard isFromCurrentUser, let lastReadAt = otherUserLastReadAt else { return false }
+            // Both timestamps are ISO-8601 — lexicographic comparison is safe
+            // as long as both use the same format (UTC with same fractional precision).
+            return message.createdAt <= lastReadAt
+        }()
 
         return MessageViewData(
             id: message.id,
             text: message.content,
             timeText: date.map { dateFormatting.formatTime($0) } ?? "",
-            isFromCurrentUser: message.senderId == currentUserId
+            isFromCurrentUser: isFromCurrentUser,
+            isRead: isRead
         )
     }
 }

@@ -32,9 +32,6 @@ enum ProfileStrings: String {
     case saveLocationButton = "profile.save_location_button"
     case noLocationSet = "profile.no_location_set"
     case pickOnMap = "profile.pick_on_map"
-    case tapMapToPin = "profile.tap_map_to_pin"
-    case locationPickerTitle = "profile.location_picker_title"
-    case confirmLocationButton = "profile.confirm_location_button"
 
     case sectionSports = "profile.section_sports"
     case loadingSports = "profile.loading_sports"
@@ -90,6 +87,8 @@ enum ProfileStrings: String {
     case statusCompleted = "profile.status_completed"
     case statusCancelled = "profile.status_cancelled"
     case statusAvailable = "profile.status_available"
+    case statusReservationPending = "profile.status_reservation_pending"
+    case statusRejected = "profile.status_rejected"
 
     case bookingCancelTitle = "profile.booking_cancel_title"
     case bookingCancelConfirm = "profile.booking_cancel_confirm"
@@ -103,6 +102,17 @@ enum ProfileStrings: String {
     case bookingRecommended = "profile.booking_recommended"
     case bookingSessionNotStartedTitle = "profile.booking_session_not_started_title"
     case bookingSessionNotStartedMessage = "profile.booking_session_not_started_message"
+    case bookingRejectTitle = "profile.booking_reject_title"
+    case bookingRejectMessageFormat = "profile.booking_reject_message_format"
+    case bookingRejectConfirm = "profile.booking_reject_confirm"
+    case bookingRejectButton = "profile.booking_reject_button"
+
+    case bookingFilterUpcoming = "profile.booking_filter_upcoming"
+    case bookingFilterToConfirm = "profile.booking_filter_to_confirm"
+    case bookingFilterFinished = "profile.booking_filter_finished"
+
+    case scopeShowArchive = "profile.scope_show_archive"
+    case scopeShowCurrent = "profile.scope_show_current"
 
     // MARK: - My Slots (Mentor)
     case sectionMySlots = "profile.section_my_slots"
@@ -118,6 +128,9 @@ enum ProfileStrings: String {
     // MARK: - Mentor Profile / Generate Slots
     case sectionMentorProfile = "profile.section_mentor_profile"
     case generateSlotsTitle = "profile.generate_slots_title"
+    case stripeGateTitle = "profile.stripe_gate_title"
+    case stripeGateMessage = "profile.stripe_gate_message"
+    case stripeGateConfigureButton = "profile.stripe_gate_configure_button"
     case generateSportLabel = "profile.generate_sport_label"
     case generateSportPlaceholder = "profile.generate_sport_placeholder"
     case generatePlaceLabel = "profile.generate_place_label"
@@ -206,6 +219,10 @@ enum ProfileStrings: String {
 
     static func bookingCompleteMessage(_ mentorName: String) -> String {
         String(format: NSLocalizedString(ProfileStrings.bookingCompleteMessageFormat.rawValue, bundle: .module, comment: ""), mentorName)
+    }
+
+    static func bookingRejectMessage(_ mentorName: String) -> String {
+        String(format: NSLocalizedString(ProfileStrings.bookingRejectMessageFormat.rawValue, bundle: .module, comment: ""), mentorName)
     }
 
     static func generatePartialResult(_ generated: Int, _ skipped: Int) -> String {

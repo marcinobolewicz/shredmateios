@@ -1,6 +1,7 @@
 import SwiftUI
 import Theme
 import Common
+import Payment
 
 public struct MentorSlotsSection: View {
     @Environment(AppTheme.self) private var theme
@@ -20,55 +21,18 @@ public struct MentorSlotsSection: View {
                 daySection(group)
             }
         }
-        .alert(
-            PlacesStrings.slotDeleteTitle.localized,
-            isPresented: $viewModel.showDeleteConfirmation,
-            presenting: viewModel.selectedSlot
-        ) { _ in
-            Button(PlacesStrings.cancelButton.localized, role: .cancel) {
-                viewModel.dismissAction()
-            }
-            Button(PlacesStrings.slotDeleteConfirm.localized, role: .destructive) {
-                Task { await viewModel.confirmDelete() }
-            }
-        } message: { slot in
-            Text("\(slot.dayHeader)\n\(slot.timeRange) · \(slot.duration)")
-        }
-        .alert(
-            PlacesStrings.slotBookTitle.localized,
-            isPresented: $viewModel.showBookConfirmation,
-            presenting: viewModel.selectedSlot
-        ) { _ in
-            Button(PlacesStrings.cancelButton.localized, role: .cancel) {
-                viewModel.dismissAction()
-            }
-            Button(PlacesStrings.slotBookConfirm.localized) {
-                Task { await viewModel.confirmBook() }
-            }
-        } message: { slot in
-            Text("\(slot.dayHeader)\n\(slot.timeRange) · \(slot.duration)\n\(slot.price)")
-        }
-        .alert(
-            PlacesStrings.slotBookTooSoonTitle.localized,
-            isPresented: $viewModel.showBookingTooSoon
-        ) {
-            Button("OK") { viewModel.dismissAction() }
-        } message: {
-            Text(PlacesStrings.slotBookTooSoonMessage.localized)
-        }
-        .alert(
-            PlacesStrings.slotActionErrorTitle.localized,
-            isPresented: .init(
-                get: { viewModel.actionError != nil },
-                set: { if !$0 { viewModel.actionError = nil } }
-            )
-        ) {
-            Button("OK") { viewModel.actionError = nil }
-        } message: {
-            if let error = viewModel.actionError {
-                Text(error)
-            }
-        }
+        .overlay { processingOverlay }
+        .stripePaymentSheet(
+            isPresented: $viewModel.showPaymentSheet,
+            paymentSheet: viewModel.paymentSheet,
+            onResult: viewModel.handlePaymentResult
+        )
+        .deleteSlotAlert(viewModel: viewModel)
+        .bookSlotAlert(viewModel: viewModel)
+        .bookingTooSoonAlert(viewModel: viewModel)
+        .actionErrorAlert(viewModel: viewModel)
+        .paymentSuccessAlert(viewModel: viewModel)
+        .paymentErrorAlert(viewModel: viewModel)
     }
 
     private func daySection(_ group: MentorSlotDayGroup) -> some View {
@@ -83,6 +47,115 @@ public struct MentorSlotsSection: View {
                         viewModel.slotTapped(slot)
                     }
                 }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var processingOverlay: some View {
+        if viewModel.isProcessingPayment {
+            ZStack {
+                Color.black.opacity(0.3)
+                    .ignoresSafeArea()
+                VStack(spacing: theme.spacing.sm) {
+                    ProgressView()
+                    Text(PlacesStrings.slotPaymentProcessing.localized)
+                        .dsTextStyle(.caption)
+                        .foregroundStyle(theme.colors.textInverse)
+                }
+                .padding(theme.spacing.lg)
+                .background(theme.colors.surface)
+                .clipShape(RoundedRectangle(cornerRadius: theme.radius.md))
+            }
+        }
+    }
+}
+
+// MARK: - Alert Modifiers
+
+private extension View {
+
+    func deleteSlotAlert(viewModel: MentorSlotsViewModel) -> some View {
+        alert(
+            PlacesStrings.slotDeleteTitle.localized,
+            isPresented: Bindable(viewModel).showDeleteConfirmation,
+            presenting: viewModel.selectedSlot
+        ) { _ in
+            Button(PlacesStrings.cancelButton.localized, role: .cancel) {
+                viewModel.dismissAction()
+            }
+            Button(PlacesStrings.slotDeleteConfirm.localized, role: .destructive) {
+                Task { await viewModel.confirmDelete() }
+            }
+        } message: { slot in
+            Text("\(slot.dayHeader)\n\(slot.timeRange) · \(slot.duration)")
+        }
+    }
+
+    func bookSlotAlert(viewModel: MentorSlotsViewModel) -> some View {
+        alert(
+            PlacesStrings.slotBookTitle.localized,
+            isPresented: Bindable(viewModel).showBookConfirmation,
+            presenting: viewModel.selectedSlot
+        ) { _ in
+            Button(PlacesStrings.cancelButton.localized, role: .cancel) {
+                viewModel.dismissAction()
+            }
+            Button(PlacesStrings.slotBookConfirm.localized) {
+                Task { await viewModel.confirmBook() }
+            }
+        } message: { slot in
+            Text("\(slot.dayHeader)\n\(slot.timeRange) · \(slot.duration)\n\(slot.price)")
+        }
+    }
+
+    func bookingTooSoonAlert(viewModel: MentorSlotsViewModel) -> some View {
+        alert(
+            PlacesStrings.slotBookTooSoonTitle.localized,
+            isPresented: Bindable(viewModel).showBookingTooSoon
+        ) {
+            Button("OK") { viewModel.dismissAction() }
+        } message: {
+            Text(PlacesStrings.slotBookTooSoonMessage.localized)
+        }
+    }
+
+    func actionErrorAlert(viewModel: MentorSlotsViewModel) -> some View {
+        alert(
+            PlacesStrings.slotActionErrorTitle.localized,
+            isPresented: .init(
+                get: { viewModel.actionError != nil },
+                set: { if !$0 { viewModel.actionError = nil } }
+            )
+        ) {
+            Button("OK") { viewModel.actionError = nil }
+        } message: {
+            if let error = viewModel.actionError {
+                Text(error)
+            }
+        }
+    }
+
+    func paymentSuccessAlert(viewModel: MentorSlotsViewModel) -> some View {
+        alert(
+            PlacesStrings.slotPaymentSuccessTitle.localized,
+            isPresented: Bindable(viewModel).showPaymentSuccess
+        ) {
+            Button("OK") { viewModel.dismissPaymentSuccess() }
+        } message: {
+            Text(PlacesStrings.slotPaymentSuccessMessage.localized)
+        }
+    }
+
+    func paymentErrorAlert(viewModel: MentorSlotsViewModel) -> some View {
+        alert(
+            PlacesStrings.slotPaymentErrorTitle.localized,
+            isPresented: Bindable(viewModel).showPaymentError
+        ) {
+            Button("OK") { viewModel.dismissPaymentError() }
+        } message: {
+            if let msg = viewModel.paymentErrorMessage {
+                Text(msg)
             }
         }
     }

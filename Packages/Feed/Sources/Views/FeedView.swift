@@ -121,9 +121,9 @@ private struct _PostsList: View {
                 }
                 .listRowInsets(EdgeInsets(
                     top: 0,
-                    leading: theme.spacing.md,
+                    leading: 0,
                     bottom: 0,
-                    trailing: theme.spacing.md
+                    trailing: 0
                 ))
                 .listRowSeparator(.hidden)
                 .listRowSeparatorTint(theme.colors.border.opacity(0.4))
@@ -154,68 +154,106 @@ private struct ActivityPostRow: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: theme.spacing.xs) {
-            HStack(alignment: .center, spacing: theme.spacing.sm) {
-                Button(action: onRiderTap) {
-                    AvatarView(
-                        url: URL(string: post.rider.avatarUrl ?? ""),
-                        initials: post.rider.initials
-                    )
-                }
-                .buttonStyle(.plain)
-                
-                VStack(
-                    alignment: .leading,
-                    spacing: theme.spacing.xxs
-                ) {
-                    Button(action: onRiderTap) {
-                        Text(post.rider.displayName)
-                            .dsTextStyle(.heading)
-                            .lineLimit(1)
-                    }
-                    .buttonStyle(.plain)
-                    
-                    Button(action: onPlaceTap) {
-                        Text(post.place.name)
-                            .dsTextStyle(.subheadline)
-                            .lineLimit(1)
-                    }
-                    .buttonStyle(.plain)
-                }
-            }
-            
-            if let photoUrl = post.photoUrl, let url = URL(string: photoUrl) {
-                Color.clear
-                    .frame(maxWidth: .infinity)
-                    .aspectRatio(1, contentMode: .fit)
-                    .overlay {
-                        AsyncImage(url: url) { phase in
-                            switch phase {
-                            case .success(let image):
-                                image
-                                    .resizable()
-                                    .scaledToFill()
-                            case .failure:
-                                theme.colors.surfaceSecondary
-                            default:
-                                theme.colors.surfaceSecondary
-                            }
-                        }
-                    }
-                    .clipped()
-                    .clipShape(RoundedRectangle(cornerRadius: theme.radius.sm))
-            }
-            
+            _PostHeader(post: post, onRiderTap: onRiderTap, onPlaceTap: onPlaceTap)
+                .padding(.horizontal, theme.spacing.md)
+
             if let caption = post.caption, !caption.isEmpty {
-                Text(caption).dsTextStyle(.body)
+                Text(caption)
+                    .dsTextStyle(.body)
+                    .padding(.horizontal, theme.spacing.md)
             }
-            
+
+            if let photoUrl = post.photoUrl, let url = URL(string: photoUrl) {
+                _PostPhoto(url: url)
+            }
+
             Text(DateFormatting.shared.timestamp(from: post.createdAt))
                 .dsTextStyle(.caption)
                 .foregroundStyle(theme.colors.textSecondary)
                 .frame(maxWidth: .infinity, alignment: .trailing)
+                .padding(.horizontal, theme.spacing.md)
         }
-        .padding(.horizontal, theme.spacing.sm)
         .padding(.vertical, theme.spacing.md)
+    }
+}
+
+// MARK: - Post Header
+
+private struct _PostHeader: View {
+    @Environment(AppTheme.self) private var theme
+    let post: ActivityPost
+    let onRiderTap: () -> Void
+    let onPlaceTap: () -> Void
+
+    var body: some View {
+        HStack(alignment: .center, spacing: theme.spacing.sm) {
+            Button(action: onRiderTap) {
+                AvatarView(
+                    url: URL(string: post.rider.avatarUrl ?? ""),
+                    initials: post.rider.initials
+                )
+            }
+            .buttonStyle(.plain)
+
+            VStack(alignment: .leading, spacing: theme.spacing.xxs) {
+                Button(action: onRiderTap) {
+                    Text(post.rider.displayName)
+                        .dsTextStyle(.heading)
+                        .lineLimit(1)
+                }
+                .buttonStyle(.plain)
+
+                Button(action: onPlaceTap) {
+                    placeLabel
+                }
+                .buttonStyle(.plain)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var placeLabel: some View {
+        if post.isCheckIn {
+            (Text(FeedStrings.checkedInAt.localized + " ")
+                .font(theme.typography.caption)
+                .foregroundColor(theme.colors.textSecondary) +
+            Text(post.place.name)
+                .font(theme.typography.subheadline)
+                .foregroundColor(theme.colors.textSecondary))
+                .lineLimit(1)
+        } else {
+            Text(post.place.name)
+                .dsTextStyle(.subheadline)
+                .lineLimit(1)
+        }
+    }
+}
+
+// MARK: - Post Photo
+
+private struct _PostPhoto: View {
+    @Environment(AppTheme.self) private var theme
+    let url: URL
+
+    var body: some View {
+        Color.clear
+            .frame(maxWidth: .infinity)
+            .aspectRatio(1, contentMode: .fit)
+            .overlay {
+                AsyncImage(url: url) { phase in
+                    switch phase {
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .scaledToFill()
+                    case .failure:
+                        theme.colors.surfaceSecondary
+                    default:
+                        theme.colors.surfaceSecondary
+                    }
+                }
+            }
+            .clipped()
     }
 }
 

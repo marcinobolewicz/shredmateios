@@ -12,11 +12,22 @@ struct MyBookingsView: View {
     }
 
     var body: some View {
-        content
+        VStack(spacing: 0) {
+            filterPicker
+            content
+        }
+            .background(theme.colors.backgroundSecondary)
             .navigationTitle(ProfileStrings.myBookingsTitle.localized)
             .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(.hidden, for: .navigationBar)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(viewModel.timeScope.toggleActionTitle) {
+                        viewModel.toggleScope()
+                    }
+                }
+            }
             .task { viewModel.loadOnAppear() }
-            .refreshable { viewModel.refresh() }
             .alert(
                 ProfileStrings.bookingCancelTitle.localized,
                 isPresented: $viewModel.showCancelConfirmation,
@@ -57,6 +68,20 @@ struct MyBookingsView: View {
             } message: {
                 Text(ProfileStrings.bookingSessionNotStartedMessage.localized)
             }
+            .alert(
+                ProfileStrings.bookingRejectTitle.localized,
+                isPresented: $viewModel.showRejectConfirmation,
+                presenting: viewModel.selectedSlot
+            ) { _ in
+                Button(CommonStrings.cancelButton.localized, role: .cancel) {
+                    viewModel.dismissAction()
+                }
+                Button(ProfileStrings.bookingRejectConfirm.localized, role: .destructive) {
+                    Task { await viewModel.confirmReject() }
+                }
+            } message: { slot in
+                Text(ProfileStrings.bookingRejectMessage(slot.mentorRider.displayName))
+            }
             .alert(item: $viewModel.actionError) { err in
                 Alert(
                     title: Text(err.title),
@@ -66,6 +91,13 @@ struct MyBookingsView: View {
                     }
                 )
             }
+    }
+
+    private var filterPicker: some View {
+        ChipFilterPicker(
+            selection: $viewModel.filter,
+            allLabel: ProfileStrings.slotFilterAll.localized
+        )
     }
 
     @ViewBuilder
@@ -101,7 +133,8 @@ struct MyBookingsView: View {
                     slot: slot,
                     action: viewModel.action(for: slot),
                     onCancel: { viewModel.cancelTapped(slot) },
-                    onComplete: { viewModel.completeTapped(slot) }
+                    onComplete: { viewModel.completeTapped(slot) },
+                    onReject: { viewModel.rejectTapped(slot) }
                 )
                 .listRowInsets(EdgeInsets(
                     top: theme.spacing.sm,
@@ -117,6 +150,7 @@ struct MyBookingsView: View {
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
         .background(theme.colors.backgroundSecondary)
+        .refreshable { viewModel.refresh() }
     }
 
     private func slotSummary(_ slot: MentorSlot) -> String {
@@ -135,6 +169,7 @@ private struct BookingRow: View {
     let action: BookingAction?
     let onCancel: () -> Void
     let onComplete: () -> Void
+    let onReject: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: theme.spacing.xs) {
@@ -194,6 +229,8 @@ private struct BookingRow: View {
         case .completed: return (ProfileStrings.statusCompleted.localized, .green)
         case .cancelled: return (ProfileStrings.statusCancelled.localized, .red)
         case .available: return (ProfileStrings.statusAvailable.localized, .gray)
+        case .reservationPending: return (ProfileStrings.statusReservationPending.localized, .pink)
+        case .rejected: return (ProfileStrings.statusRejected.localized, .red)
         }
     }
 
@@ -210,15 +247,17 @@ private struct BookingRow: View {
                 .dsTextStyle(.caption)
                 .foregroundStyle(theme.colors.textSecondary)
 
-        case .complete:
+        case .complete(let canReject):
             HStack(spacing: theme.spacing.sm) {
                 Button(ProfileStrings.bookingConfirmSession.localized, action: onComplete)
                     .buttonStyle(.borderedProminent)
                     .controlSize(.small)
 
-                Button(ProfileStrings.bookingCancelButton.localized, role: .destructive, action: onCancel)
-                    .buttonStyle(.bordered)
-                    .controlSize(.small)
+                if canReject {
+                    Button(ProfileStrings.bookingRejectButton.localized, role: .destructive, action: onReject)
+                        .buttonStyle(.bordered)
+                        .controlSize(.small)
+                }
             }
 
         case .completed(let recommendation):
@@ -244,4 +283,3 @@ private struct BookingRow: View {
         return formatter.string(from: NSNumber(value: value)) ?? "\(value) \(currency)"
     }
 }
-

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CoreLocation
 import Networking
 import Common
 
@@ -24,17 +25,22 @@ final class PlaceDetailsViewModel {
     private(set) var selectedSportSlug: String?
 
     var showRolePicker = false
+    var showLocationUpdatePrompt = false
+    var showLocationMapPicker = false
 
     let placeId: UUID
     let sportIds: [UUID]
     let sportFilters: [PlaceDetailsViewData.SportFilter]
+    let placeLocation: CLLocationCoordinate2D?
 
     // MARK: - Dependencies
 
     private let placesService: any PlacesServiceProtocol
+    private let riderService: any RiderServiceProtocol
     private let authState: AuthState
     private let rowPresenter: PlaceRiderRowPresenter
     private let sportPreferenceStorage: any SportPreferenceStorageProtocol
+    private let locationPromptPolicy: LocationPromptPolicy
     private var lastLoadedSportSlug: String?
 
     // MARK: - Init
@@ -43,17 +49,23 @@ final class PlaceDetailsViewModel {
         placeId: UUID,
         sportIds: [UUID],
         sportFilters: [PlaceDetailsViewData.SportFilter],
+        placeLocation: CLLocationCoordinate2D?,
         placesService: any PlacesServiceProtocol,
+        riderService: any RiderServiceProtocol,
         authState: AuthState,
         sportPreferenceStorage: any SportPreferenceStorageProtocol,
+        locationPromptPolicy: LocationPromptPolicy = .default,
         rowPresenter: PlaceRiderRowPresenter = .init()
     ) {
         self.placeId = placeId
         self.sportIds = sportIds
         self.sportFilters = sportFilters
+        self.placeLocation = placeLocation
         self.placesService = placesService
+        self.riderService = riderService
         self.authState = authState
         self.sportPreferenceStorage = sportPreferenceStorage
+        self.locationPromptPolicy = locationPromptPolicy
         self.rowPresenter = rowPresenter
         self.selectedSportSlug = nil
     }
@@ -157,6 +169,7 @@ final class PlaceDetailsViewModel {
             joinedRole = response.role ?? role
             membershipSportId = response.sportId ?? someSportId
             await loadRiders(force: true)
+            await evaluateLocationPrompt()
         } catch {
             self.error = PlacesStrings.failedCheckIn(error.localizedDescription)
         }
@@ -185,5 +198,34 @@ final class PlaceDetailsViewModel {
 
     func clearError() {
         error = nil
+    }
+
+    // MARK: - Location Prompt
+
+    private func evaluateLocationPrompt() async {
+        guard let spot = placeLocation else { return }
+        let current = try? await riderService.fetchMyBaseLocation()
+        guard locationPromptPolicy.shouldPrompt(current: current, spot: spot) else { return }
+        showLocationUpdatePrompt = true
+    }
+
+    func confirmAutoLocationUpdate() async {
+        guard let spot = placeLocation else { return }
+        let offset = locationPromptPolicy.autoUpdateCoordinate(for: spot)
+        await updateBaseLocation(to: offset)
+    }
+
+    func confirmMapLocation(_ coordinate: CLLocationCoordinate2D) async {
+        await updateBaseLocation(to: coordinate)
+    }
+
+    private func updateBaseLocation(to coordinate: CLLocationCoordinate2D) async {
+        do {
+            _ = try await riderService.updateMyBaseLocation(
+                UpdateBaseLocationRequest(latitude: coordinate.latitude, longitude: coordinate.longitude)
+            )
+        } catch {
+            self.error = PlacesStrings.failedUpdateBaseLocation(error.localizedDescription)
+        }
     }
 }
