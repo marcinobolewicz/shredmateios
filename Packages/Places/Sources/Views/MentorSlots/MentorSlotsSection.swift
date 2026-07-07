@@ -17,6 +17,10 @@ public struct MentorSlotsSection: View {
             Text(PlacesStrings.mentorSlotsTitle.localized)
                 .dsTextStyle(.heading)
 
+            if !viewModel.isOwner && viewModel.hasSlots {
+                marketplaceDisclaimer
+            }
+
             ForEach(viewModel.dayGroups) { group in
                 daySection(group)
             }
@@ -33,6 +37,25 @@ public struct MentorSlotsSection: View {
         .actionErrorAlert(viewModel: viewModel)
         .paymentSuccessAlert(viewModel: viewModel)
         .paymentErrorAlert(viewModel: viewModel)
+    }
+
+    private var marketplaceDisclaimer: some View {
+        HStack(alignment: .top, spacing: theme.spacing.sm) {
+            Image(systemName: "info.circle")
+                .foregroundStyle(theme.colors.textSecondary)
+                .accessibilityHidden(true)
+
+            Text(PlacesStrings.slotMarketplaceDisclaimer.localized)
+                .dsTextStyle(.caption)
+                .foregroundStyle(theme.colors.textSecondary)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(theme.spacing.sm)
+        .background(
+            RoundedRectangle(cornerRadius: theme.radius.md, style: .continuous)
+                .fill(theme.colors.surfaceTertiary)
+        )
     }
 
     private func daySection(_ group: MentorSlotDayGroup) -> some View {
@@ -105,7 +128,12 @@ private extension View {
                 Task { await viewModel.confirmBook() }
             }
         } message: { slot in
-            Text("\(slot.dayHeader)\n\(slot.timeRange) · \(slot.duration)\n\(slot.price)")
+            let header = "\(slot.dayHeader)\n\(slot.timeRange) · \(slot.duration)\n\(slot.price)"
+            if let mentor = viewModel.mentorName {
+                Text("\(header)\n\n\(PlacesStrings.slotBookSeller(mentor))\n\(PlacesStrings.slotBookOperator.localized)")
+            } else {
+                Text("\(header)\n\n\(PlacesStrings.slotBookOperator.localized)")
+            }
         }
     }
 
@@ -143,7 +171,11 @@ private extension View {
         ) {
             Button("OK") { viewModel.dismissPaymentSuccess() }
         } message: {
-            Text(PlacesStrings.slotPaymentSuccessMessage.localized)
+            if let mentor = viewModel.mentorName {
+                Text(PlacesStrings.slotPaymentSuccessMessage(mentor: mentor))
+            } else {
+                Text(PlacesStrings.slotPaymentSuccessMessage.localized)
+            }
         }
     }
 

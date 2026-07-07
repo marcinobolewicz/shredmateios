@@ -62,7 +62,11 @@
 "places.slot_payment_processing" = "Processing payment...";
 "places.slot_payment_success_title" = "Booking confirmed";
 "places.slot_payment_success_message" = "Your session has been booked and paid for successfully.";
+"places.slot_payment_success_message_format" = "Booking paid. Session run by %@.";
 "places.slot_payment_error_title" = "Payment failed";
+"places.slot_marketplace_disclaimer" = "Session is run by the Mentor. ShredMate handles booking and payment.";
+"places.slot_book_seller_format" = "Buying session from: %@";
+"places.slot_book_operator" = "Platform operator: ShredMate";
 
 /* Rider Card */
 "places.follow_button"   = "Follow";

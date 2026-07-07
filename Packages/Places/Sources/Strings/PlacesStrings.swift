@@ -70,7 +70,11 @@ enum PlacesStrings: String {
     case slotPaymentProcessing = "places.slot_payment_processing"
     case slotPaymentSuccessTitle = "places.slot_payment_success_title"
     case slotPaymentSuccessMessage = "places.slot_payment_success_message"
+    case slotPaymentSuccessMessageFormat = "places.slot_payment_success_message_format"
     case slotPaymentErrorTitle = "places.slot_payment_error_title"
+    case slotMarketplaceDisclaimer = "places.slot_marketplace_disclaimer"
+    case slotBookSellerFormat = "places.slot_book_seller_format"
+    case slotBookOperator = "places.slot_book_operator"
 
     // MARK: - Mentors Search
     case mentorsSearchTitle = "places.mentors_search_title"
@@ -139,6 +143,14 @@ enum PlacesStrings: String {
 
     static func mentorRecommendations(_ count: Int) -> String {
         String(format: NSLocalizedString(PlacesStrings.mentorRecommendationsFormat.rawValue, bundle: .module, comment: ""), count)
+    }
+
+    static func slotBookSeller(_ name: String) -> String {
+        String(format: NSLocalizedString(PlacesStrings.slotBookSellerFormat.rawValue, bundle: .module, comment: ""), name)
+    }
+
+    static func slotPaymentSuccessMessage(mentor name: String) -> String {
+        String(format: NSLocalizedString(PlacesStrings.slotPaymentSuccessMessageFormat.rawValue, bundle: .module, comment: ""), name)
     }
 
     static func checkedInRole(_ role: String) -> String {

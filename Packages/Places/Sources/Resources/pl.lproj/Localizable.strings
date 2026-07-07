@@ -62,7 +62,11 @@
 "places.slot_payment_processing" = "Przetwarzanie płatności...";
 "places.slot_payment_success_title" = "Rezerwacja potwierdzona";
 "places.slot_payment_success_message" = "Twoja sesja została zarezerwowana i opłacona.";
+"places.slot_payment_success_message_format" = "Rezerwacja opłacona. Sesję prowadzi %@.";
 "places.slot_payment_error_title" = "Płatność nieudana";
+"places.slot_marketplace_disclaimer" = "Sesję prowadzi Mentor. ShredMate obsługuje rezerwację i płatność.";
+"places.slot_book_seller_format" = "Kupujesz sesję od: %@";
+"places.slot_book_operator" = "Operator platformy: ShredMate";
 
 /* Profil ridera */
 "places.follow_button"   = "Obserwuj";
