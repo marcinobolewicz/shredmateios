@@ -33,6 +33,16 @@ enum AppStrings: String {
     case guestSlide4Subtitle = "app.guest_slide4_subtitle"
     case guestSlide4Cta      = "app.guest_slide4_cta"
 
+    case legalUpdateTitle    = "app.legal_update_title"
+    case legalUpdateMessage  = "app.legal_update_message"
+    case legalDocTerms       = "app.legal_doc_terms"
+    case legalDocMentorTerms = "app.legal_doc_mentor_terms"
+    case legalDocPrivacy     = "app.legal_doc_privacy"
+    case legalDocUnknown     = "app.legal_doc_unknown"
+    case legalAcceptButton   = "app.legal_accept_button"
+    case legalDeclineButton  = "app.legal_decline_button"
+    case legalAcceptError    = "app.legal_accept_error"
+
     var localized: String {
         NSLocalizedString(rawValue, bundle: .module, comment: "")
     }

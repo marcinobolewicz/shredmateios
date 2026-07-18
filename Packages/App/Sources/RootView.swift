@@ -60,6 +60,14 @@ public struct RootView: View {
         ) {
             WelcomeView(onAction: coordinator.handleWelcomeAction)
         }
+        // Blocking re-acceptance of updated legal documents (dismisses only
+        // after accepting, or by declining — which logs the user out).
+        .fullScreenCover(isPresented: .init(
+            get: { !authState.pendingLegalDocuments.isEmpty },
+            set: { _ in }
+        )) {
+            LegalAcceptanceView()
+        }
         .inAppNotificationOverlay(center: coordinator.dependencies.notificationCenter)
         #if DEBUG
         .onShake { showPulseConsole = true }

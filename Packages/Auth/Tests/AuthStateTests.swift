@@ -258,7 +258,12 @@ actor MockAuthService: AuthServiceProtocol {
         )
     }
     
-    func register(email: String, password: String, name: String) async throws -> AuthResponse {
+    func register(
+        email: String,
+        password: String,
+        name: String,
+        acceptedDocuments: [AcceptedDocument]
+    ) async throws -> AuthResponse {
         if shouldFail {
             throw errorToThrow
         }

@@ -30,21 +30,39 @@ public final class RegisterViewModel {
     public var passwordMismatch: Bool {
         !confirmPassword.isEmpty && password != confirmPassword
     }
-    
+
+    /// Consent text with links to the current published document versions
+    /// (falls back to canonical URLs until documents are loaded).
+    public var consentMarkdown: String {
+        let documents = authState.legalDocuments
+        let privacyURL = documents.first { $0.type == .privacy }?.url ?? Self.fallbackPrivacyURL
+        let termsURL = documents.first { $0.type == .terms }?.url ?? Self.fallbackTermsURL
+        return RegisterStrings.consentMarkdown(privacyURL: privacyURL, termsURL: termsURL)
+    }
+
+    private static let fallbackPrivacyURL = "https://shredmate.pl/privacy"
+    private static let fallbackTermsURL = "https://shredmate.pl/terms"
+
     // MARK: - Dependencies
-    
+
     private let authState: AuthState
     private weak var router: AuthRouter?
-    
+
     // MARK: - Init
-    
+
     public init(authState: AuthState, router: AuthRouter) {
         self.authState = authState
         self.router = router
     }
-    
+
     // MARK: - Actions
-    
+
+    /// Load current legal document versions so the consent links point at the
+    /// exact versions that will be accepted on register.
+    public func loadLegalDocuments() async {
+        await authState.loadLegalDocumentsIfNeeded()
+    }
+
     public func register() async {
         guard isFormValid else { return }
         

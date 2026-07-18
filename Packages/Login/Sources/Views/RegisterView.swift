@@ -8,6 +8,7 @@ import Common
 private struct LegalConsentRow: View {
     @Environment(AppTheme.self) private var theme
     @Binding var isAccepted: Bool
+    let markdown: String
 
     var body: some View {
         HStack(alignment: .top, spacing: theme.spacing.sm) {
@@ -20,7 +21,7 @@ private struct LegalConsentRow: View {
             }
             .buttonStyle(.plain)
 
-            Text(.init(RegisterStrings.consentMarkdown.localized))
+            Text(.init(markdown))
                 .font(.caption)
                 .foregroundStyle(theme.colors.primaryForeground.opacity(Self.textOpacity))
                 .tint(theme.colors.primaryForeground)
@@ -55,12 +56,13 @@ public struct RegisterView: View {
                 AuthCardHeader(title: RegisterStrings.headerTitle.localized)
                 formSection
                     .padding(.top, theme.spacing.xs)
-                LegalConsentRow(isAccepted: $viewModel.termsAccepted)
+                LegalConsentRow(isAccepted: $viewModel.termsAccepted, markdown: viewModel.consentMarkdown)
                 registerButton
                     .padding(.top, theme.spacing.xs)
                 loginLink
             }
         }
+        .task { await viewModel.loadLegalDocuments() }
         .alert(CommonStrings.errorTitle.localized, isPresented: .init(
             get: { viewModel.errorMessage != nil },
             set: { if !$0 { viewModel.clearError() } }

@@ -26,3 +26,13 @@
 "app.guest_slide4_title"    = "Sam zostań mentorem";
 "app.guest_slide4_subtitle" = "Dobrze jeździsz? Ucz innych i zarabiaj na swojej pasji. Ustaw własne terminy, stawki i miejsca — wypłaty przez Stripe prosto na konto.";
 "app.guest_slide4_cta"      = "Załóż profil mentora";
+
+"app.legal_update_title"    = "Aktualizacja dokumentów";
+"app.legal_update_message"  = "Zaktualizowaliśmy dokumenty prawne. Aby dalej korzystać z ShredMate, zapoznaj się z nimi i zaakceptuj nowe wersje.";
+"app.legal_doc_terms"       = "Regulamin";
+"app.legal_doc_mentor_terms" = "Regulamin mentora";
+"app.legal_doc_privacy"     = "Polityka Prywatności";
+"app.legal_doc_unknown"     = "Dokument";
+"app.legal_accept_button"   = "Akceptuję";
+"app.legal_decline_button"  = "Nie akceptuję — wyloguj";
+"app.legal_accept_error"    = "Nie udało się zapisać akceptacji. Spróbuj ponownie.";

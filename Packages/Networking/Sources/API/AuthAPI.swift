@@ -20,10 +20,21 @@ public enum AuthAPI {
     }
     
     /// Register a new user
-    public static func register(email: String, password: String, name: String) -> Endpoint<AuthResponse> {
+    public static func register(
+        email: String,
+        password: String,
+        name: String,
+        acceptedDocuments: [AcceptedDocument] = []
+    ) -> Endpoint<AuthResponse> {
         .post(
             "/auth/register",
-            body: RegisterRequest(email: email, password: password, name: name),
+            body: RegisterRequest(
+                email: email,
+                password: password,
+                name: name,
+                acceptedDocuments: acceptedDocuments
+            ),
+            keys: .camelCase,
             auth: .none
         )
     }

@@ -6,8 +6,25 @@
 //
 
 import Foundation
+import Networking
 
 enum PlacesStrings: String {
+    // Moderation (report / block)
+    case moderationMenu = "places.moderation_menu"
+    case moderationReportUser = "places.moderation_report_user"
+    case moderationBlockUserFormat = "places.moderation_block_user_format"
+    case moderationUnblockUserFormat = "places.moderation_unblock_user_format"
+    case moderationReportTitle = "places.moderation_report_title"
+    case moderationReasonSpam = "places.moderation_reason_spam"
+    case moderationReasonHarassment = "places.moderation_reason_harassment"
+    case moderationReasonInappropriate = "places.moderation_reason_inappropriate"
+    case moderationReasonFakeProfile = "places.moderation_reason_fake_profile"
+    case moderationReasonSafety = "places.moderation_reason_safety"
+    case moderationReasonOther = "places.moderation_reason_other"
+    case moderationReportSuccess = "places.moderation_report_success"
+    case moderationBlockSuccessFormat = "places.moderation_block_success_format"
+    case moderationActionFailed = "places.moderation_action_failed"
+
     case pickerTitle = "places.picker_title"
     case rootNavigationTitle = "places.root_navigation_title"
     case listNavigationTitle = "places.list_navigation_title"
@@ -163,5 +180,30 @@ enum PlacesStrings: String {
 
     static func mentorsCount(_ count: Int) -> String {
         String(format: NSLocalizedString(PlacesStrings.mentorsCountFormat.rawValue, bundle: .module, comment: ""), count)
+    }
+
+    static func moderationBlockUser(_ name: String) -> String {
+        String(format: NSLocalizedString(PlacesStrings.moderationBlockUserFormat.rawValue, bundle: .module, comment: ""), name)
+    }
+
+    static func moderationUnblockUser(_ name: String) -> String {
+        String(format: NSLocalizedString(PlacesStrings.moderationUnblockUserFormat.rawValue, bundle: .module, comment: ""), name)
+    }
+
+    static func moderationBlockSuccess(_ name: String) -> String {
+        String(format: NSLocalizedString(PlacesStrings.moderationBlockSuccessFormat.rawValue, bundle: .module, comment: ""), name)
+    }
+}
+
+extension ReportReason {
+    var localizedLabel: String {
+        switch self {
+        case .spam: return PlacesStrings.moderationReasonSpam.localized
+        case .harassment: return PlacesStrings.moderationReasonHarassment.localized
+        case .inappropriateContent: return PlacesStrings.moderationReasonInappropriate.localized
+        case .fakeProfile: return PlacesStrings.moderationReasonFakeProfile.localized
+        case .safety: return PlacesStrings.moderationReasonSafety.localized
+        case .other: return PlacesStrings.moderationReasonOther.localized
+        }
     }
 }

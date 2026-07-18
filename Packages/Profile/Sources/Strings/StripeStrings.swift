@@ -36,8 +36,23 @@ enum StripeStrings: String {
     case openDashboardButton = "stripe.open_dashboard_button"
     case refreshBalanceButton = "stripe.refresh_balance_button"
 
+    case mentorTermsTitle = "stripe.mentor_terms_title"
+    case mentorTermsMessage = "stripe.mentor_terms_message"
+    case mentorTermsLink = "stripe.mentor_terms_link"
+    case mentorTermsAcceptButton = "stripe.mentor_terms_accept_button"
+    case failedAcceptTermsFormat = "stripe.failed_accept_terms_format"
+
     var localized: String {
         NSLocalizedString(rawValue, bundle: .module, comment: "")
+    }
+
+    static func failedAcceptTerms(_ error: String) -> String {
+        String(
+            format: NSLocalizedString(
+                StripeStrings.failedAcceptTermsFormat.rawValue,
+                bundle: .module, comment: ""
+            ), error
+        )
     }
 
     static func failedLoadStatus(_ error: String) -> String {

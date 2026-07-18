@@ -3,7 +3,8 @@
 "profile.success_alert_title" = "Success";
 "profile.delete_account_dialog_title" = "Delete Account";
 "profile.delete_account_button" = "Delete Account";
-"profile.delete_account_dialog_message" = "This action cannot be undone. All your data will be permanently deleted.";
+"profile.delete_account_dialog_message" = "This action cannot be undone. We'll delete your profile and personal data. Billing records (bookings, payments) are kept for the period required by law.";
+"profile.delete_account_blocked" = "You can't delete your account while you have active bookings or unsettled payments. Cancel them or wait for settlement, then try again.";
 "profile.loading_profile" = "Loading profile...";
 "profile.section_profile_information" = "Profile Information";
 "profile.display_name_placeholder" = "Display Name";
@@ -71,6 +72,7 @@
 "profile.status_rejected" = "Rejected";
 
 "profile.booking_cancel_title" = "Cancel booking?";
+"profile.booking_cancel_refund_note" = "The payment will be fully refunded to the card used for the booking.";
 "profile.booking_cancel_confirm" = "Cancel booking";
 "profile.booking_cancel_button" = "Cancel booking";
 "profile.booking_too_late_to_cancel" = "Too late to cancel (less than 2h before start)";
@@ -190,5 +192,11 @@
 "stripe.wallet_unavailable" = "Balance could not be loaded. Please try refreshing in a moment.";
 "stripe.open_dashboard_button" = "Open Stripe Dashboard";
 "stripe.refresh_balance_button" = "Refresh balance";
+
+"stripe.mentor_terms_title" = "Mentor Terms";
+"stripe.mentor_terms_message" = "Before you can accept payments, please review and accept the mentor terms. You provide services in your own name and are responsible for their legal compliance.";
+"stripe.mentor_terms_link" = "Read the mentor terms";
+"stripe.mentor_terms_accept_button" = "Accept mentor terms";
+"stripe.failed_accept_terms_format" = "Could not save your acceptance: %@";
 "stripe.invalid_dashboard_url" = "Invalid dashboard URL received";
 "stripe.failed_dashboard_link_format" = "Failed to open Stripe dashboard: %@";

@@ -20,6 +20,10 @@ enum ConversationsStrings: String {
     case deleteConfirmButton = "conversations.delete_confirm_button"
     case deleteCancelButton = "conversations.delete_cancel_button"
 
+    case reportMessageAction = "conversations.report_message_action"
+    case reportMessageSuccess = "conversations.report_message_success"
+    case reportMessageFailed = "conversations.report_message_failed"
+
     var localized: String {
         NSLocalizedString(rawValue, bundle: .module, comment: "")
     }

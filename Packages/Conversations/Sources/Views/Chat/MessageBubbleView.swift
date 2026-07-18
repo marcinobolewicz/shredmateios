@@ -7,10 +7,15 @@
 
 import SwiftUI
 import Theme
+import Networking
+import Common
 
 struct MessageBubbleView: View {
     @Environment(AppTheme.self) private var theme
+    @Environment(ModerationService.self) private var moderation
     let viewData: MessageViewData
+
+    @State private var resultMessage: String?
 
     var body: some View {
         HStack {
@@ -42,8 +47,33 @@ struct MessageBubbleView: View {
             .padding(.horizontal, theme.spacing.sm)
             .padding(.vertical, theme.spacing.xs)
             .background(bubbleBackground)
+            .contextMenu {
+                // Report is only offered for messages from the other person.
+                if !viewData.isFromCurrentUser {
+                    Button(role: .destructive) {
+                        Task { await reportMessage() }
+                    } label: {
+                        Label(ConversationsStrings.reportMessageAction.localized, systemImage: "flag")
+                    }
+                }
+            }
 
             if !viewData.isFromCurrentUser { Spacer(minLength: 60) }
+        }
+        .alert(
+            resultMessage ?? "",
+            isPresented: .init(get: { resultMessage != nil }, set: { if !$0 { resultMessage = nil } })
+        ) {
+            Button(CommonStrings.okButton.localized) { resultMessage = nil }
+        }
+    }
+
+    private func reportMessage() async {
+        do {
+            try await moderation.report(targetType: .message, targetId: viewData.id, reason: .inappropriateContent)
+            resultMessage = ConversationsStrings.reportMessageSuccess.localized
+        } catch {
+            resultMessage = ConversationsStrings.reportMessageFailed.localized
         }
     }
 

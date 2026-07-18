@@ -92,6 +92,17 @@ public struct RiderCardView: View {
         .background(theme.colors.backgroundSecondary)
         .navigationTitle(viewData.displayName)
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            if !isOwnProfile {
+                ToolbarItem(placement: .topBarTrailing) {
+                    ReportBlockMenu(
+                        riderId: viewData.riderId.uuidString.lowercased(),
+                        userId: viewData.userId?.uuidString.lowercased(),
+                        displayName: viewData.displayName
+                    )
+                }
+            }
+        }
         .refreshable {
             async let follow: Void = viewModel.loadOnAppear()
             async let slots: Void = slotsViewModel?.refresh() ?? ()

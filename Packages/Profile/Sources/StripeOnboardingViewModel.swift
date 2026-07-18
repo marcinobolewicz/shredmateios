@@ -43,6 +43,11 @@ public final class StripeOnboardingViewModel {
     private(set) var error: String?
     private(set) var returnStatus: StripeReturnStatus?
 
+    /// Current MENTOR_TERMS versions the mentor must accept before onboarding.
+    /// Non-empty → the view shows the terms card instead of proceeding to Stripe.
+    private(set) var pendingMentorTerms: [LegalDocument] = []
+    private(set) var isAcceptingTerms = false
+
     var isLoading: Bool {
         switch step {
         case .creatingAccount, .creatingLink, .refreshingStatus, .loadingBalance, .openingDashboard: true
@@ -73,15 +78,18 @@ public final class StripeOnboardingViewModel {
     // MARK: - Dependencies
 
     private let stripeService: any StripeServiceProtocol
+    private let legalService: (any LegalServiceProtocol)?
     private let urlOpener: any URLOpening
 
     // MARK: - Init
 
     public init(
         stripeService: any StripeServiceProtocol,
+        legalService: (any LegalServiceProtocol)? = nil,
         urlOpener: any URLOpening = DefaultURLOpener()
     ) {
         self.stripeService = stripeService
+        self.legalService = legalService
         self.urlOpener = urlOpener
     }
 
@@ -111,6 +119,13 @@ public final class StripeOnboardingViewModel {
 
     func startOnboarding() async {
         error = nil
+
+        // The backend rejects Stripe onboarding (403 MENTOR_TERMS_ACCEPTANCE_REQUIRED)
+        // until the current mentor terms are accepted — check proactively and show
+        // the acceptance card instead of a raw error.
+        if await requiresMentorTermsAcceptance() {
+            return
+        }
 
         step = .creatingAccount
         do {
@@ -199,6 +214,41 @@ public final class StripeOnboardingViewModel {
 
         await urlOpener.open(dashboardURL)
         step = .idle
+    }
+
+    // MARK: - Mentor Terms
+
+    /// Checks whether the current MENTOR_TERMS still need acceptance.
+    /// On status-check failure we don't block — the backend enforces the gate anyway.
+    private func requiresMentorTermsAcceptance() async -> Bool {
+        guard let legalService else { return false }
+        do {
+            let legalStatus = try await legalService.fetchStatus()
+            pendingMentorTerms = legalStatus.requiresAcceptance.filter { $0.type == .mentorTerms }
+        } catch {
+            pendingMentorTerms = []
+        }
+        return !pendingMentorTerms.isEmpty
+    }
+
+    /// Accept the pending mentor terms and continue onboarding.
+    func acceptMentorTerms() async {
+        guard let legalService, !pendingMentorTerms.isEmpty else { return }
+
+        isAcceptingTerms = true
+        error = nil
+        do {
+            _ = try await legalService.accept(
+                documents: pendingMentorTerms.map(AcceptedDocument.init(document:)),
+                context: .mentorOnboarding
+            )
+            pendingMentorTerms = []
+            isAcceptingTerms = false
+            await startOnboarding()
+        } catch {
+            isAcceptingTerms = false
+            self.error = StripeStrings.failedAcceptTerms(error.localizedDescription)
+        }
     }
 
     func handleReturn(status rawStatus: String?) async {

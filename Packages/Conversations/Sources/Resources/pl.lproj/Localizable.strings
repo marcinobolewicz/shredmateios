@@ -12,3 +12,6 @@
 "conversations.delete_confirm_message" = "Spowoduje to trwałe usunięcie rozmowy i wszystkich wiadomości. Tej operacji nie można cofnąć.";
 "conversations.delete_confirm_button" = "Usuń";
 "conversations.delete_cancel_button" = "Anuluj";
+"conversations.report_message_action" = "Zgłoś wiadomość";
+"conversations.report_message_success" = "Dziękujemy. Wiadomość została zgłoszona do moderacji.";
+"conversations.report_message_failed" = "Nie udało się zgłosić wiadomości. Spróbuj ponownie.";

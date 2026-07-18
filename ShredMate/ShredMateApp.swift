@@ -74,6 +74,7 @@ struct ShredMateApp: App {
                 .environment(dependencies.authState)
                 .environment(dependencies.followRepository)
                 .environment(dependencies.stripePaymentService)
+                .environment(dependencies.moderationService)
                 .environment(theme)
         }
     }

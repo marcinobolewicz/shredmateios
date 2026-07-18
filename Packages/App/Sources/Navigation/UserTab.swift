@@ -83,7 +83,8 @@ struct UserTabView: View {
                     feedService: dependencies.feedService,
                     mentorSlotsService: dependencies.mentorSlotsService,
                     stripeService: dependencies.stripeService,
-                    authState: dependencies.authState
+                    authState: dependencies.authState,
+                    legalService: dependencies.legalService
                 ),
                 path: $router.profilePath
             )

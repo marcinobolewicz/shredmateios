@@ -13,7 +13,12 @@ private let logger = Logger(subsystem: "com.shredmate.auth", category: "AuthServ
 /// Protocol for AuthService abstraction (enables testing)
 public protocol AuthServiceProtocol: Sendable {
     func login(email: String, password: String) async throws -> AuthResponse
-    func register(email: String, password: String, name: String) async throws -> AuthResponse
+    func register(
+        email: String,
+        password: String,
+        name: String,
+        acceptedDocuments: [AcceptedDocument]
+    ) async throws -> AuthResponse
     func logout() async throws
     func fetchCurrentUser() async throws -> User
     func refreshSession() async throws -> AuthResponse
@@ -43,9 +48,21 @@ public actor AuthService: AuthServiceProtocol {
         return response
     }
     
-    public func register(email: String, password: String, name: String) async throws -> AuthResponse {
+    public func register(
+        email: String,
+        password: String,
+        name: String,
+        acceptedDocuments: [AcceptedDocument] = []
+    ) async throws -> AuthResponse {
         logger.debug("Attempting registration for: \(email)")
-        let response = try await client.send(AuthAPI.register(email: email, password: password, name: name))
+        let response = try await client.send(
+            AuthAPI.register(
+                email: email,
+                password: password,
+                name: name,
+                acceptedDocuments: acceptedDocuments
+            )
+        )
         try await saveSession(from: response)
         logger.debug("Registration successful")
         return response

@@ -19,6 +19,8 @@ public final class AppDependencies {
     public let feedService: any FeedServiceProtocol
     public let stripeService: any StripeServiceProtocol
     public let stripePaymentService: StripePaymentService
+    public let legalService: any LegalServiceProtocol
+    public let moderationService: ModerationService
     public let chatService: any ChatServiceProtocol
     public let chatRealtimeClient: ChatRealtimeProviding
     public let chatRepository: ChatRepository
@@ -39,6 +41,8 @@ public final class AppDependencies {
         feedService: any FeedServiceProtocol,
         stripeService: any StripeServiceProtocol,
         stripePaymentService: StripePaymentService,
+        legalService: any LegalServiceProtocol,
+        moderationService: ModerationService,
         chatService: any ChatServiceProtocol,
         chatRealtimeClient: ChatRealtimeProviding,
         chatRepository: ChatRepository,
@@ -58,6 +62,8 @@ public final class AppDependencies {
         self.feedService = feedService
         self.stripeService = stripeService
         self.stripePaymentService = stripePaymentService
+        self.legalService = legalService
+        self.moderationService = moderationService
         self.chatService = chatService
         self.chatRealtimeClient = chatRealtimeClient
         self.chatRepository = chatRepository
@@ -116,6 +122,8 @@ public struct AppSetup {
             feedService: services.feed,
             stripeService: services.stripe,
             stripePaymentService: stripePaymentService,
+            legalService: auth.legalService,
+            moderationService: auth.moderationService,
             chatService: chat.service,
             chatRealtimeClient: chat.realtimeClient,
             chatRepository: chat.repository,
@@ -132,6 +140,8 @@ public struct AppSetup {
         let httpClient: AuthenticatingHTTPClient
         let authState: AuthState
         let pushDeviceService: any PushDeviceServiceProtocol
+        let legalService: any LegalServiceProtocol
+        let moderationService: ModerationService
     }
 
     private static func configureAuth() -> AuthDependencies {
@@ -159,12 +169,15 @@ public struct AppSetup {
 
         let authService = AuthService(client: httpClient, tokenStorage: tokenStorage)
         let riderService = RiderService(client: httpClient)
+        let legalService = LegalService(client: httpClient)
+        let moderationService = ModerationService(client: httpClient)
 
         let authState = AuthState(
             authService: authService,
             riderService: riderService,
             tokenStorage: tokenStorage,
-            pushDeviceService: pushDeviceService
+            pushDeviceService: pushDeviceService,
+            legalService: legalService
         )
 
         Task { @MainActor in
@@ -176,7 +189,9 @@ public struct AppSetup {
         return AuthDependencies(
             httpClient: httpClient,
             authState: authState,
-            pushDeviceService: pushDeviceService
+            pushDeviceService: pushDeviceService,
+            legalService: legalService,
+            moderationService: moderationService
         )
     }
 

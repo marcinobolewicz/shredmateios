@@ -20,8 +20,18 @@ enum RegisterStrings: String {
     case alreadyHaveAccount = "register.already_have_account"
     case signInButton = "register.sign_in_button"
     case consentMarkdown = "register.consent_markdown"
+    case consentMarkdownFormat = "register.consent_markdown_format"
 
     var localized: String {
         NSLocalizedString(rawValue, bundle: .module, comment: "")
+    }
+
+    /// Consent text with links pointing at the current published document versions.
+    static func consentMarkdown(privacyURL: String, termsURL: String) -> String {
+        String(
+            format: NSLocalizedString(consentMarkdownFormat.rawValue, bundle: .module, comment: ""),
+            privacyURL,
+            termsURL
+        )
     }
 }

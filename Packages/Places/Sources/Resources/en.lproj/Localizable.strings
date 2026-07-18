@@ -1,4 +1,18 @@
 /* Places */
+"places.moderation_menu" = "More options";
+"places.moderation_report_user" = "Report user";
+"places.moderation_block_user_format" = "Block %@";
+"places.moderation_unblock_user_format" = "Unblock %@";
+"places.moderation_report_title" = "Reason for report";
+"places.moderation_reason_spam" = "Spam";
+"places.moderation_reason_harassment" = "Harassment or abuse";
+"places.moderation_reason_inappropriate" = "Inappropriate content";
+"places.moderation_reason_fake_profile" = "Fake profile";
+"places.moderation_reason_safety" = "Safety concern";
+"places.moderation_reason_other" = "Other";
+"places.moderation_report_success" = "Thanks. Your report was sent to moderation.";
+"places.moderation_block_success_format" = "Blocked %@. You won't see or message each other anymore.";
+"places.moderation_action_failed" = "Couldn't complete the action. Please try again.";
 "places.picker_title" = "Select Place";
 "places.root_navigation_title" = "Spots";
 "places.list_navigation_title" = "Explore";

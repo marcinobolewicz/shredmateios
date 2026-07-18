@@ -67,14 +67,18 @@ public final class ProfileViewModel {
         feedService: any FeedServiceProtocol,
         mentorSlotsService: any MentorSlotsServiceProtocol,
         stripeService: any StripeServiceProtocol,
-        authState: AuthState
+        authState: AuthState,
+        legalService: (any LegalServiceProtocol)? = nil
     ) {
         self.repository = ProfileRepository(riderService: riderService, sportsService: sportsService)
         self.presenter = ProfileFormPresenter()
         self.feedService = feedService
         self.mentorSlotsService = mentorSlotsService
         self.placesService = placesService
-        self.stripeOnboardingViewModel = StripeOnboardingViewModel(stripeService: stripeService)
+        self.stripeOnboardingViewModel = StripeOnboardingViewModel(
+            stripeService: stripeService,
+            legalService: legalService
+        )
         self.authState = authState
     }
 
@@ -293,7 +297,12 @@ public final class ProfileViewModel {
             try await repository.deleteAccount()
             await authState.handleSessionInvalidation()
         } catch {
-            self.error = ProfileStrings.failedDeleteAccount(error.localizedDescription)
+            // 409 = active bookings / unsettled payments block deletion (server guard).
+            if case NetworkError.requestFailed(let statusCode) = error, statusCode == 409 {
+                self.error = ProfileStrings.deleteAccountBlocked.localized
+            } else {
+                self.error = ProfileStrings.failedDeleteAccount(error.localizedDescription)
+            }
             isLoading = false
         }
     }

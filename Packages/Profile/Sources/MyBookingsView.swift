@@ -40,7 +40,7 @@ struct MyBookingsView: View {
                     Task { await viewModel.confirmCancel() }
                 }
             } message: { slot in
-                Text(slotSummary(slot))
+                Text("\(slotSummary(slot))\n\n\(ProfileStrings.bookingCancelRefundNote.localized)")
             }
             .confirmationDialog(
                 ProfileStrings.bookingCompleteTitle.localized,

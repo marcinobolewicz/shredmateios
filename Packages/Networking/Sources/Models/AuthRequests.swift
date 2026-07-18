@@ -16,11 +16,15 @@ public struct RegisterRequest: Codable, Sendable {
     public let email: String
     public let password: String
     public let name: String
-    
-    public init(email: String, password: String, name: String) {
+    /// Current legal document versions the user accepted (from GET /legal/documents).
+    /// Required by the backend once legal documents are published.
+    public let acceptedDocuments: [AcceptedDocument]
+
+    public init(email: String, password: String, name: String, acceptedDocuments: [AcceptedDocument] = []) {
         self.email = email
         self.password = password
         self.name = name
+        self.acceptedDocuments = acceptedDocuments
     }
 }
 

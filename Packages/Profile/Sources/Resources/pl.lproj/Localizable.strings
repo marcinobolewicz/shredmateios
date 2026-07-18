@@ -3,7 +3,8 @@
 "profile.success_alert_title" = "Sukces";
 "profile.delete_account_dialog_title" = "Usuń konto";
 "profile.delete_account_button" = "Usuń konto";
-"profile.delete_account_dialog_message" = "Tej akcji nie można cofnąć. Wszystkie Twoje dane zostaną trwale usunięte.";
+"profile.delete_account_dialog_message" = "Tej akcji nie można cofnąć. Usuniemy Twój profil i dane osobowe. Dane rozliczeń (rezerwacje, płatności) zachowamy przez okres wymagany przepisami.";
+"profile.delete_account_blocked" = "Nie można usunąć konta z aktywnymi rezerwacjami lub nierozliczonymi płatnościami. Anuluj rezerwacje lub poczekaj na rozliczenie i spróbuj ponownie.";
 "profile.loading_profile" = "Wczytywanie profilu...";
 "profile.section_profile_information" = "Informacje o profilu";
 "profile.display_name_placeholder" = "Nazwa wyświetlana";
@@ -71,6 +72,7 @@
 "profile.status_rejected" = "Odrzucone";
 
 "profile.booking_cancel_title" = "Anulować rezerwację?";
+"profile.booking_cancel_refund_note" = "Płatność zostanie w całości zwrócona na kartę, którą opłacono rezerwację.";
 "profile.booking_cancel_confirm" = "Anuluj rezerwację";
 "profile.booking_cancel_button" = "Anuluj rezerwację";
 "profile.booking_too_late_to_cancel" = "Zbyt późno na anulowanie (mniej niż 2h przed startem)";
@@ -190,5 +192,11 @@
 "stripe.wallet_unavailable" = "Nie udało się pobrać salda. Spróbuj odświeżyć za chwilę.";
 "stripe.open_dashboard_button" = "Otwórz dashboard Stripe";
 "stripe.refresh_balance_button" = "Odśwież saldo";
+
+"stripe.mentor_terms_title" = "Regulamin mentora";
+"stripe.mentor_terms_message" = "Zanim zaczniesz przyjmować płatności, zapoznaj się z regulaminem mentora i zaakceptuj jego postanowienia. Świadczysz usługi we własnym imieniu i odpowiadasz za ich zgodność z prawem.";
+"stripe.mentor_terms_link" = "Przeczytaj regulamin mentora";
+"stripe.mentor_terms_accept_button" = "Akceptuję regulamin mentora";
+"stripe.failed_accept_terms_format" = "Nie udało się zapisać akceptacji: %@";
 "stripe.invalid_dashboard_url" = "Otrzymano nieprawidłowy adres dashboardu";
 "stripe.failed_dashboard_link_format" = "Nie udało się otworzyć dashboardu Stripe: %@";

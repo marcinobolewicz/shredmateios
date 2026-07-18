@@ -258,7 +258,12 @@ private actor MockAuthService: AuthServiceProtocol {
         return AuthResponse(accessToken: "mock-access", refreshToken: "mock-refresh", user: user)
     }
 
-    func register(email: String, password: String, name: String) async throws -> AuthResponse {
+    func register(
+        email: String,
+        password: String,
+        name: String,
+        acceptedDocuments: [AcceptedDocument]
+    ) async throws -> AuthResponse {
         guard let user = mockUser else { throw AuthError.invalidCredentials }
         return AuthResponse(accessToken: "mock-access", refreshToken: "mock-refresh", user: user)
     }

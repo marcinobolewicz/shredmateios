@@ -9,6 +9,7 @@ enum ProfileStrings: String {
     case deleteAccountDialogTitle = "profile.delete_account_dialog_title"
     case deleteAccountButton = "profile.delete_account_button"
     case deleteAccountDialogMessage = "profile.delete_account_dialog_message"
+    case deleteAccountBlocked = "profile.delete_account_blocked"
 
     case loadingProfile = "profile.loading_profile"
 
@@ -92,6 +93,7 @@ enum ProfileStrings: String {
 
     case bookingCancelTitle = "profile.booking_cancel_title"
     case bookingCancelConfirm = "profile.booking_cancel_confirm"
+    case bookingCancelRefundNote = "profile.booking_cancel_refund_note"
     case bookingCancelButton = "profile.booking_cancel_button"
     case bookingTooLateToCancel = "profile.booking_too_late_to_cancel"
     case bookingConfirmSession = "profile.booking_confirm_session"

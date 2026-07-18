@@ -25,6 +25,9 @@ struct StripeOnboardingView: View {
                     if let returnStatus = viewModel.returnStatus {
                         ReturnStatusBanner(status: returnStatus, theme: theme)
                     }
+                    if !viewModel.pendingMentorTerms.isEmpty {
+                        mentorTermsCard
+                    }
                     if viewModel.status != nil {
                         statusCard
                     }
@@ -75,6 +78,47 @@ struct StripeOnboardingView: View {
                 .font(theme.typography.body)
                 .foregroundStyle(theme.colors.textSecondary)
                 .multilineTextAlignment(.center)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(theme.spacing.lg)
+        .background(theme.colors.background)
+        .clipShape(RoundedRectangle(cornerRadius: theme.radius.lg, style: .continuous))
+    }
+
+    // MARK: - Mentor Terms
+
+    private var mentorTermsCard: some View {
+        VStack(spacing: theme.spacing.sm) {
+            Image(systemName: "doc.text")
+                .font(.largeTitle)
+                .foregroundStyle(theme.colors.primary)
+
+            Text(StripeStrings.mentorTermsTitle.localized)
+                .font(theme.typography.headline)
+
+            Text(StripeStrings.mentorTermsMessage.localized)
+                .font(theme.typography.body)
+                .foregroundStyle(theme.colors.textSecondary)
+                .multilineTextAlignment(.center)
+
+            ForEach(viewModel.pendingMentorTerms) { document in
+                if let url = URL(string: document.url) {
+                    Link(destination: url) {
+                        Label(StripeStrings.mentorTermsLink.localized, systemImage: "arrow.up.right.square")
+                            .font(theme.typography.body.weight(.medium))
+                    }
+                    .foregroundStyle(theme.colors.primary)
+                }
+            }
+
+            DSLoadingButton(
+                StripeStrings.mentorTermsAcceptButton.localized,
+                isLoading: viewModel.isAcceptingTerms,
+                isDisabled: viewModel.isAcceptingTerms
+            ) {
+                Task { await viewModel.acceptMentorTerms() }
+            }
+            .padding(.top, theme.spacing.sm)
         }
         .frame(maxWidth: .infinity)
         .padding(theme.spacing.lg)

@@ -1,4 +1,18 @@
 /* Places */
+"places.moderation_menu" = "Więcej opcji";
+"places.moderation_report_user" = "Zgłoś użytkownika";
+"places.moderation_block_user_format" = "Zablokuj %@";
+"places.moderation_unblock_user_format" = "Odblokuj %@";
+"places.moderation_report_title" = "Powód zgłoszenia";
+"places.moderation_reason_spam" = "Spam";
+"places.moderation_reason_harassment" = "Nękanie lub obraźliwe treści";
+"places.moderation_reason_inappropriate" = "Nieodpowiednie treści";
+"places.moderation_reason_fake_profile" = "Fałszywy profil";
+"places.moderation_reason_safety" = "Zagrożenie bezpieczeństwa";
+"places.moderation_reason_other" = "Inny powód";
+"places.moderation_report_success" = "Dziękujemy. Zgłoszenie zostało wysłane do moderacji.";
+"places.moderation_block_success_format" = "Zablokowano użytkownika %@. Nie będziecie się już widzieć ani pisać.";
+"places.moderation_action_failed" = "Nie udało się wykonać akcji. Spróbuj ponownie.";
 "places.picker_title" = "Wybierz miejsce";
 "places.root_navigation_title" = "Spoty";
 "places.list_navigation_title" = "Odkrywaj";

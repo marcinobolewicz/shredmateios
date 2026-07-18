@@ -12,3 +12,6 @@
 "conversations.delete_confirm_message" = "This will permanently remove the conversation and all its messages. This action cannot be undone.";
 "conversations.delete_confirm_button" = "Delete";
 "conversations.delete_cancel_button" = "Cancel";
+"conversations.report_message_action" = "Report message";
+"conversations.report_message_success" = "Thanks. The message was reported to moderation.";
+"conversations.report_message_failed" = "Couldn't report the message. Please try again.";
